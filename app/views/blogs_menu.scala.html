@@ -19,7 +19,7 @@ case _ => {
 }
 }
 <li><hr/></li>
-<li><a href="#routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
+<li><a href="@routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
 @user match {
 case Guest => {}
 case _ => {

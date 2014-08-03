@@ -4,26 +4,10 @@ import java.sql.Timestamp
 import org.joda.time.{Period, DateTime}
 import play.api.db.slick.Config.driver.simple._
 
-case class Post(
-  id:String,
-  blog:String, //
-  image:Option[String],
-  title:String,
-  subtitle:Option[String],
-  content:String,
-  slug:Option[String],
-  draft: Boolean,
-  created:Option[Timestamp],
-  published:Option[Timestamp],
-  author:String
-)  {
+case class Post(id:String, blog:String, image:Option[String], title:String, subtitle:Option[String], content:String, slug:Option[String], draft:Boolean, created:Option[Timestamp], published:Option[Timestamp], author:String) {
 
-  def publishedDate() = {
-    published match {
-      case None => null
-      case Some(time) => new DateTime(time)
-    }
-  }
+  def publishedDate() = new DateTime(published.getOrElse(0))
+
 }
 
 class Posts(tag:Tag) extends Table[Post](tag, "Post") {

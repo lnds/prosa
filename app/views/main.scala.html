@@ -1,4 +1,4 @@
-@(title: String)(menu: Html)(content: Html)
+@(title: String, user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,8 +19,44 @@
     <script src="@routes.Assets.at("js/prosa.js")"> </script>
     <script src="@routes.Assets.at("js/docs.min.js")"></script>
 
+    @user match {
+        case Guest => {}
+        case _ => {
+            <style>
+                body {
+                    padding-top: 50px;
+                }
+            </style>
+        }
+    }
 </head>
 <body>
+@user match {
+    case Guest => {}
+    case user:Author => {
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Prosa &nbsp;| <small>@Messages("menu.welcome", user.nickname)</small></a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        @userMenu
+                    </ul>
+                    <form class="navbar-form navbar-right">
+                        <input type="text" class="form-control" placeholder="@Messages("menu.search")">
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+}
     <div id="site-wrapper">
         <div id="site-canvas">
             <div id="site-menu" class="col-sm-3 col-md-2 sidebar">

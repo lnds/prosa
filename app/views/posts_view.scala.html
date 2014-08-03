@@ -1,20 +1,8 @@
 @(blog:Blog, post:Post, user:Visitor)(implicit flash:Flash)
-@main(post.title) {
+@main(post.title, user) {
 @views.html.blogs_menu(blog.alias, user)
 }{
-    @user match {
-        case Guest => {}
-        case _ => {
-            <div class="metabar metabar-top">
-                <div class="metabar-block align-right">
-                    <div class="btn-set">
-                        <a class="btn btn-primary" href="@routes.PostsController.editPost(blog.alias, post.id)">@Messages("posts.action.edit")</a>
-                    </div>
-                </div>
-            </div>
-            }
-
-    }
+}{
 <div id="banner-image" class="jumbotron cover-image" data-load-image="@post.image">
     <div class="container cover-container">
         <h1>@post.title</h1>

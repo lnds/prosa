@@ -24,6 +24,8 @@ menu.home=Inicio
 menu.blogs=Blogs
 menu.login=Ingreso
 menu.logout=Finalizar Sesión
+menu.welcome=Bienvenido {0}
+menu.search=Buscar...
 
 # Index
 index.caption.published=publicado hace
@@ -33,6 +35,10 @@ index.caption.published_at=en
 blogs.title=Blogs
 blogs.description=Blogs disponibles en este servidor
 blogs.action.visit=visitar
+
+# Blogs Actions
+blogs.action.create=Crear Blog
+
 
 # Posts Pagination
 posts.newer=Nuevos

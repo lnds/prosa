@@ -5,21 +5,10 @@
     else
         routes.PostsGuestController.index(blog.alias, pageNum=newPage)
 }
-@main(blog.alias){
+@main(blog.alias, user){
     @views.html.blogs_menu(blog.alias, user)
-} {
-    @user match {
-    case Guest => {}
-    case _ => {
-        <div class="metabar metabar-top">
-            <div class="metabar-block align-right">
-                <div class="btn-set">
-                    <a class="btn btn-primary" href="@routes.PostsController.newPost(blog.alias)">@Messages("posts.action.new")</a>
-                </div>
-            </div>
-        </div>
-    }
-}
+}{
+}{
 <aside role="banner" class="cover">
     <div data-load-image="@blog.image.orNull" class="blog-cover-image"></div>
     <div class="cover-container">
@@ -131,5 +120,4 @@
     </div>
 
 </section>
-
 }
