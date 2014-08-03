@@ -1,0 +1,94 @@
+@(caption:String, page:Page[Blog], user:Visitor)(implicit flash:Flash)
+@main(caption) {
+@views.html.blogs_menu(null, user)
+}{
+@user match {
+    case Guest => {}
+    case _ => {
+    <div class="metabar metabar-top">
+        <div class="metabar-block align-right">
+            <div class="btn-set">
+                <a class="btn btn-primary" href="#routes.Blogs.create">@Messages("blogs.action.create")</a>
+            </div>
+        </div>
+    </div>
+    }
+}
+<div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")">
+    <div class="container cover-container">
+        <h1>@Messages("blogs.title")</h1>
+    </div>
+</div>
+<div class="container">
+
+    @flash.get("error").map { message =>
+    <div class="row" id="alerts">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div class="alert alert-danger alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <p>@message</p>
+            </div>
+        </div>
+    </div>
+    }
+
+    @flash.get("success").map { message =>
+    <div class="row" id="alerts">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div class="alert alert-success alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <p>@message</p>
+            </div>
+        </div>
+    </div>
+    }
+
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <hr/>
+            <span style="text-align: center">@Messages("blogs.description")</span>
+            <hr/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <div class="container-fluid">
+                <div class="row">
+                    @Option(page.items).filterNot(_.isEmpty).map { blogs  =>
+                    @for(blog <- blogs) {
+                    <div class="col-md-4 ">
+                        <div class="thumbnail">
+                            @blog.image match {
+                            case None => {
+                            <img  alt="..."   data-src="holder.js/300x200" >
+                            }
+                            case Some(img) =>  {
+                            <img  alt="..." width="300" height="200" style="max-height: 200px;min-height: 200px" src="@img" >
+                            }
+                            }
+                            <div class="caption">
+                                <h3><a href="@routes.PostsGuestController.index(blog.alias)">@blog.name</a></h3>
+                                <p>@blog.description</p>
+                                <p>
+                                    @user match {
+                                    case Guest => {}
+                                    case _ => {
+                                    <a href="#" class="btn btn-primary" role="button"><i class="fa fa-gear"></i> @Messages("blogs.action.config")</a>
+                                    }
+                                    }
+                                    <a href="@routes.PostsGuestController.index(blog.alias)" class="btn btn-link">@Messages("blogs.action.visit")</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+}

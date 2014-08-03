@@ -1,15 +1,43 @@
-@(title: String)(content: Html)
-
+@(title: String)(menu: Html)(content: Html)
 <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>@title</title>
+    <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
 
-<html>
-    <head>
-        <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-        <script src="@routes.Assets.at("javascripts/hello.js")" type="text/javascript"></script>
-    </head>
-    <body>
-        @content
-    </body>
+    <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
+    <link rel='stylesheet' href='@routes.Assets.at("css/font-awesome.css")'>
+    <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>
+    <link rel='stylesheet' href='@routes.Assets.at("css/prosa-main.css")'>
+    <script src="@routes.Assets.at("js/jquery-1.10.2.js")" ></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.at("js/prosa.js")"> </script>
+    <script src="@routes.Assets.at("js/docs.min.js")"></script>
+
+</head>
+<body>
+    <div id="site-wrapper">
+        <div id="site-canvas">
+            <div id="site-menu" class="col-sm-3 col-md-2 sidebar">
+                <ul>
+                    @menu
+                </ul>
+            </div>
+            <a href="#" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
+            @content
+        </div>
+    </div>
+<!-- scripts -->
+<script>
+    $body = document.body;
+    $('[data-load-image]', $body).each(function() {
+        ImageLoader.load($(this));
+    });
+</script>
+</body>
 </html>

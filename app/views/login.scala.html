@@ -1,0 +1,45 @@
+@(form:Form[Option[Author]])(implicit flash:Flash)
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>@Messages("Login")</title>
+    <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
+    <link rel='stylesheet' href='@routes.Assets.at("css/signin.css")'>
+    <script src="@routes.Assets.at("js/jquery-1.10.2.js")" ></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
+</head>
+<body>
+
+<div class="container">
+    <form method="post" action="#routes.Auth.authenticate" class=form-signin">
+
+        <h2 class="form-signin-heading">Sign in</h2>
+
+        @form.globalError.map { error =>
+        <p class="error">
+            @error.message
+        </p>
+        }
+
+        @flash.get("success").map { message =>
+        <p class="success">
+            @message
+        </p>
+        }
+
+        <p>
+            <input type="text" class="form-control" name="nickname" placeholder="Nick" id="nickname" value="@form("nickname").value">
+        </p>
+        <p>
+            <input type="password" class="form-control" name="password" id="password" placeholder="Password">
+        </p>
+        <p>
+            <button class="btn btn-lg btn-primary btn-block" type="submit" id="loginbutton">Login</button>
+        </p>
+
+    </form>
+</div>
+
+</body>
+</html>

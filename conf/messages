@@ -1,0 +1,42 @@
+# prosa
+prosa.main.title=Esto es Prosa
+prosa.main.subtitle=
+prosa.main.content.index=Lo último publicado
+
+# date formatting
+dates.year= año
+dates.years= años
+dates.month= mes
+dates.months= meses
+dates.week= semana
+dates.weeks= semanas
+dates.day= día
+dates.days= días
+dates.hour= hora
+dates.hours= horas
+dates.minute= minuto
+dates.minutes= minutos
+dates.second= segundo
+dates.seconds= segundos
+
+# Menu
+menu.home=Inicio
+menu.blogs=Blogs
+menu.login=Ingreso
+menu.logout=Finalizar Sesión
+
+# Index
+index.caption.published=publicado hace
+index.caption.published_at=en
+
+# Blogs
+blogs.title=Blogs
+blogs.description=Blogs disponibles en este servidor
+blogs.action.visit=visitar
+
+
+#footer
+
+footer.copyright=© 2014 Eduardo Díaz. Todos los derechos reservados.
+footer.prosa=Publicado usando Prosa
+footer.image.copyright=Imagen de portada (CC) Indi Samarajiva

@@ -1,7 +1,76 @@
-@(message: String)
+@(message: String, posts:List[(Post,Blog)])
+@main("Prosa") {
+<li><a href="@routes.Application.index"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
+<li><a href="@routes.BlogsGuestController.index()"><i class="glyphicon glyphicon-th"></i>&nbsp;  @Messages("menu.blogs")</a></li>
+<li></li>
+<li><a href="@routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
+}{
+<div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")" >
+    <div class="container cover-container">
+        <h1>@Messages("prosa.main.title")</h1>
+        <h2>@Messages("prosa.main.subtitle")</h2>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <hr/>
+            <span style="text-align: center">@Messages("prosa.main.content.index")</span>
+            <hr/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <section class="post-list">
+                @for((p,blog) <- posts) {
+                <article role="article" class="post-item post">
+                    <header class="post-item-header">
+                        <h2 class="post-item-header">
+                            <a href="@tools.PostAux.slug(blog.alias, p, false)" title="@p.title">@p.title</a>
+                        </h2>
+                        @if(p.subtitle) {
+                        <h3 class="post-item-subtitle">
+                            @p.subtitle
+                        </h3>
+                        }
+                    </header>
+                    <section class="post-item-excerpt">
+                        @tools.PostAux.excerpt(p.content)
+                    </section>
+                    <footer class="post-item-footer">
+                        <p>
+                        <ul class="list-unstyled list-inline">
+                            <li class="post-item-meta-item">
+                                @Messages("index.caption.published")
+                                <time datetime="@p.published" itemprop="datePublished">@tools.PostAux.formatElapsed(p.published)</time>
+                            </li>
+                            <li class="post-item-meta-item">
+                                @Messages("index.caption.published_at") <a href="@routes.PostsGuestController.index(blog.alias)">@blog.name</a>
+                            </li>
 
-@main("Welcome to Play") {
+                        </ul>
+                        </p>
+                    </footer>
+                </article>
+                }
 
-    @play20.welcome(message)
-
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+            <footer role="contentinfo" class="footer">
+                <p>
+                    <small>@Messages("footer.copyright")</small>
+                </p>
+                <p>
+                    <small>@Messages("footer.image.copyright")</small>
+                </p>
+                <p>
+                    <small>@Messages("footer.prosa")</small>
+                </p>
+            </footer>
+        </div>
+    </div>
+</div>
 }

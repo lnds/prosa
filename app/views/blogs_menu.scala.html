@@ -1,0 +1,29 @@
+@(alias:String, user:Visitor)
+<li>
+    @if(alias == null) {
+    <a href="@routes.Application.index"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
+<li><a href="@routes.BlogsGuestController.index()"><i class="glyphicon glyphicon-th"></i>&nbsp;  @Messages("menu.blogs")</a></li>
+} else {
+<a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
+}
+
+<li></li>
+@if(alias) {
+@user match {
+case Guest => {}
+case _ => {
+<li><a href="@routes.PostsController.newPost(alias)"><i class="fa fa-pencil"></i>&nbsp;  @Messages("posts.action.new")</a></li>
+<li><a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-list"></i>&nbsp;  @Messages("posts.action.posts")</a></li>
+<li><a href="@routes.PostsController.drafts(alias)"><i class="fa fa-edit"></i>&nbsp;  @Messages("posts.action.drafts")</a></li>
+}
+}
+}
+<li><hr/></li>
+<li><a href="#routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
+@user match {
+case Guest => {}
+case _ => {
+<li><a href="#routes.Authors.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("main.change_password")</a></li>
+<li><a href="#routes.Auth.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
+}
+}

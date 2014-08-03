@@ -3,7 +3,33 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET         /                                           controllers.Application.index()
+GET         /login                                      controllers.AuthController.login()
+GET         /logout                                     controllers.AuthController.logout()
+POST        /authenticate                               controllers.AuthController.authenticate()
+
+GET         /change_password                            controllers.AuthorsController.changePassword
+POST        /change_password                            controllers.AuthorsController.savePassword
+
+GET         /blogs                                      controllers.BlogsGuestController.index(page:Int ?=0)
+
+GET         /blogs/create                               controllers.BlogsController.create()
+POST        /blogs/create                               controllers.BlogsController.createBlog()
+
+POST        /images/uploadImage                         controllers.ImagesController.upload()
+
+GET         /blog/:alias                                controllers.PostsGuestController.index(alias:String, pageNum:Int ?=0)
+GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.viewPost(alias,year:Int,month:Int,day:Int,slug:String)
+GET         /blog/:alias/atom.xml                       controllers.PostsGuestController.atom(alias)
+
+GET         /blog/:alias/new                            controllers.PostsController.newPost(alias)
+POST        /blog/:alias/save                           controllers.PostsController.savePost(alias)
+POST        /blog/:alias/delete                         controllers.PostsController.deletePost(alias:String, id:String)
+POST        /blog/:alias/unpublish                      controllers.PostsController.unpublishPost(alias, id:String)
+POST        /blog/:alias/update                         controllers.PostsController.updatePost(alias, id:String)
+GET         /blog/:alias/drafts                         controllers.PostsController.drafts(alias:String, pageNum:Int ?=0)
+GET         /blog/:alias/edit/:id                       controllers.PostsController.editPost(alias,id)
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
