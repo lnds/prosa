@@ -1,0 +1,31 @@
+@(blog:models.Blog, posts:List[(Post,Author)])<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>@blog.name</title>
+    <subtitle>@blog.description</subtitle>
+    <link href="@blog.url.getOrElse(routes.PostsGuestController.index(blog.alias).url).stripSuffix("/")/atom.xml" rel="self" />
+    <link href="@blog.url.getOrElse(routes.PostsGuestController.index(blog.alias).url)"  />
+    <id>urn:uuid:@blog.id.dropRight(9)</id>
+    @posts.headOption.map { p =>
+        @defining(p._1.publishedDate) { date =>
+        <updated>@date</updated>
+        }
+    }
+    @for((post,author) <- posts) {
+    <entry>
+        <title>@post.title</title>
+        @defining(post.publishedDate) { date =>
+        <link href="@blog.url.getOrElse("/").stripSuffix("/")@routes.PostsGuestController.viewPost(blog.alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.getOrElse("")).url" />
+        <id>urn:uuid:@post.id.dropRight(9)</id>
+        <updated>@date</updated>
+        <summary>Summary</summary>
+        <content type="html">
+            @post.content
+        </content>
+        <author>
+            <name>@author.fullname.getOrElse(author.nickname)</name>
+            <email>@author.email</email>
+        </author>
+        }
+    </entry>
+    }
+</feed>

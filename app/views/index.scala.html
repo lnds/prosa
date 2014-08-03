@@ -19,45 +19,42 @@
             <hr/>
         </div>
     </div>
-    <div class="row">
-        <div class="col-sm-10 col-sm-offset-1">
-            <section class="post-list">
-                @for((p,blog) <- posts) {
-                <article role="article" class="post-item post">
-                    <header class="post-item-header">
-                        <h2 class="post-item-header">
+    <section class="post-list">
+        @for((p,blog) <- posts) {
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <article role="article" class="post-item post">
+                        <header class="post-item-header">
+                            <h2 class="post-item-header">
                             <a href="@tools.PostAux.slug(blog.alias, p, false)" title="@p.title">@p.title</a>
-                        </h2>
-                        @if(p.subtitle) {
-                        <h3 class="post-item-subtitle">
+                            </h2>
+                            @if(p.subtitle) {
+                            <h3 class="post-item-subtitle">
                             @p.subtitle
-                        </h3>
-                        }
-                    </header>
-                    <section class="post-item-excerpt">
-                        @tools.PostAux.excerpt(p.content)
-                    </section>
-                    <footer class="post-item-footer">
-                        <p>
-                        <ul class="list-unstyled list-inline">
-                            <li class="post-item-meta-item">
-                                @Messages("index.caption.published")
-                                <time datetime="@p.published" itemprop="datePublished">@tools.PostAux.formatElapsed(p.published)</time>
-                            </li>
-                            <li class="post-item-meta-item">
-                                @Messages("index.caption.published_at") <a href="@routes.PostsGuestController.index(blog.alias)">@blog.name</a>
-                            </li>
+                            </h3>
+                            }
+                        </header>
+                        <section class="post-item-excerpt">
+                            @tools.PostAux.excerpt(p.content)
+                        </section>
+                        <footer class="post-item-footer">
+                            <p>
+                                <ul class="list-unstyled list-inline">
+                                    <li class="post-item-meta-item">
+                                    @Messages("index.caption.published")
+                                    <time datetime="@p.published" itemprop="datePublished">@tools.PostAux.formatElapsed(p.published)</time>
+                                    @Messages("index.caption.published_at") <a href="@routes.PostsGuestController.index(blog.alias)">@blog.name</a>
+                                    </li>
+                                </ul>
+                            </p>
+                        </footer>
+                    </article>
+                </div>
+            </div>
+        }
 
-                        </ul>
-                        </p>
-                    </footer>
-                </article>
-                }
-
-            </section>
-        </div>
-    </div>
-    <div class="row">
+    </section>
+    <div id="page-footer" class="row">
         <div class="col-sm-10 col-sm-offset-1">
             <footer role="contentinfo" class="footer">
                 <p>

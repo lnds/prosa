@@ -1,0 +1,135 @@
+@(blog:Blog, currentPage:Page[Post], drafts:Boolean, user:Visitor)(implicit flash:Flash)
+@link(newPage: Int, newOrderBy: Option[Int] = None) = @{
+    if (drafts)
+        routes.PostsController.drafts(blog.alias, pageNum=newPage)
+    else
+        routes.PostsGuestController.index(blog.alias, pageNum=newPage)
+}
+@main(blog.alias){
+    @views.html.blogs_menu(blog.alias, user)
+} {
+    @user match {
+    case Guest => {}
+    case _ => {
+        <div class="metabar metabar-top">
+            <div class="metabar-block align-right">
+                <div class="btn-set">
+                    <a class="btn btn-primary" href="@routes.PostsController.newPost(blog.alias)">@Messages("posts.action.new")</a>
+                </div>
+            </div>
+        </div>
+    }
+}
+<aside role="banner" class="cover">
+    <div data-load-image="@blog.image.orNull" class="blog-cover-image"></div>
+    <div class="cover-container">
+        @if(blog.logo) {
+        <a href="@routes.PostsGuestController.index(blog.alias)" class="cover-logo" >
+            <img src="@blog.logo.getOrElse("")"   alt="Blog Logo">
+        </a>
+        }
+        <h1 class="cover-title">@blog.name</h1>
+        <p class="cover-description">@blog.description</p>
+    </div>
+</aside>
+<section class="wrapper" tabindex="0">
+    <div class="wrapper-container">
+        @if(drafts) {
+        <header>
+            <h1 class="drafts-title">@Messages("posts.content.drafts")</h1>
+            <hr/>
+        </header>
+        }
+        @flash.get("success").map { message =>
+        <div class="row" id="alerts">
+            <div class="col-sm-12">
+                <div class="alert alert-info alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <p>@message</p>
+                </div>
+            </div>
+        </div>
+        }
+
+        @flash.get("error").map { message =>
+        <div class="row" id="alerts">
+            <div class="col-sm-12">
+                <div class="alert alert-danger alert-dismissable">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <p>@message</p>
+                </div>
+            </div>
+        </div>
+        }
+
+        @Option(currentPage.items).filterNot(_.isEmpty).map { posts =>
+            @for(p <- posts) {
+            <div class="row">
+                <div class="col-sm-12">
+                    <article role="article">
+                        <header class="post-item-header">
+                            <h2>
+                                <a href="@tools.PostAux.slug(blog.alias, p, drafts)" title="@p.title">@p.title</a>
+                            </h2>
+                            @if(p.subtitle) {
+                            <h3>@p.subtitle</h3>
+                            }
+                        </header>
+                        <section class="post-item-excerpt">
+                            @tools.PostAux.excerpt(p.content)
+                        </section>
+                        <footer class="post-item-footer">
+                            <p>
+                            <ul class="list-unstyled list-inline">
+                                <li class="post-item-meta-item">
+                                    @Messages("index.caption.published")
+                                    <time datetime="@p.published" itemprop="datePublished">@tools.PostAux.formatElapsed(p.published)</time>
+                                </li>
+                            </ul>
+                            </p>
+                        </footer>
+                    </article>
+                </div>
+            </div>
+            }
+            <div class="row">
+                <div class="col-sm-12">
+                    <div id="pagination" class="post-list-pagination">
+                        @currentPage.prev.map { page =>
+                        <a href="@link(page)" class="post-list-pagination-item post-list-pagination-item-prev"><i class="fa fa-angle-double-left"></i>&nbsp;@Messages("posts.newer")</a>
+                        }
+                        <span class="post-list-pagination-item post-list-pagination-item-current">@Messages("posts.current_page", currentPage.page+1, currentPage.countPages)</span>
+                        @currentPage.next.map { page =>
+                        <a href="@link(page)" class="post-list-pagination-item post-list-pagination-item-next">@Messages("posts.older")&nbsp;<i class="fa fa-angle-double-right"></i> </a>
+                        }.getOrElse {
+                        <a class="disable">&nbsp;</a>
+                        }
+                    </div>
+                </div>
+            </div>
+       }.getOrElse {
+            <div class="well">
+                @if(drafts) {
+                <em>@Messages("posts.index.no-drafts")</em>
+                } else {
+                <em>@Messages("ports.index.no-published")</em>
+                }
+            </div>
+       }
+        <div class="row">
+            <div class="col-sm-12">
+                <footer role="contentinfo" class="footer">
+                    <p>
+                        <small>@Messages("footer.copyright")</small>
+                    </p>
+                    <p>
+                        <small>@Messages("footer.prosa")</small>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+}

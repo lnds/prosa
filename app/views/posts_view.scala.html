@@ -1,0 +1,56 @@
+@(blog:Blog, post:Post, user:Visitor)(implicit flash:Flash)
+@main(post.title) {
+@views.html.blogs_menu(blog.alias, user)
+}{
+    @user match {
+        case Guest => {}
+        case _ => {
+            <div class="metabar metabar-top">
+                <div class="metabar-block align-right">
+                    <div class="btn-set">
+                        <a class="btn btn-primary" href="@routes.PostsController.editPost(blog.alias, post.id)">@Messages("posts.action.edit")</a>
+                    </div>
+                </div>
+            </div>
+            }
+
+    }
+<div id="banner-image" class="jumbotron cover-image" data-load-image="@post.image">
+    <div class="container cover-container">
+        <h1>@post.title</h1>
+        <h2>@post.subtitle</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
+        <div class="post-content">
+            @Html(post.content)
+        </div>
+    </div>
+</div>
+
+<script>
+    $( function() {
+        var bisrc = $("#banner-image" ).css('background-image');
+        var rx = /url\((.*)\)/g;
+        var a = rx.exec(bisrc);
+        if (a) {
+            var src = a[1];
+            var img  = new Image();
+            img.onload = function() {
+                var h2 = img.naturalHeight;
+                $("#banner-image" ).height(h2);
+
+                var h = h2+20;
+                if (h < 320)
+                    h = 320;
+                if (h > 820)
+                    h = 820;
+                $(".top-cover" ).height(h-20);
+                $(".post-wrapper" ).css("top", h+"px");
+            };
+            img.src = src;
+        }
+    });
+</script>
+}

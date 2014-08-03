@@ -34,6 +34,10 @@ blogs.title=Blogs
 blogs.description=Blogs disponibles en este servidor
 blogs.action.visit=visitar
 
+# Posts Pagination
+posts.newer=Nuevos
+posts.older=Antiguos
+posts.current_page=Página {0} de {1}
 
 #footer
 

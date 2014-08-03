@@ -8,6 +8,7 @@ case class Blog(
   alias:String,
   description:String,
   image:Option[String],
+  logo:Option[String],
   url:Option[String],
   owner:String
 )
@@ -18,10 +19,11 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "Blog") {
   def alias = column[String]("alias")
   def description = column[String]("description")
   def image = column[String]("image", O.Nullable)
+  def logo = column[String]("logo", O.Nullable)
   def url = column[String]("url", O.Nullable)
   def owner = column[String]("owner", O.Length(45, varying = true))
 
-  def * = (id,name,alias,description,image.?, url.?, owner) <> (Blog.tupled, Blog.unapply)
+  def * = (id,name,alias,description,image.?, logo.?, url.?, owner) <> (Blog.tupled, Blog.unapply)
 }
 
 
@@ -38,5 +40,7 @@ object Blogs {
   }
 
   def count()(implicit s:Session) : Int = Query(blogs.length).first
+
+  def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
 }
