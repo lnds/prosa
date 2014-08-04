@@ -2,7 +2,9 @@
 @main(caption, user) {
     @views.html.blogs_menu(null, user)
 }{
- <li><a class="" href="@routes.BlogsController.create">@Messages("blogs.action.create")</a></li>
+<ul class="nav navbar-nav navbar-right">
+<li><a class="" href="@routes.BlogsController.create">@Messages("blogs.action.create")</a></li>
+</ul>
 }{
 <div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")">
     <div class="container cover-container">

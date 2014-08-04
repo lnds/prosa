@@ -8,6 +8,11 @@
 @main(blog.alias, user){
     @views.html.blogs_menu(blog.alias, user)
 }{
+<ul class="nav navbar-nav navbar-right">
+    <li><a href="@routes.PostsController.drafts(blog.alias)"><i class="fa fa-tasks"></i>&nbsp; @Messages("menu.drafts")</a></li>
+    <li><a href="@routes.PostsGuestController.index(blog.alias)"><i class="fa fa-list"></i>&nbsp; @Messages("menu.posts")</a></li>
+    <li><a class="" href="@routes.PostsController.create(blog.alias)"><i class="fa fa-pencil"></i>&nbsp; @Messages("posts.action.new")</a> </li>
+</ul>
 }{
 <aside role="banner" class="cover">
     <div data-load-image="@blog.image.orNull" class="blog-cover-image"></div>
@@ -25,7 +30,7 @@
     <div class="wrapper-container">
         @if(drafts) {
         <header>
-            <h1 class="drafts-title">@Messages("posts.content.drafts")</h1>
+            <h1 class="drafts-title">@Messages("posts.index.drafts")</h1>
             <hr/>
         </header>
         }
@@ -101,7 +106,7 @@
                 @if(drafts) {
                 <em>@Messages("posts.index.no-drafts")</em>
                 } else {
-                <em>@Messages("ports.index.no-published")</em>
+                <em>@Messages("posts.index.no-published")</em>
                 }
             </div>
        }

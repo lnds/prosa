@@ -43,15 +43,10 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Prosa &nbsp;| <small>@Messages("menu.welcome", user.nickname)</small></a>
+                    <a class="navbar-brand" href="@routes.Application.index()">Prosa &nbsp;| <small>@Messages("menu.welcome", user.nickname)</small></a>
                 </div>
                 <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        @userMenu
-                    </ul>
-                    <form class="navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="@Messages("menu.search")">
-                    </form>
+                    @userMenu
                 </div>
             </div>
         </div>

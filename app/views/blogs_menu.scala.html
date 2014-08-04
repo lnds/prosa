@@ -12,9 +12,8 @@
 @user match {
 case Guest => {}
 case _ => {
-<li><a href="@routes.PostsController.newPost(alias)"><i class="fa fa-pencil"></i>&nbsp;  @Messages("posts.action.new")</a></li>
-<li><a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-list"></i>&nbsp;  @Messages("posts.action.posts")</a></li>
-<li><a href="@routes.PostsController.drafts(alias)"><i class="fa fa-edit"></i>&nbsp;  @Messages("posts.action.drafts")</a></li>
+<li><a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-list"></i>&nbsp;  @Messages("menu.posts")</a></li>
+<li><a href="@routes.PostsController.drafts(alias)"><i class="fa fa-edit"></i>&nbsp;  @Messages("menu.drafts")</a></li>
 }
 }
 }
@@ -23,7 +22,7 @@ case _ => {
 @user match {
 case Guest => {}
 case _ => {
-<li><a href="#routes.Authors.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("main.change_password")</a></li>
+<li><a href="#routes.Authors.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("menu.change_password")</a></li>
 <li><a href="#routes.Auth.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
 }
 }

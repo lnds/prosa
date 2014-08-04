@@ -1,0 +1,145 @@
+@(blog:Blog, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@main_editor("Posts New", user) {
+@views.html.blogs_menu(blog.alias, user)
+}{
+<form id="post-save" method="post" action="@routes.PostsController.save(blog.alias)" class="navbar-form navbar-right">
+    <input type="hidden" id="blog" name="blog" value="@blog.alias" />
+    <input type="hidden" id="id" name="id" value="@form("id").value" />
+    <input type="hidden" id="image" name="image" value="@form("image").value" />
+    <input type="hidden" id="title" name="title" value=""/>
+    <input type="hidden" id="subtitle" name="subtitle" value=""/>
+    <input type="hidden" id="content" name="content" value=""/>
+    <input type="hidden" id="draft" name="draft" value="true"/>
+    <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+    <a class="btn btn-default" href="@routes.PostsGuestController.index(blog.alias)">@Messages("posts.action.cancel")</a>
+    <button class="btn btn-primary" onclick="sbmt();">@Messages("posts.action.save")</button>
+    @form("id").value match {
+        case None => {}
+        case Some(id) => {
+        <button class="btn btn-danger" onclick="sbmt();">@Messages("posts.action.delete")</button>
+        }
+    }
+    <button class="btn btn-success" onclick="publish();">@Messages("posts.action.publish")</button>
+</form>
+}{
+<div id="banner-image" class="jumbotron cover-image" data-load-image="">
+    <div class="container cover-container">
+        <div class="top-cover-container">
+            <div class="top-cover-upload">
+                <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
+                    <span class="screen-reader-text">$Messages("posts.action.upload_image")</span>
+                </button>
+
+            </div>
+
+        </div>
+        <div class="fileupload-process">
+            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+        </div>
+        @form("title").error match {
+        case None => {
+        <h1 class="post-title-cover editable" style="text-align: left" id="post_title"  contenteditable="true" placeholder="@Messages("posts.content.title")">@form("title").value</h1>
+        }
+        case Some(error) =>   {
+        <h1 class="post-title-cover editable" style="text-align: left; color:darkred" id="post_title"  contenteditable="true" placeholder="@Messages(error.message)">@form("title").value</h1>
+        }
+        }
+        @form("subtitle").error match {
+        case None => {
+        <h2 class="post-subtitle-cover editable" style="text-align: left" id="post_subtitle"  contenteditable="true" placeholder="@Messages("posts.content.subtitle")">@form("subtitle").value</h2>
+        }
+        case Some(error) =>   {
+        <h2 class="post-subtitle-cover editable" style="text-align: left;color:darkred" id="post_subtitle"  contenteditable="true" placeholder="@Messages(error.message)">@form("subtitle").value</h2>
+        }
+        }
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
+        <div class="post-content">
+            @form("content").error match {
+            case None => {}
+            case Some(error) => {  <p class="text-danger">@Messages(error.message)</p> }
+            }
+            <div class="editor" id="post_content">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+} {
+<script>
+
+    function sbmt() {
+        var title = $("#post_title").text();
+        var subtitle = $("#post_subtitle").text();
+        var content = editor.serialize().post_content.value;
+        $("#title").val(title);
+        $("#subtitle").val(subtitle);
+        $("#content").val(content);
+        $("#post-save").submit();
+    }
+    function publish() {
+        $("#draft").val(false);
+        sbmt();
+    }
+</script>
+<script src="@routes.Assets.at("js/dropzone.js")"></script>
+<script language="javascript">
+
+        document.querySelector("#total-progress").style.opacity = "0";
+
+
+var myDropzone = new Dropzone(document.body, {
+    url: "@routes.ImagesController.upload()",
+    paramName: "file",
+    thumbnailWidth: 80,
+    thumbnailHeight: 80,
+    parallelUploads:1,
+    autoQueue:true,
+    clickable: ".fileinput-button"
+});
+myDropzone.on("addedfile", function(file) {
+    // Hookup the start button
+    ///  file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
+});
+
+// Update the total progress bar
+myDropzone.on("totaluploadprogress", function(progress) {
+    document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+});
+
+myDropzone.on("sending", function(file) {
+    // Show the total progress bar when upload starts
+    document.querySelector("#total-progress").style.opacity = "1";
+    // And disable the start button
+});
+
+myDropzone.on("success", function(file, response, e) {
+    var url = response;
+    $("#image" ).val(url);
+    $("#banner-image").css("background-image", "url("+url+")" );
+    $("#banner-image" ).height(file.height);
+    var h2 = file.height;
+    var h = h2 + 20;
+    if (h < 320)
+        h = 320;
+    if (h > 820)
+        h = 820;
+    $(".top-cover" ).height(h-20);
+    $(".post-wrapper" ).css("top", h+"px");
+    myDropzone.removeAllFiles(true);
+    document.querySelector("#total-progress").style.opacity = "0";
+
+});
+
+// Hide the total progress bar when nothing's uploading anymore
+myDropzone.on("queuecomplete", function(progress) {
+    document.querySelector("#total-progress").style.opacity = "0";
+    myDropzone.removeAllFiles(true);
+});
+        </script>
+}

@@ -32,12 +32,12 @@ object Posts {
   val posts = TableQuery[Posts]
 
   def last(n:Int)(implicit s:Session) : List[(Post,Blog)] = {
-    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id)} yield (p,b) ).sortBy(_._1.published.desc).take(n)
+    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false } yield (p,b) ).sortBy(_._1.published.desc).take(n)
     q.list.map(p => p)
   }
 
   def last(blog:Blog, n:Int)(implicit s:Session) : List[(Post,Author)] = {
-    val q = (for { (p,a) <- posts innerJoin Authors.authors on (_.author === _.id) if p.blog === blog.id } yield (p,a) ).sortBy(_._1.published.desc).take(n)
+    val q = (for { (p,a) <- posts innerJoin Authors.authors on (_.author === _.id) if p.blog === blog.id && p.draft === false } yield (p,a) ).sortBy(_._1.published.desc).take(n)
     q.list.map(p => p)
   }
 
@@ -59,6 +59,24 @@ object Posts {
 
     val query = for {p <- posts if (p.blog === blog.id) && (p.published >= tini) && (p.published <= tend) && (p.slug === slug)} yield p
     query.firstOption
+  }
+
+  def findById(id:String)(implicit s:Session) = posts.filter(_.id === id).firstOption
+
+  def create(author:Author, blog:Blog,  title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String])(implicit s:Session) = {
+    def published = if (draft) None else Some(new Timestamp(DateTime.now.getMillis))
+    def slug = if (draft) None else Some(tools.PostAux.slugify(title))
+    def post = Post(id=IdGenerator.nextId(classOf[Post]), blog=blog.id, title=title, subtitle=subtitle,
+                    image=image, author=author.id,
+                    content=content,
+                    created=Some(new Timestamp(DateTime.now.getMillis)),
+                    published=published,slug=slug,draft=draft )
+    insert(post)
+    post
+  }
+
+  def insert(post:Post)(implicit s:Session) {
+    posts.insert(post)
   }
 
 }

@@ -43,4 +43,13 @@ object Blogs {
 
   def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
+  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String])(implicit s:Session) {
+    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, owner.id)
+    insert(blog)
+  }
+
+  def insert(blog:Blog)(implicit s:Session) {
+    blogs.insert(blog)
+  }
+
 }

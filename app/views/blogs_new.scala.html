@@ -1,0 +1,148 @@
+@(form: Form[BlogsController.BlogData], user:Visitor)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@main("Blogs New", user) {
+@views.html.blogs_menu(null, user)
+}{
+<form method="post" id="blog-create-form" action="@routes.BlogsController.create" class="navbar-form navbar-right">
+    <input type="hidden" id="post_url" name="url" value="@form("url").value" />
+    <input type="hidden" id="blog_image" name="image" value="@form("image").value" />
+    <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+    <a class="btn" href="@routes.BlogsGuestController.index()">@Messages("blogs.action.cancel")</a>
+    <button class="btn btn-primary" onclick="sbmt();">@Messages("blogs.action.create")</button>
+</form>
+}{
+<div id="banner-image" class="jumbotron cover-image image-loaded" data-load-image="">
+    <div class="container blog-cover-container">
+        <div class="blog-top-cover-upload">
+            <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
+                <span class="screen-reader-text">$Messages("blogs.action.upload_image")</span>
+            </button>
+            @form("name").error match {
+            case None => {
+            <h1 class="blog-title-cover editable" id="blog_name"  style="text-align: left"  contenteditable="true" placeholder="@Messages("blogs.input.blog_name")">@form("name").value</h1>
+            }
+            case Some(error) =>   {
+            <h1 class="blog-title-cover editable text-danger" id="blog_name"  style="text-align: left;color:darkred"  contenteditable="true" placeholder="@Messages(error.message)">@form("name").value - 2</h1>
+            }
+            }
+
+            @form("description").error match {
+            case None => {
+            <h2 class="blog-description-cover editable" style="text-align: left" id="blog_description" contenteditable="true" placeholder="@Messages("blogs.content.blog_description")">@form("description").value</h2>
+            }
+            case Some(error) =>   {
+            <h2 class="blog-description-cover editable" style="text-align: left;color:darkred" id="blog_description" contenteditable="true" placeholder="@Messages(error.message)">@form("description").value</h2>
+            }
+            }
+            @form("alias").error match {
+            case None => {
+            <h3 class="blog-alias-cover editable" id="blog_alias" style="text-align: left"  contenteditable="true" placeholder="@Messages("blogs.content.blog_alias")">@form("alias").value</h3>
+            }
+            case Some(error) =>   {
+            <h3 class="blog-alias-cover editable" id="blog_alias" style="text-align: left;color:darkred"  contenteditable="true" placeholder="@Messages(error.message)">@form("alias").value</h3>
+            }
+            }
+            @form("url").error match {
+            case None => {
+            <h4 class="blog-url-cover editable" id="blog_url" style="text-align: left" contenteditable="true" placeholder="@Messages("blogs.content.blog_url")">@form("url").value</h4>
+
+            }
+            case Some(error) => {
+            <h4 class="blog-url-cover editable" id="blog_url" style="text-align: left;color:darkred" contenteditable="true" placeholder="@Messages(error.message)">@form("url").value</h4>
+            }
+            }
+        </div>
+
+        <div class="fileupload-process">
+            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            @form.globalError.map { error =>
+            <div class="textbox-wrap text-danger">
+                <span>@error.message</span>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function sbmt() {
+        var blog_name = $("#blog_name").text();
+        var param_blog_name = "<input type='hidden' name='name' value='"+blog_name+"' />";
+
+        var blog_desc = $("#blog_description").text();
+        var param_blog_desc = "<input type='hidden' name='description' value='"+blog_desc+"' />";
+
+        var blog_alias = $("#blog_alias").text();
+        var param_blog_alias = "<input type='hidden' name='alias' value='"+blog_alias+"' />";
+
+        $("#post_url").val($("#blog_url").text());
+        $("#blog-create-form").append(param_blog_name);
+        $("#blog-create-form").append(param_blog_desc);
+        $("#blog-create-form").append(param_blog_alias);
+        $("#blog-create-form").submit();
+
+
+    }
+</script>
+<script src="@routes.Assets.at("js/dropzone.js")"></script>
+<script language="javascript">
+
+        document.querySelector("#total-progress").style.opacity = "0";
+
+
+var myDropzone = new Dropzone(document.body, {
+    url: "@routes.ImagesController.upload()",
+    paramName: "file",
+    thumbnailWidth: 80,
+    thumbnailHeight: 80,
+    parallelUploads:1,
+    autoQueue:true,
+    clickable: ".fileinput-button"
+});
+myDropzone.on("addedfile", function(file) {
+    // Hookup the start button
+    //document.body.style.backgroundImage = file;
+    ///  file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
+});
+
+// Update the total progress bar
+myDropzone.on("totaluploadprogress", function(progress) {
+    document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+});
+
+myDropzone.on("sending", function(file) {
+    // Show the total progress bar when upload starts
+    document.querySelector("#total-progress").style.opacity = "1";
+    // And disable the start button
+});
+
+myDropzone.on("success", function(file, response, e) {
+    var url = response;
+    $("#blog_image").val(url);
+    $("#banner-image").css("background-image", "url("+url+")" );
+    // $("#banner-image" ).height(file.height);
+
+    myDropzone.removeAllFiles(true);
+    document.querySelector("#total-progress").style.opacity = "0";
+});
+
+// Hide the total progress bar when nothing's uploading anymore
+myDropzone.on("queuecomplete", function(progress) {
+    document.querySelector("#total-progress").style.opacity = "0";
+    myDropzone.removeAllFiles(true);
+});
+
+
+        </script>
+}

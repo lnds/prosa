@@ -14,7 +14,7 @@ POST        /change_password                            controllers.AuthorsContr
 GET         /blogs                                      controllers.BlogsGuestController.index(page:Int ?=0)
 
 GET         /blogs/create                               controllers.BlogsController.create()
-POST        /blogs/create                               controllers.BlogsController.createBlog()
+POST        /blogs/create                               controllers.BlogsController.save()
 
 POST        /images/uploadImage                         controllers.ImagesController.upload()
 
@@ -22,8 +22,8 @@ GET         /blog/:alias                                controllers.PostsGuestCo
 GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.viewPost(alias,year:Int,month:Int,day:Int,slug:String)
 GET         /blog/:alias/atom.xml                       controllers.PostsGuestController.atom(alias)
 
-GET         /blog/:alias/new                            controllers.PostsController.newPost(alias)
-POST        /blog/:alias/save                           controllers.PostsController.savePost(alias)
+GET         /blog/:alias/new                            controllers.PostsController.create(alias)
+POST        /blog/:alias/save                           controllers.PostsController.save(alias)
 POST        /blog/:alias/delete                         controllers.PostsController.deletePost(alias:String, id:String)
 POST        /blog/:alias/unpublish                      controllers.PostsController.unpublishPost(alias, id:String)
 POST        /blog/:alias/update                         controllers.PostsController.updatePost(alias, id:String)

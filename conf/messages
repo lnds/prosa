@@ -26,6 +26,9 @@ menu.login=Ingreso
 menu.logout=Finalizar Sesión
 menu.welcome=Bienvenido {0}
 menu.search=Buscar...
+menu.posts=Publicados
+menu.drafts=Borradores
+menu.change_password=Cambiar Clave
 
 # Index
 index.caption.published=publicado hace
@@ -35,15 +38,34 @@ index.caption.published_at=en
 blogs.title=Blogs
 blogs.description=Blogs disponibles en este servidor
 blogs.action.visit=visitar
+blogs.action.upload_image=subir imagen
 
 # Blogs Actions
 blogs.action.create=Crear Blog
+blogs.action.cancel=Cancelar
+blogs.action.config=configurar
 
+# Blogs Input
+blogs.input.blog_name=Nombra tu blog aquí
 
 # Posts Pagination
 posts.newer=Nuevos
 posts.older=Antiguos
 posts.current_page=Página {0} de {1}
+
+# Posts Index
+posts.index.no-drafts=No hay borradores
+posts.index.no-published=No hay artículos publicados
+
+# Posts Drafts
+posts.index.drafts=Borradores
+
+# Posts Actions
+posts.action.new=Nuevo Artículo
+posts.action.cancel=Cancelar
+posts.action.save=Grabar
+posts.action.publish=Publicar
+
 
 #footer
 

@@ -1,0 +1,94 @@
+@(title: String, user:Author)(menu: Html)(userMenu:Html)(content: Html)(actions:Html)
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>@title</title>
+
+    <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
+
+    <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
+    <link rel='stylesheet' href='@routes.Assets.at("css/font-awesome.css")'>
+    <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>
+
+    <link rel="stylesheet" href='@routes.Assets.at("editor/css/medium-editor.min.css")'>
+    <link rel="stylesheet" href='@routes.Assets.at("editor/css/themes/default.min.css")'>
+    <link rel="stylesheet" href='@routes.Assets.at("editor/css/medium-editor-insert-plugin.css")'>
+    <link rel='stylesheet' href='@routes.Assets.at("css/prosa-main.css")'>
+
+    <script src="@routes.Assets.at("js/jquery-1.10.2.js")" ></script>
+    <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.at("editor/js/medium-editor.min.js")"></script>
+    <script src="@routes.Assets.at("editor/js/medium-editor-insert-plugin.all.js")"></script>
+    <script src="@routes.Assets.at("js/prosa.js")"> </script>
+    <script src="@routes.Assets.at("js/docs.min.js")"></script>
+
+    <style>
+        body {
+            padding-top: 50px;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="@routes.Application.index()">Prosa &nbsp;| <small>@Messages("menu.welcome", user.nickname)</small></a>
+        </div>
+        <div class="navbar-collapse collapse">
+            @userMenu
+        </div>
+    </div>
+</div>
+<div id="site-wrapper">
+    <div id="site-canvas">
+        <div id="site-menu">
+            <ul>
+                @menu
+            </ul>
+        </div><!-- site menu -->
+
+        <a href="#" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
+        @content
+
+    </div><!-- #site-canvas -->
+</div><!-- #site-wrapper -->
+
+
+<!-- scripts -->
+<script>
+    $body = document.body;
+    $('[data-load-image]', $body).each(function() {
+        ImageLoader.load($(this));
+    });
+</script>
+
+<script>var editor = new MediumEditor('.editor', {
+    placeholder:'@Messages("placeholders.editor.type_here")',
+    buttonLabels: 'fontawesome'
+});
+</script>
+<script>
+    $(function(){
+        $('.editor').mediumInsert({
+            editor: editor,
+            addons: {
+                images: {imagesUploadScript:"@routes.ImagesController.upload"},
+                embeds: {}
+            }
+        })
+    })
+</script>
+@actions
+
+</body>
+</html>

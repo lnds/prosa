@@ -1,8 +1,7 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Guest, Visitor, Posts, Blogs}
-import org.joda.time.{Period, DateTime}
+import models.{Blogs, Guest, Posts, Visitor}
 import play.api.i18n.Messages
 import play.api.mvc.Controller
 
@@ -15,7 +14,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     Blogs.findByAlias(alias).map { blog =>
 
       val page = Posts.list(blog, draft = false, page = pageNum)
-      Ok(views.html.post_index(blog, page, false, user))
+      Ok(views.html.post_index(blog, page, drafts=false, user))
 
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
