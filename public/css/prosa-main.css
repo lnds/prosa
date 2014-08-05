@@ -1,9 +1,16 @@
+
+@font-face {
+    font-family:  "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+}
+
+
 html,
 body {
     overflow-x: hidden;
     height: 100%;
 }
 body {
+    font-family: "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
     padding: 0;
     margin: 0;
 }
@@ -101,7 +108,7 @@ body {
 /** Cover Image **/
 .cover-image {
     position: absolute;
-    max-height: 640px;
+    max-height: 800px;
     min-height: 450px;
     width: 100%;
     top: 0;
@@ -294,26 +301,50 @@ body {
 }
 
 .post-title-cover {
-    font-weight: 700;
+    font-weight: 500;
     font-style: normal;
     word-wrap: break-word;
     font-size: 48.5px;
     color:#eee;
     position: absolute;
     bottom: 40%;
-    left:20%;
     text-align: center;
-    width: 100%;
+    left:20%;
+    width: 60%;
     text-shadow: 0 1px 2px rgba(0,0,0,.3);
 }
 
 
 .post-subtitle-cover {
     position: absolute;
-    left: 20%;
     bottom: 20%;
     display:block;
-    width: 100%;
+    left:20%;
+    width: 60%;
     text-shadow: 0 1px 2px rgba(0,0,0,.3);
     color: #ccc;
+    text-align: center;
+}
+
+.post-content {
+    font-style: normal;
+    letter-spacing: 0.01rem;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.5;
+    font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.post-content img {
+    max-width: 80%;
+}
+
+
+@media only screen and (min-device-width : 320px)
+and (max-device-width : 568px) {
+    .post-content{
+        font-weight: 200;
+        font-size: 14px;
+    }
 }

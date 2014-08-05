@@ -1,6 +1,6 @@
 @(blog:Blog, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
 @main_editor("Posts New", user) {
-@views.html.blogs_menu(blog.alias, user)
+    @views.html.blogs_menu(blog.alias, user)
 }{
 <form id="post-save" method="post" action="@routes.PostsController.save(blog.alias)" class="navbar-form navbar-right">
     <input type="hidden" id="blog" name="blog" value="@blog.alias" />
@@ -29,9 +29,7 @@
                 <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
                     <span class="screen-reader-text">$Messages("posts.action.upload_image")</span>
                 </button>
-
             </div>
-
         </div>
         <div class="fileupload-process">
             <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -40,18 +38,18 @@
         </div>
         @form("title").error match {
         case None => {
-        <h1 class="post-title-cover editable" style="text-align: left" id="post_title"  contenteditable="true" placeholder="@Messages("posts.content.title")">@form("title").value</h1>
+        <h1 class="post-title-cover editable" id="post_title"  contenteditable="true" placeholder="@Messages("posts.content.title")">@form("title").value</h1>
         }
         case Some(error) =>   {
-        <h1 class="post-title-cover editable" style="text-align: left; color:darkred" id="post_title"  contenteditable="true" placeholder="@Messages(error.message)">@form("title").value</h1>
+        <h1 class="post-title-cover editable" style="color:darkred" id="post_title"  contenteditable="true" placeholder="@Messages(error.message)">@form("title").value</h1>
         }
         }
         @form("subtitle").error match {
         case None => {
-        <h2 class="post-subtitle-cover editable" style="text-align: left" id="post_subtitle"  contenteditable="true" placeholder="@Messages("posts.content.subtitle")">@form("subtitle").value</h2>
+        <h2 class="post-subtitle-cover editable"  id="post_subtitle"  contenteditable="true" placeholder="@Messages("posts.content.subtitle")">@form("subtitle").value</h2>
         }
         case Some(error) =>   {
-        <h2 class="post-subtitle-cover editable" style="text-align: left;color:darkred" id="post_subtitle"  contenteditable="true" placeholder="@Messages(error.message)">@form("subtitle").value</h2>
+        <h2 class="post-subtitle-cover editable" style="color:darkred" id="post_subtitle"  contenteditable="true" placeholder="@Messages(error.message)">@form("subtitle").value</h2>
         }
         }
     </div>
@@ -87,10 +85,12 @@
         sbmt();
     }
 </script>
+
 <script src="@routes.Assets.at("js/dropzone.js")"></script>
+
 <script language="javascript">
 
-        document.querySelector("#total-progress").style.opacity = "0";
+document.querySelector("#total-progress").style.opacity = "0";
 
 
 var myDropzone = new Dropzone(document.body, {

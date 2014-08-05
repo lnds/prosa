@@ -2,6 +2,7 @@ package models
 
 import java.sql.Timestamp
 import org.joda.time.{Period, DateTime}
+import play.api.Logger
 import play.api.db.slick.Config.driver.simple._
 
 case class Post(id:String, blog:String, image:Option[String], title:String, subtitle:Option[String], content:String, slug:Option[String], draft:Boolean, created:Option[Timestamp], published:Option[Timestamp], author:String) {
@@ -11,8 +12,8 @@ case class Post(id:String, blog:String, image:Option[String], title:String, subt
 }
 
 class Posts(tag:Tag) extends Table[Post](tag, "Post") {
-  def id = column[String]("id", O.PrimaryKey)
-  def blog = column[String]("blog")
+  def id = column[String]("id", O.PrimaryKey, O.NotNull)
+  def blog = column[String]("blog", O.Length(45, varying = true))
   def image = column[String]("image")
   def title = column[String]("title")
   def subtitle = column[String]("subtitle")
@@ -29,7 +30,7 @@ class Posts(tag:Tag) extends Table[Post](tag, "Post") {
 
 object Posts {
 
-  val posts = TableQuery[Posts]
+  lazy val posts = TableQuery[Posts]
 
   def last(n:Int)(implicit s:Session) : List[(Post,Blog)] = {
     val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false } yield (p,b) ).sortBy(_._1.published.desc).take(n)
@@ -61,7 +62,11 @@ object Posts {
     query.firstOption
   }
 
-  def findById(id:String)(implicit s:Session) = posts.filter(_.id === id).firstOption
+  def findById(id:String)(implicit s:Session) : Option[Post] = {
+    val result = posts.filter(p => p.id === id).firstOption
+    Logger.info("post findById("+id+") = "+result)
+    result
+  }
 
   def create(author:Author, blog:Blog,  title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String])(implicit s:Session) = {
     def published = if (draft) None else Some(new Timestamp(DateTime.now.getMillis))
@@ -71,12 +76,28 @@ object Posts {
                     content=content,
                     created=Some(new Timestamp(DateTime.now.getMillis)),
                     published=published,slug=slug,draft=draft )
-    insert(post)
+    val result = insert(post)
+    Logger.info("create result = "+result)
     post
   }
 
-  def insert(post:Post)(implicit s:Session) {
+  def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean)(implicit s:Session)  {
+    def published = if (publish) Some(new Timestamp(DateTime.now.getMillis)) else None
+    def slug = if (publish) Some(tools.PostAux.slugify(title)) else None
+    def isDraft = !publish
+    update(post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug))
+  }
+
+  def insert(post:Post)(implicit s:Session) = {
     posts.insert(post)
+  }
+
+  def update(post:Post)(implicit s:Session) {
+    posts.filter(_.id===post.id).update(post)
+  }
+
+  def delete(post:Post)(implicit s:Session) {
+    posts.filter(_.id===post.id).delete
   }
 
 }

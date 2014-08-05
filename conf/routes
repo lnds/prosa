@@ -19,16 +19,16 @@ POST        /blogs/create                               controllers.BlogsControl
 POST        /images/uploadImage                         controllers.ImagesController.upload()
 
 GET         /blog/:alias                                controllers.PostsGuestController.index(alias:String, pageNum:Int ?=0)
-GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.viewPost(alias,year:Int,month:Int,day:Int,slug:String)
+GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.view(alias,year:Int,month:Int,day:Int,slug:String)
 GET         /blog/:alias/atom.xml                       controllers.PostsGuestController.atom(alias)
 
 GET         /blog/:alias/new                            controllers.PostsController.create(alias)
 POST        /blog/:alias/save                           controllers.PostsController.save(alias)
-POST        /blog/:alias/delete                         controllers.PostsController.deletePost(alias:String, id:String)
-POST        /blog/:alias/unpublish                      controllers.PostsController.unpublishPost(alias, id:String)
-POST        /blog/:alias/update                         controllers.PostsController.updatePost(alias, id:String)
+POST        /blog/:alias/delete                         controllers.PostsController.delete(alias:String, id:String)
+POST        /blog/:alias/unpublish                      controllers.PostsController.unpublish(alias, id:String)
+POST        /blog/:alias/update                         controllers.PostsController.update(alias, id:String)
 GET         /blog/:alias/drafts                         controllers.PostsController.drafts(alias:String, pageNum:Int ?=0)
-GET         /blog/:alias/edit/:id                       controllers.PostsController.editPost(alias,id)
+GET         /blog/:alias/edit/:id                       controllers.PostsController.edit(alias,id)
 
 
 # Map static resources from the /public folder to the /assets URL path

@@ -1,100 +1,97 @@
-@(alias:String, id:String, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Blog, post:Post, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
 @main_editor(Messages("posts.action.edit")+" - "+form("title").value.get, user) {
-@views.html.blogs_menu(alias, user)
+    @views.html.blogs_menu(blog.alias, user)
 }{
-<form id="post-form" method="post" action="" class="navbar-form navbar-right">
-    <input type="hidden" id="blog" name="blog" value="@alias" />
-    <input type="hidden" id="id" name="id" value="@id" />
+<form id="post-form" method="post" action="@routes.PostsController.update(blog.alias, post.id)" class="navbar-form navbar-right">
+    <input type="hidden" id="blog" name="blog" value="@blog.alias" />
+    <input type="hidden" id="id" name="id" value="@post.id" />
     <input type="hidden" id="image" name="image" value="@form("image").value" />
     <input type="hidden" id="title" name="title" value="@form("title").value" />
     <input type="hidden" id="subtitle" name="subtitle" value="@form("subtitle").value" />
-    <input type="hidden" id="content" name="content" value="" />
+    <input type="hidden" id="content" name="content" value="@form("content").value" />
     <input type="hidden" id="draft" name="draft" value="@form("draft").value" />
-    <input type="hidden" id="publish" name="publish" value="false" />
+    <input type="hidden" id="publish" name="publish" value="@form("publish").value" />
     <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
     @form("draft").value.get match  {
         case "true" => {
-        <a class="btn btn-default" href="@routes.PostsController.drafts(alias)">@Messages("posts.action.cancel")</a>
+        <a class="btn btn-default" href="@routes.PostsController.drafts(blog.alias)">@Messages("posts.action.cancel")</a>
         }
         case "false" => {
-        <a class="btn btn-default" href="@routes.PostsGuestController.index(alias)">@Messages("posts.action.cancel")</a>
-        <button class="btn" data-toggle="modal" data-target="#modalUnpublish">@Messages("posts.action.unpublish")</button>
+        <a class="btn btn-default" href="@routes.PostsGuestController.index(blog.alias)">@Messages("posts.action.cancel")</a>
+        <a class="btn btn-info" data-toggle="modal" data-target="#modalUnpublish">@Messages("posts.action.unpublish")</a>
         }
     }
     <button class="btn btn-primary" onclick="sbmt();">@Messages("posts.action.save")</button>
-    <button class="btn btn-danger" data-toggle="modal" data-target="#modalDelete">@Messages("posts.action.delete")</button>
-    <button class="btn btn-success" onclick="publish();">@Messages("posts.action.publish")</button>
+    <a class="btn btn-danger" data-toggle="modal" data-target="#modalDelete">@Messages("posts.action.delete")</a>
+    <a  class="btn btn-success" onclick="publish();">@Messages("posts.action.publish")</a>
 </form>
 }{
-<div class="post-canvas">
-    <div role="banner" class="top-cover">
-        <div id="banner-image" data-load-image="@form("image").value" class="cover-image image-loaded" ></div>
-    <div class="top-cover-container">
-        <div class="top-cover-upload">
-            <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
-                <span class="screen-reader-text">$Messages("posts.action.upload_image")</span>
-            </button>
-
+<div id="banner-image" class="jumbotron cover-image" data-load-image="@form("image").value">
+    <div class="container cover-container">
+        <div class="top-cover-container">
+            <div class="top-cover-upload">
+                <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
+                    <span class="screen-reader-text">$Messages("posts.action.upload_image")</span>
+                </button>
+            </div>
         </div>
-
+        <div class="fileupload-process">
+            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+        </div>
         @form("title").error match {
         case None => {
-        <h1 class="post-title-cover editable" style="text-align: left" id="post_title"  contenteditable="true" placeholder="@Messages("posts.content.title")">@form("title").value</h1>
+        <h1 class="post-title-cover editable" id="post_title"  contenteditable="true" placeholder="@Messages("posts.content.title")">@form("title").value</h1>
         }
         case Some(error) =>   {
-        <h1 class="post-title-cover editable" style="text-align: left; color:darkred" id="post_title"  contenteditable="true" placeholder="@Messages(error.message)">@form("title").value</h1>
+        <h1 class="post-title-cover editable" style="color:darkred" id="post_title"  contenteditable="true" placeholder="@Messages(error.message)">@form("title").value</h1>
         }
         }
         @form("subtitle").error match {
         case None => {
-        <h2 class="post-subtitle-cover editable" style="text-align: left" id="post_subtitle"  contenteditable="true" placeholder="@Messages("posts.content.subtitle")">@form("subtitle").value</h2>
+        <h2 class="post-subtitle-cover editable" id="post_subtitle"  contenteditable="true" placeholder="@Messages("posts.content.subtitle")">@form("subtitle").value</h2>
         }
         case Some(error) =>   {
-        <h2 class="post-subtitle-cover editable" style="text-align: left; color:darkred" id="post_subtitle"  contenteditable="true" placeholder="@Messages(error.message)">@form("subtitle").value</h2>
+        <h2 class="post-subtitle-cover editable" style="color:darkred" id="post_subtitle"  contenteditable="true" placeholder="@Messages(error.message)">@form("subtitle").value</h2>
         }
         }
-    </div>
-    <div class="fileupload-process">
-        <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-            <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
-        </div>
     </div>
 </div>
-<section role="main">
-    <div class="post-wrapper">
-        @flash.get("success").map { message =>
-        <div class="row" id="alerts">
-            <div class="col-sm-12 ">
-                <div class="alert alert-info alert-dismissable">
-                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                    <p>@message</p>
+<div class="row">
+    <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
+        <div class="post-content">
+            @flash.get("success").map { message =>
+            <div class="row" id="alerts">
+                <div class="col-sm-12 ">
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <p>@message</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        }
-        @form("content").error match {
-        case None => {}
-        case Some(error) => {  <p class="text-danger">@error.message</p> }
-        }
-        <div class="post-content">
+            }
+            @flash.get("error").map { message =>
+            <div class="row" id="alerts">
+                <div class="col-sm-8 col-sm-offset-2">
+                    <div class="alert alert-danger alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <p>@message</p>
+                    </div>
+                </div>
+            </div>
+            }
+            @form("content").error match {
+            case None => {}
+            case Some(error) => {  <p class="text-danger">@Messages(error.message)</p> }
+            }
             <div class="editor" id="post_content">
                 @Html(form("content").value.getOrElse(""))
             </div>
         </div>
     </div>
-    @flash.get("error").map { message =>
-    <div class="row" id="alerts">
-        <div class="col-sm-8 col-sm-offset-2">
-            <div class="alert alert-danger alert-dismissable">
-                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                <p>@message</p>
-            </div>
-        </div>
-    </div>
-    }
-</section>
 </div>
-}  {
+}{
 
 <section>
     <div class="modal  fade in alert " style="z-indez: 10050;" id="modalDelete"  role="dialog" aria-labelledby="modalDeleteLabel" aria-hidden="true">
@@ -138,22 +135,17 @@
 
 <script>
     function sbmt_delete() {
-        $("#post-form").attr('action', "@routes.PostsController.deletePost(alias, id)");
-        $("#content").val("-")
+        $("#post-form").attr('action', "@routes.PostsController.delete(blog.alias, post.id)");
         $("#post-form").submit();
     }
-</script>
-<script>
+
     function unpublish() {
-        $("#post-form").attr('action', "@routes.PostsController.unpublishPost(alias, id)");
-        $("#content").val("-")
+        $("#post-form").attr('action', "@routes.PostsController.unpublish(blog.alias, post.id)");
         $("#post-form").submit();
     }
-</script>
-<script>
+
     function sbmt() {
-        var publish = false
-        $("#post-form").attr('action', "@routes.PostsController.updatePost(alias, id)");
+        $("#post-form").attr('action', "@routes.PostsController.update(blog.alias, post.id)");
         var title = $("#post_title").text();
         var subtitle = $("#post_subtitle").text();
         var content = editor.serialize().post_content.value;
@@ -162,18 +154,19 @@
         $("#content").val(content);
         $("#post-form").submit();
     }
-</script>
-<script>
+
     function publish() {
-        $("#publish").val(true);
+        $("#publish").val("true");
+        $("#draft").val("false");
         sbmt();
     }
 </script>
 
 <script src="@routes.Assets.at("js/dropzone.js")"></script>
+
 <script language="javascript">
 
-        document.querySelector("#total-progress").style.opacity = "0";
+document.querySelector("#total-progress").style.opacity = "0";
 
 
 var myDropzone = new Dropzone(document.body, {
@@ -223,9 +216,7 @@ myDropzone.on("queuecomplete", function(progress) {
     document.querySelector("#total-progress").style.opacity = "0";
     myDropzone.removeAllFiles(true);
 });
-        </script>
 
-<script>
     $( function() {
         var bisrc = $("#banner-image" ).css('background-image');
         var rx = /url\((.*)\)/g;
@@ -251,4 +242,5 @@ myDropzone.on("queuecomplete", function(progress) {
         }
     });
 </script>
+
 }

@@ -13,7 +13,7 @@ object PostAux {
   def slug(blog: String, post: Post, drafts:Boolean) = {
     val bdate = if (drafts) post.created else post.published
     bdate match {
-      case None => routes.PostsController.editPost(blog, post.id).url
+      case None => routes.PostsController.edit(blog, post.id).url
       case Some(d) =>
         slugString(blog, d, post, drafts)
     }
@@ -22,10 +22,9 @@ object PostAux {
   def slugString(alias: String, d: java.sql.Timestamp, post: Post, draft:Boolean) = {
     val date = new DateTime(d)
     if (draft)
-      routes.PostsController.editPost(alias, post.id).url
+      routes.PostsController.edit(alias, post.id).url
     else
-      routes.PostsGuestController.viewPost(alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.get).url
-
+      routes.PostsGuestController.view(alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.get).url
   }
 
   val EXCERPT_SIZE = 250

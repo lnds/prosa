@@ -19,7 +19,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
 
-  def viewPost(alias:String, year:Int, month:Int, day:Int, slug:String) = StackAction { implicit request =>
+  def view(alias:String, year:Int, month:Int, day:Int, slug:String) = StackAction { implicit request =>
 
     val user : Visitor = loggedIn.getOrElse(Guest)
 

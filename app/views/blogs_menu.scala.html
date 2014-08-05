@@ -22,7 +22,7 @@ case _ => {
 @user match {
 case Guest => {}
 case _ => {
-<li><a href="#routes.Authors.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("menu.change_password")</a></li>
-<li><a href="#routes.Auth.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
+<li><a href="@routes.AuthorsController.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("menu.change_password")</a></li>
+<li><a href="@routes.AuthController.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
 }
 }
