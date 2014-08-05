@@ -29,6 +29,7 @@ POST        /blog/:alias/unpublish                      controllers.PostsControl
 POST        /blog/:alias/update                         controllers.PostsController.update(alias, id:String)
 GET         /blog/:alias/drafts                         controllers.PostsController.drafts(alias:String, pageNum:Int ?=0)
 GET         /blog/:alias/edit/:id                       controllers.PostsController.edit(alias,id)
+GET         /blog/:alias/index                          controllers.PostsController.index(alias:String)
 
 
 # Map static resources from the /public folder to the /assets URL path

@@ -46,4 +46,13 @@ object Authors {
   def insert(author:Author)(implicit s:Session) {
     authors.insert(author)
   }
+
+  def update(author:Author)(implicit s:Session) {
+    authors.filter(_.id===author.id).update(author)
+  }
+
+  def changePassword(author:Author, newPassword:String)(implicit s:Session) {
+    update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
+  }
+
 }

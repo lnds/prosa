@@ -11,6 +11,16 @@ import play.api.mvc.Controller
 
 object PostsController extends Controller with DBElement with TokenValidateElement with AuthElement with AuthConfigImpl  {
 
+  def index(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
+
+    Blogs.findByAlias(alias).map { blog =>
+
+      val page = Posts.list(blog, draft = false, page = pageNum)
+      Ok(views.html.post_index(blog, page, drafts=false, loggedIn))
+
+    } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+  }
+
   val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 

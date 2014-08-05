@@ -32,7 +32,7 @@ trait TokenValidateElement extends StackableController {
     tokenInSession <- request.session.get(PreventingCsrfTokenSessionKey)
   } yield tokenInForm == tokenInSession) getOrElse false
 
-  override def proceed[A](request: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[SimpleResult]): Future[SimpleResult] = {
+  override def proceed[A](request: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     if (isIgnoreTokenValidation(request) || validateToken(request)) {
       implicit val ctx = StackActionExecutionContext(request)
       val newToken = generateToken

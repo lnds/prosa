@@ -9,20 +9,24 @@
 
 <li></li>
 @if(alias) {
+    @user match {
+        case Guest => {
+        }
+        case _ => {
+            <li><a href="@routes.PostsController.index(alias)"><i class="fa fa-list"></i>&nbsp;  @Messages("menu.posts")</a></li>
+            <li><a href="@routes.PostsController.drafts(alias)"><i class="fa fa-edit"></i>&nbsp;  @Messages("menu.drafts")</a></li>
+        }
+    }
+    <li><hr/></li>
+    <li><a href="@routes.PostsController.index(alias)"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
+} else {
+    <li><hr/></li>
+    <li><a href="@routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
+}
 @user match {
-case Guest => {}
-case _ => {
-<li><a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-list"></i>&nbsp;  @Messages("menu.posts")</a></li>
-<li><a href="@routes.PostsController.drafts(alias)"><i class="fa fa-edit"></i>&nbsp;  @Messages("menu.drafts")</a></li>
-}
-}
-}
-<li><hr/></li>
-<li><a href="@routes.AuthController.login"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
-@user match {
-case Guest => {}
-case _ => {
-<li><a href="@routes.AuthorsController.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("menu.change_password")</a></li>
-<li><a href="@routes.AuthController.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
-}
+    case Guest => {}
+    case _ => {
+        <li><a href="@routes.AuthorsController.changePassword"><i class="fa fa-key"></i>&nbsp;  @Messages("menu.change_password")</a></li>
+        <li><a href="@routes.AuthController.logout"><i class="fa fa-power-off"></i>&nbsp;  @Messages("menu.logout")</a></li>
+    }
 }
