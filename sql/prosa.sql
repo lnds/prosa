@@ -183,8 +183,6 @@ CREATE INDEX idx_post_blog ON "Post" USING btree (blog);
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM ediaz;
-GRANT ALL ON SCHEMA public TO ediaz;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
