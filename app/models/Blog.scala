@@ -14,7 +14,7 @@ case class Blog(
   owner:String
 )
 
-class Blogs(tag:Tag) extends Table[Blog](tag, "Blog") {
+class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
   def id = column[String]("id", O.PrimaryKey)
   def name = column[String]("name")
   def alias = column[String]("alias")

@@ -4,7 +4,7 @@ import play.api.db.slick.Config.driver.simple._
 
 case class Image(id:String, filename:String, contentType:String, url:Option[String])
 
-class Images(tag:Tag) extends Table[Image](tag, "Image") {
+class Images(tag:Tag) extends Table[Image](tag, "image") {
   def id = column[String]("id", O.PrimaryKey)
   def filename = column[String]("filename")
   def contentType = column[String]("contentType")
