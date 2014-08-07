@@ -6,33 +6,41 @@ No recomiendo usar este release en un ambiente productivo a menos que asumas los
 
 Esta es una versión aún en desarrollo (alfa).
 
-
 Para instalar necesitas:
 
 - Java JDK 1.6 o superior
-- Postgresql 9.1 o superior
-
+- Una de las 2 bases de datos soportadas:
+  - Postgresql 9.1 o superior
+  - MySQL 5.5 o superior
 
 Instalación rápida:
 
-1. Crear una base de datos postgresql.
+1. Crear una base de datos Postgres o MySQL, y crear el usuario/rol en la base de datos y dar los permisos necesarios:
 
-2. Configurar conexión a postgres en el archivo conf/application.conf
+Para usar PostgreSQL:
 
-3. Cargar la base con el script disponible en sql/prosa.sql, esto creará las tablas y la cuenta admin. 
-Por ejemplo, puedes hacer:
-	$ psql
-        # create database prosa;
-        \c prosa
-        \i sql/prosa.sql
-        \q
+    $ sudo -u postgres createuser -P -e -s prosa
+    Enter password for new role: *****
+    Enter it again: *****
+    CREATE ROLE prosa PASSWORD 'md567447f92b67a3fff259aef3595724a4f' SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN;
+    $ psql postgres -U prosa
+    postgres=# create database prosa;
+    CREATE DATABASE
+    postgres=# \q
 
-Este script crea el usuario "admin" con contraseña "admin", con el que puedes ingresar a la aplicación.
+Para usar MySQL:
 
-4. Si usas linux o Mac OSX debes ejecutar:
+    $ mysqladmin create prosa -uroot -p
+    $ mysql prosa -u root -p
+    mysql> grant all on prosa.* to 'prosa'@'%' identified by 'prosa' with grant option;
+    mysql> Bye
+
+2. Configurar conexión a Postgres o MySQL en el archivo `conf/application.conf`. Actualiza el usuario y contraseña con valores apropiados.
+
+3. Si usas linux o Mac OSX debes ejecutar:
 	$ ./activator run
 
-5. Dirige tu navegador hasta la url: http://localhost:9000 y listo! Tienes prosa corriendo en tu pc.
+4. Dirige tu navegador hasta la url: http://localhost:9000/ y listo! Tienes prosa corriendo en tu PC.
 
 
 Modo Producción:
@@ -45,6 +53,6 @@ Puedes cambiar el puerto agregando la opción -Dhttp.port:
 
 	$ .activator start -Dhttp.port=80
 
-Para más detalles puedes leer la documentación de Play Framework 3.0 en: http://www.playframework.com/documentation/2.3.0/Home
+Para más detalles puedes leer la documentación de Play Framework 2.3.0 en: http://www.playframework.com/documentation/2.3.0/Home
 
 Si tienes dudas puedes abrir un ticket en el proyecto en GitHub.
