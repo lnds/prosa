@@ -17,6 +17,10 @@ object Images {
 
   val images = TableQuery[Images]
 
+  def findById(id:String)(implicit s:Session) : Option[Image] = {
+    images.filter(_.id===id).firstOption
+  }
+
   def addImage(filename:String, contentType:String)(implicit s:Session) = {
     val image = Image(IdGenerator.nextId(classOf[Image]), filename, contentType, None)
     insert(image)

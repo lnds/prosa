@@ -23,9 +23,8 @@ object ImagesController extends Controller with DBElement with AuthElement with 
     val image =
       request.body.file("file").map { file =>
         val contentType = file.contentType.getOrElse("")
-        val originalFilename = file.filename
-        file.ref.moveTo(tempFile, true)
-        Map("filename" -> originalFilename, "contentType" -> contentType)
+        file.ref.moveTo(tempFile, replace=true)
+        Map("filename" -> tempFile.getAbsolutePath, "contentType" -> contentType)
       }
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
@@ -36,6 +35,25 @@ object ImagesController extends Controller with DBElement with AuthElement with 
         Ok(url)
       }
     )
+  }
+
+
+}
+
+object ContentController extends Controller with DBElement {
+
+  /**
+   * This method get temporal file, you should configure a CDN in application.conf
+   */
+  def getImage(id: String) = StackAction {
+    implicit request =>
+      Images.findById(id).map {
+        img =>
+          val source = scala.io.Source.fromFile(img.filename)((scala.io.Codec.ISO8859))
+          val byteArray = source.map(_.toByte).toArray
+          source.close()
+          Ok(byteArray).as(img.contentType)
+      } getOrElse NotFound
   }
 
 }

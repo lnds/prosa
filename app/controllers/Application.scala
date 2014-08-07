@@ -1,7 +1,7 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Guest, Visitor, Posts}
+import models.{Images, Guest, Visitor, Posts}
 import play.api.mvc._
 
 object Application extends Controller with DBElement  with OptionalAuthElement with AuthConfigImpl {
@@ -12,5 +12,7 @@ object Application extends Controller with DBElement  with OptionalAuthElement w
     val user : Visitor = loggedIn.getOrElse(Guest)
     Ok(views.html.index("Prosa",  Posts.last(MAX_POSTS), user))
   }
+
+
 
 }

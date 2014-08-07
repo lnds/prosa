@@ -17,6 +17,7 @@ GET         /blogs/create                               controllers.BlogsControl
 POST        /blogs/create                               controllers.BlogsController.save()
 
 POST        /images/uploadImage                         controllers.ImagesController.upload()
+GET         /images/get/:id                             controllers.ContentController.getImage(id)
 
 GET         /blog/:alias                                controllers.PostsGuestController.index(alias:String, pageNum:Int ?=0)
 GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.view(alias,year:Int,month:Int,day:Int,slug:String)
