@@ -45,7 +45,7 @@ blogs.action.create=Crear Blog
 blogs.action.cancel=Cancelar
 blogs.action.config=configurar
 
-blogs.success.created=Blog Creado
+blogs.success.created=Blog creado
 
 # Blogs Input
 blogs.input.blog_name=Nombra tu blog aquí

@@ -1,0 +1,99 @@
+# prosa
+prosa.main.title=This is Prosa
+prosa.main.subtitle=
+prosa.main.content.index=Latest published
+
+# date formatting
+dates.year= year
+dates.years= yers
+dates.month= month
+dates.months= months
+dates.week= week
+dates.weeks= weeks
+dates.day= day
+dates.days= days
+dates.hour= hour
+dates.hours= hours
+dates.minute= minute
+dates.minutes= minutes
+dates.second= second
+dates.seconds= seconds
+
+# Menu
+menu.home=Home
+menu.blogs=Blogs
+menu.login=Login
+menu.logout=Logout
+menu.welcome=Welcome {0}
+menu.search=Search…
+menu.posts=Published
+menu.drafts=Drafts
+menu.change_password=Change Password
+
+# Index
+index.caption.published=posted ago
+index.caption.published_at=en
+
+# Blogs
+blogs.title=Blogs
+blogs.description=Blogs  available on this server
+blogs.action.visit=Visit
+blogs.action.upload_image=Upload Image
+
+# Blogs Actions
+blogs.action.create=Create Blog
+blogs.action.cancel=Cancel
+blogs.action.config=Configure
+
+blogs.success.created=Blog created
+
+# Blogs Input
+blogs.input.blog_name=Blog name
+
+# Posts Pagination
+posts.newer=News
+posts.older=Old
+posts.current_page=Page {0} of {1}
+
+# Posts Index
+posts.index.no-drafts=No drafts
+posts.index.no-published=No published post
+
+# Posts Drafts
+posts.index.drafts=Drafts
+
+# Posts Actions
+posts.action.new=New Post
+posts.action.cancel=Cancel
+posts.action.save=Save
+posts.action.publish=Post
+posts.action.delete=Delete
+posts.action.edit=Edit
+posts.action.unpublish=Unpublish
+
+
+#  Posts Editor
+posts.content.title=Title
+posts.content.subtitle=Subtitle (optional)
+posts.content.content=Write your history
+
+posts.modal.caption.delete=Delete Post
+posts.modal.caption.unpublish=Quitting Post
+posts.modal.text.delete=Are you sure you want to delete this item?
+posts.modal.text.unpublish=Are you sure you want to stop publishing this post? The urls published disappear too.
+posts.error.not_found=Post not found
+posts.error.no_posts=No Post
+
+posts.success.created=Post created
+posts.success.saved=Post saved
+posts.success.published=Post published
+posts.success.deleted=Post Deleted
+
+
+#footer
+
+footer.copyright=© 2014 Eduardo Díaz. All rights reserved.
+footer.prosa=Publish using Prosa
+footer.image.copyright=Cover imagen (CC) Indi Samarajiva
+
+placeholders.editor.type_here=Write your text
