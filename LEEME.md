@@ -16,5 +16,11 @@ Prosa está escrito en Scala y es posible gracias, principalmente, a los siguien
 
 El archivo INSTALAR tiene las instrucciones para instalar.
 
+# Nota para los desarrolladores
+
+Para los números de versión usamos Semantic Versioning: http://semver.org/
+
+
+
 
 
