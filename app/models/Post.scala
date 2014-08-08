@@ -11,7 +11,7 @@ case class Post(id:String, blog:String, image:Option[String], title:String, subt
 
 }
 
-class Posts(tag:Tag) extends Table[Post](tag, "Post") {
+class Posts(tag:Tag) extends Table[Post](tag, "post") {
   def id = column[String]("id", O.PrimaryKey, O.NotNull)
   def blog = column[String]("blog", O.Length(45, varying = true))
   def image = column[String]("image")

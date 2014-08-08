@@ -17,7 +17,7 @@ case class Author(
   bio:Option[String]
 ) extends Visitor
 
-class Authors(tag:Tag) extends Table[Author](tag, "Author") {
+class Authors(tag:Tag) extends Table[Author](tag, "author") {
   def id = column[String]("id", O.PrimaryKey)
   def nickname = column[String]("nickname")
   def email = column[String]("email")

@@ -19,6 +19,7 @@ libraryDependencies ++= Seq(
   "jp.t2v" %% "play2-auth"      % "0.12.0",
   "jp.t2v" %% "play2-auth-test" % "0.12.0" % "test",
   "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
+  "mysql" % "mysql-connector-java" % "5.1.31",
   "joda-time" % "joda-time" % "2.3",
   "com.fasterxml.uuid" % "java-uuid-generator" % "3.1.3",
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.0",
