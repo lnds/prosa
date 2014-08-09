@@ -102,7 +102,7 @@ posts.success.imported=Artículo Importados
 #footer
 
 footer.copyright=© 2014 Eduardo Díaz. Todos los derechos reservados.
-footer.prosa=Publicado usando Prosa
+footer.prosa=Publicado usando Prosa - release 0.1
 footer.image.copyright=Imagen de portada (CC) Indi Samarajiva
 
 placeholders.editor.type_here=Escriba su texto
