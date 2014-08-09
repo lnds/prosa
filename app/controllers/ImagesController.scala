@@ -49,7 +49,7 @@ object ContentController extends Controller with DBElement {
     implicit request =>
       Images.findById(id).map {
         img =>
-          val source = scala.io.Source.fromFile(img.filename)((scala.io.Codec.ISO8859))
+          val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
           val byteArray = source.map(_.toByte).toArray
           source.close()
           Ok(byteArray).as(img.contentType)
