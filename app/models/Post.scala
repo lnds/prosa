@@ -44,7 +44,7 @@ object Posts {
 
   def list(blog:Blog, draft:Boolean, page:Int=0, pageSize:Int=10)(implicit s:Session) : Page[Post] = {
     val offset = pageSize * page
-    val query = (for { p <- posts if (p.blog === blog.id) && (p.draft === draft) } yield p).sortBy(_.created.desc).drop(offset).take(pageSize)
+    val query = (for { p <- posts if (p.blog === blog.id) && (p.draft === draft) } yield p).sortBy(if (draft) _.created.desc else _.published.desc).drop(offset).take(pageSize)
     val totalRows = count(blog, draft)
     val result = query.list.map(row => row)
     Page(result, page, offset, totalRows, pageSize)
