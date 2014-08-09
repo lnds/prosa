@@ -14,5 +14,8 @@ object Application extends Controller with DBElement  with OptionalAuthElement w
   }
 
 
+  def untrail(path: String) = Action {
+    MovedPermanently("/" + path)
+  }
 
 }

@@ -4,6 +4,8 @@
 
 # Home page
 GET         /                                           controllers.Application.index()
+GET         /*path/                                     controllers.Application.untrail(path:String)
+
 GET         /login                                      controllers.AuthController.login()
 GET         /logout                                     controllers.AuthController.logout()
 POST        /authenticate                               controllers.AuthController.authenticate()
