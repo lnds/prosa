@@ -29,6 +29,7 @@ menu.search=Search…
 menu.posts=Published
 menu.drafts=Drafts
 menu.change_password=Change Password
+menu.import=Import...
 
 # Index
 index.caption.published=posted ago
@@ -46,6 +47,7 @@ blogs.action.cancel=Cancel
 blogs.action.config=Configure
 
 blogs.success.created=Blog created
+blogs.error.not_found=Blog not found
 
 # Blogs Input
 blogs.input.blog_name=Blog name
@@ -89,6 +91,12 @@ posts.success.saved=Post saved
 posts.success.published=Post published
 posts.success.deleted=Post Deleted
 
+# Posts Import
+posts.import.caption=Importa Posts
+posts.import.file_format=Format
+posts.import.file=File
+posts.import.submit=Importar
+posts.success.imported=Artículo Importados
 
 #footer
 

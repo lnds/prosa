@@ -2,7 +2,6 @@ package controllers
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
@@ -56,7 +55,6 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
         formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
         postData => {
           val post = Posts.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
-          Logger.info("post creado: id="+post.id+" draft="+post.draft)
           if (postData.draft)
             Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created"))
           else
@@ -67,10 +65,8 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def edit(alias:String, id:String) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    Logger.info("edit post "+alias+" id="+id)
     Blogs.findByAlias(alias).map { blog =>
       Posts.findById(id).map { post =>
-        Logger.info("post.author = " + post.author + " loggedIn.id = " + loggedIn.id)
         if (post.author != loggedIn.id)
           Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
         else {

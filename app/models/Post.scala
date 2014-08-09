@@ -1,9 +1,14 @@
 package models
 
+import java.io.File
 import java.sql.Timestamp
 import org.joda.time.{Period, DateTime}
 import play.api.Logger
 import play.api.db.slick.Config.driver.simple._
+import play.api.libs.Files.TemporaryFile
+import play.api.libs.json.{JsString, JsObject, JsArray, Json}
+
+import scala.io.Source
 
 case class Post(id:String, blog:String, image:Option[String], title:String, subtitle:Option[String], content:String, slug:Option[String], draft:Boolean, created:Option[Timestamp], published:Option[Timestamp], author:String) {
 
@@ -98,6 +103,39 @@ object Posts {
 
   def delete(post:Post)(implicit s:Session) {
     posts.filter(_.id===post.id).delete
+  }
+
+  def importPosts(author:Author, blog:Blog, file:File, format:String)(implicit s:Session) {
+
+    Logger.info("formato: "+format)
+    if (format == "ghost")
+      importGhostFormat(author, blog, file)
+  }
+
+  def importGhostFormat(author:Author, blog:Blog, file:File)(implicit s:Session) {
+    val data = Source.fromFile(file).mkString
+    val json = Json.parse(data)
+    val jsonPosts = (json \ "data" \ "posts").as[JsArray]
+    for (p <- jsonPosts.value) {
+      val jp = p.as[JsObject]
+      val title = (jp \ "title").as[String]
+      val slug = (jp \ "slug").as[String]
+      val created = DateTime.parse((jp \ "created_at").as[String])
+      val published = DateTime.parse((jp \ "published_at").as[String])
+      val html = (jp \ "html").as[String]
+      Logger.info(s"tile: [$title]")
+      Logger.info(s"slug: [$slug]")
+      Logger.info(s"created: [$created]")
+      Logger.info(s"published: [$published]")
+      Logger.info(s"html: [$html]")
+
+      def post = Post(id = IdGenerator.nextId(classOf[Post]), blog = blog.id, title = title, subtitle = None,
+        image = None, author = author.id, content = html,
+        created = Some(new Timestamp(created.getMillis)),
+        published =  Some(new Timestamp(published.getMillis)), slug = Some(slug), draft = false)
+      insert(post)
+    }
+
   }
 
 }
