@@ -29,6 +29,7 @@ menu.search=Buscar...
 menu.posts=Publicados
 menu.drafts=Borradores
 menu.change_password=Cambiar Clave
+menu.import=Importar...
 
 # Index
 index.caption.published=publicado hace
@@ -46,6 +47,7 @@ blogs.action.cancel=Cancelar
 blogs.action.config=configurar
 
 blogs.success.created=Blog Creado
+blogs.error.not_found=Blog no encontrado
 
 # Blogs Input
 blogs.input.blog_name=Nombra tu blog aquí
@@ -90,6 +92,12 @@ posts.success.saved=Artículo grabado
 posts.success.published=Artículo publicado
 posts.success.deleted=Artículo eliminado
 
+# Posts Import
+posts.import.caption=Importar Artículos
+posts.import.file_format=Formato
+posts.import.file=Archivo
+posts.import.submit=Importar
+posts.success.imported=Artículo Importados
 
 #footer
 
