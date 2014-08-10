@@ -4,6 +4,7 @@ import controllers.routes
 import models.Post
 import org.joda.time.{Period, DateTime}
 import play.api.i18n.Messages
+import scravatar.Gravatar
 
 import scala.annotation.tailrec
 
@@ -54,6 +55,10 @@ object PostAux {
         case s => generateUniqueSlug(s + "-2", existingSlugs)
       }
     }
+  }
+
+  def avatarUrl(email:String) = {
+    Gravatar(email).avatarUrl
   }
 
 

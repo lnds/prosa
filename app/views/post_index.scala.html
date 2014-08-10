@@ -1,4 +1,4 @@
-@(blog:Blog, currentPage:Page[Post], drafts:Boolean, user:Visitor)(implicit flash:Flash)
+@(blog:Blog, currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
     if (drafts)
         routes.PostsController.drafts(blog.alias, pageNum=newPage)
@@ -18,10 +18,16 @@
 <aside role="banner" class="cover">
     <div data-load-image="@blog.image.orNull" class="blog-cover-image"></div>
     <div class="cover-container">
-        @if(blog.logo) {
+        @if(blog.useAvatarAsLogo.getOrElse(false)) {
         <a href="@routes.PostsGuestController.index(blog.alias)" class="cover-logo" >
-            <img src="@blog.logo.getOrElse("")"   alt="Blog Logo">
+            <img src="@avatarUrl"   alt="Blog Author" class="img-circle">
         </a>
+        } else {
+            @if(blog.logo.orNull) {
+            <a href="@routes.PostsGuestController.index(blog.alias)" class="cover-logo" >
+                <img src="@blog.logo.orNull"   alt="Blog Logo">
+            </a>
+            }
         }
         <h1 class="cover-title">@blog.name</h1>
         <p class="cover-description">@blog.description</p>

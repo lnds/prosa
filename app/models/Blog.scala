@@ -11,6 +11,7 @@ case class Blog(
   image:Option[String],
   logo:Option[String],
   url:Option[String],
+  useAvatarAsLogo:Option[Boolean],
   owner:String
 )
 
@@ -22,9 +23,10 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
   def image = column[String]("image", O.Nullable)
   def logo = column[String]("logo", O.Nullable)
   def url = column[String]("url", O.Nullable)
+  def useAvatarAsLogo = column[Boolean]("use_avatar_as_logo", O.Nullable)
   def owner = column[String]("owner", O.Length(45, varying = true))
 
-  def * = (id,name,alias,description,image.?, logo.?, url.?, owner) <> (Blog.tupled, Blog.unapply)
+  def * = (id,name,alias,description,image.?, logo.?, url.?, useAvatarAsLogo.?, owner) <> (Blog.tupled, Blog.unapply)
 }
 
 
@@ -45,7 +47,7 @@ object Blogs {
   def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
   def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String])(implicit s:Session) {
-    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, owner.id)
+    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, Some(false), owner.id)
     insert(blog)
   }
 

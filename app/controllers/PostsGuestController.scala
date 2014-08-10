@@ -1,9 +1,10 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Blogs, Guest, Posts, Visitor}
+import models._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
+import tools.PostAux
 
 object PostsGuestController extends Controller with DBElement with OptionalAuthElement with AuthConfigImpl  {
 
@@ -12,10 +13,9 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     val user: Visitor = loggedIn.getOrElse(Guest)
 
     Blogs.findByAlias(alias).map { blog =>
-
       val page = Posts.list(blog, draft = false, page = pageNum)
-      Ok(views.html.post_index(blog, page, drafts=false, user))
-
+      val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
+      Ok(views.html.post_index(blog, page, drafts=false, user, PostAux.avatarUrl(ownerEmail)))
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
 

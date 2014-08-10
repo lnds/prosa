@@ -1,6 +1,6 @@
 name := """prosa-blog-server"""
 
-version := "0.1.3"
+version := "0.1.4"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
@@ -25,5 +25,6 @@ libraryDependencies ++= Seq(
   "com.typesafe.play.plugins" %% "play-plugins-mailer" % "2.3.0",
   "org.jsoup" % "jsoup" % "1.7.3",
   "com.amazonaws" % "aws-java-sdk" % "1.7.12",
-  "com.github.seratch" %% "awscala" % "0.2.+"
+  "com.github.seratch" %% "awscala" % "0.2.+",
+  "com.andersen-gott" %% "scravatar" % "1.0.3"
 )

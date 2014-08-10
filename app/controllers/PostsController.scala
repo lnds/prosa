@@ -6,6 +6,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
+import tools.PostAux
 
 
 object PostsController extends Controller with DBElement with TokenValidateElement with AuthElement with AuthConfigImpl  {
@@ -13,9 +14,9 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   def index(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
 
     Blogs.findByAlias(alias).map { blog =>
-
       val page = Posts.list(blog, draft = false, page = pageNum)
-      Ok(views.html.post_index(blog, page, drafts=false, loggedIn))
+      val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
+      Ok(views.html.post_index(blog, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail)))
 
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
@@ -26,7 +27,7 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   def drafts(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.list(blog, draft = true, page = pageNum)
-      Ok(views.html.post_index(blog, page, drafts=true, loggedIn))
+      Ok(views.html.post_index(blog, page, drafts=true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
     } getOrElse BlogNotFound
   }
 
