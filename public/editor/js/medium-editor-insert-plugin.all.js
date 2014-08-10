@@ -1,11 +1,9 @@
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Addon Initialization
+/*! 
+ * medium-editor-insert-plugin v0.2.9 - jQuery insert plugin for MediumEditor
  *
  * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
+ * 
+ * Copyright (c) 2014 Pavel Linkesch (http://linkesch.sk)
  * Released under the MIT license
  */
 
@@ -39,7 +37,7 @@
           $inserts = $('.mediumInsert', $clone);
           for (j = 0; j < $inserts.length; j++) {
             $insert = $($inserts[j]);
-            $insertData = $('.mediumInsert-placeholder, .mediumInsert-embeds', $insert).children();
+            $insertData = $('.mediumInsert-placeholder', $insert).children();
             if ($insertData.length === 0) {
               $insert.remove();
             } else {
@@ -138,7 +136,8 @@
       return this.each(function () {
         $(this).addClass('medium-editor-insert-plugin');
 
-        $('p', this).bind('dragover drop', function (e) {
+        var blocks = 'p, h1, h2, h3, h4, h5, h6, ol, ul, blockquote';
+        $(this).on('dragover drop', blocks, function (e) {
           e.preventDefault();
           return false;
         });
@@ -254,6 +253,36 @@
     },
 
     /**
+    * Return insert buttons optionally filtered by addon name
+    *
+    * @param {string} addon Addon name of addon to display only
+    * @return {void}
+    */
+    getButtons: function (addon) {
+      var editor = $.fn.mediumInsert.settings.editor,
+          buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
+          buttons = '<div class="mediumInsert-buttons">'+
+            '<a class="mediumInsert-buttonsShow">+</a>'+
+            '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
+
+      if (Object.keys($.fn.mediumInsert.settings.addons).length === 0) {
+        return false;
+      }
+
+      if (typeof addon === 'undefined') {
+        $.each($.fn.mediumInsert.settings.addons, function (i) {
+          buttons += '<li>' + addons[i].insertButton(buttonLabels) + '</li>';
+        });
+      } else {
+        buttons += '<li>' + addons[addon].insertButton(buttonLabels) + '</li>';
+      }
+
+      buttons += '</ul></div>';
+
+      return buttons;
+    },
+
+    /**
     * Method setting placeholders
     *
     * @return {void}
@@ -264,22 +293,14 @@
           $el = $.fn.mediumInsert.insert.$el,
           editor = $.fn.mediumInsert.settings.editor,
           buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
-          insertBlock = '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
+          insertBlock = this.getButtons();
 
-      if (Object.keys($.fn.mediumInsert.settings.addons).length === 0) {
+      if (insertBlock === false) {
         return false;
       }
 
-      $.each($.fn.mediumInsert.settings.addons, function (i) {
-        insertBlock += '<li>' + addons[i].insertButton(buttonLabels) + '</li>';
-      });
-
-      insertBlock += '</ul>';
       insertBlock = '<div class="mediumInsert" contenteditable="false">'+
-        '<div class="mediumInsert-buttons">'+
-          '<a class="mediumInsert-buttonsShow">+</a>'+
-          insertBlock +
-        '</div>'+
+        insertBlock +
         '<div class="mediumInsert-placeholder"></div>'+
       '</div>';
 
@@ -312,7 +333,8 @@
 
         i = that.getMaxId() +1;
 
-        $el.children('p').each(function () {
+        var blocks = 'p, h1, h2, h3, h4, h5, h6, ol, ul, blockquote';
+        $el.children(blocks).each(function () {
           if ($(this).next().hasClass('mediumInsert') === false) {
             $(this).after(insertBlock);
             $(this).next('.mediumInsert').attr('id', 'mediumInsert-'+ i);
@@ -444,16 +466,128 @@
 
 }(jQuery));
 
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Images Addon
- *
- * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
- * Released under the MIT license
- */
+(function ($) {
+
+  $.fn.mediumInsert.registerAddon('embeds', {
+
+    /**
+    * Embed default options
+    */
+
+    default: {
+      urlPlaceholder: 'type or paste url here'
+    },
+
+    /**
+     * Embeds initial function
+     * @return {void}
+     */
+    init : function (options) {
+      this.options = $.extend(this.default, options);
+      this.$el = $.fn.mediumInsert.insert.$el;
+      this.setEmbedButtonEvents();
+      this.preparePreviousEmbeds();
+    },
+
+    insertButton : function (buttonLabels) {
+      var label = 'Embed';
+      if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
+        label = '<i class="fa fa-code"></i>';
+      }
+      return '<button data-addon="embeds" data-action="add" class="medium-editor-action mediumInsert-action">' + label + '</button>';
+    },
+
+    /**
+     * Add embed to $placeholder
+     * @param {element} $placeholder $placeholder to add embed to
+     * @return {void}
+     */
+    add : function ($placeholder) {
+      $.fn.mediumInsert.insert.deselect();
+
+
+      var formHtml = '<div class="medium-editor-toolbar-form-anchor mediumInsert-embedsWire" style="display: block;"><input type="text" value="" placeholder="' + this.options.urlPlaceholder + '" class="mediumInsert-embedsText"></div>';
+      $(formHtml).appendTo($placeholder.prev());
+      setTimeout(function () {
+        $placeholder.prev().find('input').focus();
+      }, 50);
+
+      $.fn.mediumInsert.insert.deselect();
+
+      this.currentPlaceholder = $placeholder;
+      $(".mediumInsert-embedsText").focus();
+    },
+
+    /**
+    * Make existing embeds interactive
+    *
+    * @return {void}
+    */
+
+    preparePreviousEmbeds: function () {
+      this.$el.find('.mediumInsert-embeds').each(function() {
+        var $parent = $(this).parent();
+        $parent.html('<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>');
+      });
+    },
+
+    setEmbedButtonEvents : function () {
+      var that = this;
+      $(document).on('keypress', 'input.mediumInsert-embedsText', function (e) {
+        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+          that.setEnterActionEvents();
+          that.removeToolbar();
+        }
+      });
+
+      this.$el.on('blur', '.mediumInsert-embedsText', function () {
+        that.removeToolbar();
+      });
+
+    },
+    setEnterActionEvents : function () {
+      var that = this;
+      if ($.fn.mediumInsert.settings.enabled === false) {
+        return false;
+      }
+
+      var url = $("input.mediumInsert-embedsText").val();
+      if (!url) {
+        return false;
+      }
+      var embed_tag = that.convertUrlToEmbedTag(url);
+      if (!embed_tag) {
+        alert('Incorrect URL format specified');
+        return false;
+      } else {
+        embed_tag = $('<div class="mediumInsert-embeds"></div>').append(embed_tag);
+        that.currentPlaceholder.append(embed_tag);
+
+        that.currentPlaceholder.closest('[data-medium-element]').trigger('keyup').trigger('input');
+      }
+    },
+
+    removeToolbar : function () {
+      $(".mediumInsert-embedsWire").remove();
+    },
+
+    convertUrlToEmbedTag : function (url) {
+      var embed_tag = url.replace(/\n?/g, '').replace(/^((http(s)?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|v\/)?)([a-zA-Z0-9-_]+)(.*)?$/, '<div class="video"><iframe width="420" height="315" src="//www.youtube.com/embed/$7" frameborder="0" allowfullscreen></iframe></div>')
+        .replace(/http:\/\/vimeo\.com\/(\d+)$/, '<iframe src="//player.vimeo.com/video/$1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>')
+
+        // TWITTER EMBEDDING NEEDS REWORK! Serialized version of embeded Twitter status is unusable because the Twitter script complitely removes blockquote element and replaces it with iframe
+        //.replace(/https:\/\/twitter\.com\/(\w+)\/status\/(\d+)\/?$/, '<blockquote class="twitter-tweet" lang="en"><a href="https://twitter.com/$1/statuses/$2"></a></blockquote><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>')
+
+        // FACEBOOK EMBEDDING NEEDS REWORK! Similarly to Twitter, FB script removes .fb-post element and replaces it with iframe, which is unusable after serializing editor's content
+        //.replace(/https:\/\/www\.facebook\.com\/(\w+)\/posts\/(\d+)$/, '<div id="fb-root"></div><script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1"; fjs.parentNode.insertBefore(js, fjs); }(document, "script", "facebook-jssdk"));</script><div class="fb-post" data-href="https://www.facebook.com/$1/posts/$2"></div>')
+
+        .replace(/http:\/\/instagram\.com\/p\/(.+)\/?$/, '<span class="instagram"><iframe src="//instagram.com/p/$1/embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe></span>');
+      return /<("[^"]*"|'[^']*'|[^'">])*>/.test(embed_tag) ? embed_tag : false;
+    }
+
+  });
+
+}(jQuery));
 
 (function ($) {
 
@@ -573,7 +707,7 @@
       if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
         label = '<i class="fa fa-picture-o"></i>';
       }
-      return '<button data-addon="images" data-action="add" class="medium-editor-action medium-editor-action-image mediumInsert-action">'+label+'</button>';
+      return '<button data-addon="images" data-action="add" class="medium-editor-action mediumInsert-action">'+label+'</button>';
     },
 
     /**
@@ -585,7 +719,9 @@
     preparePreviousImages: function () {
       this.$el.find('.mediumInsert-images').each(function() {
         var $parent = $(this).parent();
-        $parent.html('<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>');
+        $parent.html($.fn.mediumInsert.insert.getButtons('images') +
+          '<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>'
+        );
       });
     },
 
@@ -769,7 +905,7 @@
         $(this).parent().mouseleave().mouseleave();
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('click', '.mediumInsert-imageResizeBigger', function () {
@@ -777,7 +913,7 @@
         $(this).parent().mouseleave().mouseleave();
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('click', '.mediumInsert-imageRemove', function () {
@@ -791,7 +927,7 @@
         that.deleteFile(img, that);
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
     },
 
@@ -812,7 +948,7 @@
           return;
         }
 
-        $(this).addClass('hover');
+        that.$el.addClass('hover');
       });
 
       $(document).on('dragend', 'body', function () {
@@ -820,7 +956,7 @@
           return;
         }
 
-        $(this).removeClass('hover');
+        that.$el.removeClass('hover');
       });
 
       this.$el.on('dragover', '.mediumInsert', function () {
@@ -864,7 +1000,7 @@
           dropSuccessful = false;
           dropSort = false;
 
-          $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+          that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
         }
       });
 
@@ -906,7 +1042,7 @@
         dropSort = true;
         dropSortIndex = null;
 
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('drop', '.mediumInsert', function (e) {
@@ -919,7 +1055,7 @@
         }
 
         $(this).removeClass('hover');
-        $('body').removeClass('hover');
+        that.$el.removeClass('hover');
         $(this).attr('contenteditable', false);
 
         files = e.originalEvent.dataTransfer.files;
@@ -930,7 +1066,7 @@
           dropSort = false;
         } else {
           // Image move from block to block
-          $('.mediumInsert-placeholder', this).append('<div class="mediumInsert-images">'+ e.originalEvent.dataTransfer.getData('text/html') +'</div>');
+          $('.mediumInsert-placeholder', this).append('<figure class="mediumInsert-images">'+ e.originalEvent.dataTransfer.getData('text/html') +'</figure>');
           $('meta', this).remove();
           dropSuccessful = true;
         }
@@ -938,17 +1074,6 @@
     }
   });
 }(jQuery));
-
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Maps Addon
- *
- * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
- * Released under the MIT license
- */
 
 (function ($) {
 
@@ -968,7 +1093,7 @@
       if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
         label = '<i class="fa fa-map-marker"></i>';
       }
-      return '<button data-addon="maps" data-action="add" class="medium-editor-action medium-editor-action-image mediumInsert-action">'+label+'</button>';
+      return '<button data-addon="maps" data-action="add" class="medium-editor-action mediumInsert-action">'+label+'</button>';
     },
 
     /**
@@ -987,116 +1112,119 @@
 
 }(jQuery));
 
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Embeds Addon
- *
- * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2014 Vexus2 (https://github.com/vexus2)
- * Released under the MIT license
- */
-
 (function ($) {
 
-  $.fn.mediumInsert.registerAddon('embeds', {
+  $.fn.mediumInsert.registerAddon('tables', {
 
     /**
-    * Embed default options
+    * Table default options
     */
 
     default: {
-      urlPlaceholder: 'type or paste url here'
+      defaultRows: 2,
+      defaultCols: 2
     },
 
     /**
-     * Embeds initial function
+     * Tables initial function
      * @return {void}
      */
     init : function (options) {
       this.options = $.extend(this.default, options);
       this.$el = $.fn.mediumInsert.insert.$el;
-      this.setEmbedButtonEvents();
+      this.setTableButtonEvents();
     },
 
     insertButton : function (buttonLabels) {
-      var label = 'Embed';
+      var label = 'Table';
       if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
-        label = '<i class="fa fa-code"></i>';
+        label = '<i class="fa fa-table"></i>';
       }
-      return '<button data-addon="embeds" data-action="add" class="medium-editor-action medium-editor-action-image mediumInsert-action">' + label + '</button>';
+      return '<button data-addon="tables" data-action="add" class="medium-editor-action mediumInsert-action">' + label + '</button>';
     },
 
     /**
-     * Add embed to $placeholder
+     * Add table to $placeholder
      * @param {element} $placeholder $placeholder to add embed to
      * @return {void}
      */
     add : function ($placeholder) {
       $.fn.mediumInsert.insert.deselect();
 
-
-      var formHtml = '<div class="medium-editor-toolbar-form-anchor mediumInsert-embedsWire" style="display: block;"><input type="text" value="" placeholder="' + this.options.urlPlaceholder + '" class="mediumInsert-embedsText"></div>';
+      var formHtml = '<div class="medium-editor-toolbar-form-anchor mediumInsert-tableDemoBox"><table><tr><td></td><td><label>cols:<input type="text" value="' + this.options.defaultCols + '" class="mediumInsert-tableCols" /></label></td></tr><tr><td><label>rows:<input type="text" value="' + this.options.defaultRows + '" class="mediumInsert-tableRows" /></label></td><td><table class="mediumInsert-demoTable"></table></td></tr><tr><td></td><td><label><button class="mediumInsert-tableReadyButton">insert</button></label></td></tr></table></</div>';
       $(formHtml).appendTo($placeholder.prev());
+      this.updateDemoTable();
+
       setTimeout(function () {
         $placeholder.prev().find('input').focus();
       }, 50);
 
       $.fn.mediumInsert.insert.deselect();
-
       this.currentPlaceholder = $placeholder;
-      $(".mediumInsert-embedsText").focus();
     },
 
-
-    setEmbedButtonEvents : function () {
+    setTableButtonEvents : function () {
       var that = this;
-      $(document).on('keypress', 'input.mediumInsert-embedsText', function (e) {
-        if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
-          that.setEnterActionEvents();
+
+      $(document).on('keyup',
+                     'input.mediumInsert-tableRows, input.mediumInsert-tableCols',
+                     function() { that.updateDemoTable(); });
+
+      $(document).on('click', function(e) {
+        if ($(e.target).parents('.mediumInsert-buttons').length === 0) {
           that.removeToolbar();
         }
       });
 
-      this.$el.on('blur', '.mediumInsert-embedsText', function () {
+      $(document).on('click', 'button.mediumInsert-tableReadyButton', function() {
+        that.setEnterActionEvents();
         that.removeToolbar();
       });
-
     },
+
+    getDimensions : function () {
+      return {
+        rows: parseFloat($('input.mediumInsert-tableRows').val()) || 1,
+        cols: parseFloat($('input.mediumInsert-tableCols').val()) || 1
+      };
+    },
+
+    buildTable : function (table) {
+      var i, j, $row,
+        dimensions = this.getDimensions(),
+        $table = $(table);
+
+      for (i = 0; i < dimensions.rows; i++) {
+        $row = $('<tr>');
+        for (j = 0; j < dimensions.cols; j++) {
+          $row.append('<td>');
+        }
+        $table.append($row);
+      }
+    },
+
+    updateDemoTable : function () {
+      var $demoTable = $('table.mediumInsert-demoTable');
+
+      $demoTable.empty();
+      this.buildTable($demoTable);
+    },
+
     setEnterActionEvents : function () {
       var that = this;
       if ($.fn.mediumInsert.settings.enabled === false) {
         return false;
       }
 
-      var url = $("input.mediumInsert-embedsText").val();
-      if (!url) {
-        return false;
-      }
-      var embed_tag = that.convertUrlToEmbedTag(url);
-      if (!embed_tag) {
-        alert('Incorrect URL format specified');
-        return false;
-      } else {
-        embed_tag = $('<div class="mediumInsert-embeds"></div>').append(embed_tag);
-        that.currentPlaceholder.parent().append(embed_tag);
+      var $table = $('<table class="mediumInsert-table">');
+      that.buildTable($table);
 
-        that.currentPlaceholder.closest('[data-medium-element]').trigger('keyup').trigger('input');
-      }
+      that.currentPlaceholder.append($table);
+      that.currentPlaceholder.closest('[data-medium-element]').trigger('keyup').trigger('input');
     },
 
     removeToolbar : function () {
-      $(".mediumInsert-embedsWire").remove();
-    },
-
-    convertUrlToEmbedTag : function (url) {
-      var embed_tag = url.replace(/\n?/g, '').replace(/^((http(s)?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|v\/)?)([a-zA-Z0-9-_]+)(.*)?$/, '<div class="video"><iframe width="420" height="315" src="//www.youtube.com/v/$7&amp;fs=1" frameborder="0" allowfullscreen></iframe></div>')
-        .replace(/http:\/\/vimeo\.com\/(\d+)$/, '<iframe src="//player.vimeo.com/video/$1" width="500" height="281" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>')
-        .replace(/https:\/\/twitter\.com\/(\w+)\/status\/(\d+)\/?$/, '<blockquote class="twitter-tweet" lang="en"><a href="https://twitter.com/$1/statuses/$2"></a></blockquote><script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>')
-        .replace(/https:\/\/www\.facebook\.com\/(\w+)\/posts\/(\d+)$/, '<div id="fb-root"></div><script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1"; fjs.parentNode.insertBefore(js, fjs); }(document, "script", "facebook-jssdk"));</script><div class="fb-post" data-href="https://www.facebook.com/$1/posts/$2"></div>')
-        .replace(/http:\/\/instagram\.com\/p\/(.+)\/?$/, '<span class="instagram"><iframe src="//instagram.com/p/$1/embed/" width="612" height="710" frameborder="0" scrolling="no" allowtransparency="true"></iframe></span>');
-      return /<("[^"]*"|'[^']*'|[^'">])*>/.test(embed_tag) ? embed_tag : false;
+      $(".mediumInsert-tableDemoBox").remove();
     }
 
   });

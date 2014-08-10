@@ -169,6 +169,10 @@ body {
     text-align: center;
 }
 
+.cover-container h1 {
+    text-shadow: 0 1px 3px rgba(0,0,0.03);
+}
+
 .post-item-footer {
     padding: 0px 0;
 }
@@ -238,6 +242,31 @@ body {
     float:right;
 }
 
+.post-list {
+    font-style: normal;
+    letter-spacing: 0.01rem;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.5;
+    font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+    -webkit-font-smoothing: antialiased;
+    text-align: justify;
+}
+
+@media only screen and (min-device-width : 720px) {
+    .post-list {
+        font-style: normal;
+        letter-spacing: 0.01rem;
+        font-weight: 200;
+        font-size: 18px;
+        line-height: 1.5;
+        font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+        -webkit-font-smoothing: antialiased;
+        text-align: justify;
+
+    }
+}
+
 .footer {
     font-family: "Open Sans","Myriad Pro","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
     padding: 20px 0;
@@ -300,6 +329,17 @@ body {
     color: #ccc;
 }
 
+.top-cover-upload {
+    display: block;
+    position: absolute;
+    bottom:60%;
+    width: 100%;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 50px;
+    margin-bottom: 100px;
+}
+
 .post-title-cover {
     font-weight: 500;
     font-style: normal;
@@ -353,6 +393,7 @@ body {
         margin: 0 auto;
     }
 }
+
 .post-content img {
     max-width: 80%;
 }

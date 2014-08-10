@@ -1,11 +1,9 @@
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Addon Initialization
+/*! 
+ * medium-editor-insert-plugin v0.2.9 - jQuery insert plugin for MediumEditor
  *
  * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
+ * 
+ * Copyright (c) 2014 Pavel Linkesch (http://linkesch.sk)
  * Released under the MIT license
  */
 
@@ -39,7 +37,7 @@
           $inserts = $('.mediumInsert', $clone);
           for (j = 0; j < $inserts.length; j++) {
             $insert = $($inserts[j]);
-            $insertData = $('.mediumInsert-placeholder, .mediumInsert-embeds', $insert).children();
+            $insertData = $('.mediumInsert-placeholder', $insert).children();
             if ($insertData.length === 0) {
               $insert.remove();
             } else {
@@ -138,7 +136,8 @@
       return this.each(function () {
         $(this).addClass('medium-editor-insert-plugin');
 
-        $('p', this).bind('dragover drop', function (e) {
+        var blocks = 'p, h1, h2, h3, h4, h5, h6, ol, ul, blockquote';
+        $(this).on('dragover drop', blocks, function (e) {
           e.preventDefault();
           return false;
         });
@@ -254,6 +253,36 @@
     },
 
     /**
+    * Return insert buttons optionally filtered by addon name
+    *
+    * @param {string} addon Addon name of addon to display only
+    * @return {void}
+    */
+    getButtons: function (addon) {
+      var editor = $.fn.mediumInsert.settings.editor,
+          buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
+          buttons = '<div class="mediumInsert-buttons">'+
+            '<a class="mediumInsert-buttonsShow">+</a>'+
+            '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
+
+      if (Object.keys($.fn.mediumInsert.settings.addons).length === 0) {
+        return false;
+      }
+
+      if (typeof addon === 'undefined') {
+        $.each($.fn.mediumInsert.settings.addons, function (i) {
+          buttons += '<li>' + addons[i].insertButton(buttonLabels) + '</li>';
+        });
+      } else {
+        buttons += '<li>' + addons[addon].insertButton(buttonLabels) + '</li>';
+      }
+
+      buttons += '</ul></div>';
+
+      return buttons;
+    },
+
+    /**
     * Method setting placeholders
     *
     * @return {void}
@@ -264,22 +293,14 @@
           $el = $.fn.mediumInsert.insert.$el,
           editor = $.fn.mediumInsert.settings.editor,
           buttonLabels = (editor && editor.options) ? editor.options.buttonLabels : '',
-          insertBlock = '<ul class="mediumInsert-buttonsOptions medium-editor-toolbar medium-editor-toolbar-active">';
+          insertBlock = this.getButtons();
 
-      if (Object.keys($.fn.mediumInsert.settings.addons).length === 0) {
+      if (insertBlock === false) {
         return false;
       }
 
-      $.each($.fn.mediumInsert.settings.addons, function (i) {
-        insertBlock += '<li>' + addons[i].insertButton(buttonLabels) + '</li>';
-      });
-
-      insertBlock += '</ul>';
       insertBlock = '<div class="mediumInsert" contenteditable="false">'+
-        '<div class="mediumInsert-buttons">'+
-          '<a class="mediumInsert-buttonsShow">+</a>'+
-          insertBlock +
-        '</div>'+
+        insertBlock +
         '<div class="mediumInsert-placeholder"></div>'+
       '</div>';
 
@@ -312,7 +333,8 @@
 
         i = that.getMaxId() +1;
 
-        $el.children('p').each(function () {
+        var blocks = 'p, h1, h2, h3, h4, h5, h6, ol, ul, blockquote';
+        $el.children(blocks).each(function () {
           if ($(this).next().hasClass('mediumInsert') === false) {
             $(this).after(insertBlock);
             $(this).next('.mediumInsert').attr('id', 'mediumInsert-'+ i);

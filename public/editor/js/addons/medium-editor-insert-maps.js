@@ -1,11 +1,9 @@
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Maps Addon
+/*! 
+ * medium-editor-insert-plugin v0.2.9 - jQuery insert plugin for MediumEditor
  *
  * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
+ * 
+ * Copyright (c) 2014 Pavel Linkesch (http://linkesch.sk)
  * Released under the MIT license
  */
 
@@ -27,7 +25,7 @@
       if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
         label = '<i class="fa fa-map-marker"></i>';
       }
-      return '<button data-addon="maps" data-action="add" class="medium-editor-action medium-editor-action-image mediumInsert-action">'+label+'</button>';
+      return '<button data-addon="maps" data-action="add" class="medium-editor-action mediumInsert-action">'+label+'</button>';
     },
 
     /**

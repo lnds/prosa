@@ -7,7 +7,7 @@ case class Image(id:String, filename:String, contentType:String, url:Option[Stri
 class Images(tag:Tag) extends Table[Image](tag, "image") {
   def id = column[String]("id", O.PrimaryKey)
   def filename = column[String]("filename")
-  def contentType = column[String]("contentType")
+  def contentType = column[String]("contenttype")
   def url = column[String]("url", O.Nullable)
 
   def * = (id,filename,contentType,url.?) <> (Image.tupled, Image.unapply)

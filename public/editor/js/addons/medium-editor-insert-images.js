@@ -1,11 +1,9 @@
-/*!
- * medium-editor-insert-plugin v0.2.5 - jQuery insert plugin for MediumEditor
- *
- * Images Addon
+/*! 
+ * medium-editor-insert-plugin v0.2.9 - jQuery insert plugin for MediumEditor
  *
  * https://github.com/orthes/medium-editor-insert-plugin
- *
- * Copyright (c) 2013 Pavel Linkesch (http://linkesch.sk)
+ * 
+ * Copyright (c) 2014 Pavel Linkesch (http://linkesch.sk)
  * Released under the MIT license
  */
 
@@ -127,7 +125,7 @@
       if (buttonLabels == 'fontawesome' || typeof buttonLabels === 'object' && !!(buttonLabels.fontawesome)) {
         label = '<i class="fa fa-picture-o"></i>';
       }
-      return '<button data-addon="images" data-action="add" class="medium-editor-action medium-editor-action-image mediumInsert-action">'+label+'</button>';
+      return '<button data-addon="images" data-action="add" class="medium-editor-action mediumInsert-action">'+label+'</button>';
     },
 
     /**
@@ -139,7 +137,9 @@
     preparePreviousImages: function () {
       this.$el.find('.mediumInsert-images').each(function() {
         var $parent = $(this).parent();
-        $parent.html('<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>');
+        $parent.html($.fn.mediumInsert.insert.getButtons('images') +
+          '<div class="mediumInsert-placeholder" draggable="true">' + $parent.html() + '</div>'
+        );
       });
     },
 
@@ -323,7 +323,7 @@
         $(this).parent().mouseleave().mouseleave();
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('click', '.mediumInsert-imageResizeBigger', function () {
@@ -331,7 +331,7 @@
         $(this).parent().mouseleave().mouseleave();
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('click', '.mediumInsert-imageRemove', function () {
@@ -345,7 +345,7 @@
         that.deleteFile(img, that);
 
         $.fn.mediumInsert.insert.deselect();
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
     },
 
@@ -366,7 +366,7 @@
           return;
         }
 
-        $(this).addClass('hover');
+        that.$el.addClass('hover');
       });
 
       $(document).on('dragend', 'body', function () {
@@ -374,7 +374,7 @@
           return;
         }
 
-        $(this).removeClass('hover');
+        that.$el.removeClass('hover');
       });
 
       this.$el.on('dragover', '.mediumInsert', function () {
@@ -418,7 +418,7 @@
           dropSuccessful = false;
           dropSort = false;
 
-          $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+          that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
         }
       });
 
@@ -460,7 +460,7 @@
         dropSort = true;
         dropSortIndex = null;
 
-        $(this).closest('[data-medium-element]').trigger('keyup').trigger('input');
+        that.$el.closest('[data-medium-element]').trigger('keyup').trigger('input');
       });
 
       this.$el.on('drop', '.mediumInsert', function (e) {
@@ -473,7 +473,7 @@
         }
 
         $(this).removeClass('hover');
-        $('body').removeClass('hover');
+        that.$el.removeClass('hover');
         $(this).attr('contenteditable', false);
 
         files = e.originalEvent.dataTransfer.files;
@@ -484,7 +484,7 @@
           dropSort = false;
         } else {
           // Image move from block to block
-          $('.mediumInsert-placeholder', this).append('<div class="mediumInsert-images">'+ e.originalEvent.dataTransfer.getData('text/html') +'</div>');
+          $('.mediumInsert-placeholder', this).append('<figure class="mediumInsert-images">'+ e.originalEvent.dataTransfer.getData('text/html') +'</figure>');
           $('meta', this).remove();
           dropSuccessful = true;
         }
