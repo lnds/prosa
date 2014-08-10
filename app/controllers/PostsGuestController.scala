@@ -15,7 +15,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.list(blog, draft = false, page = pageNum)
       val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
-      Ok(views.html.post_index(blog, page, drafts=false, user, PostAux.avatarUrl(ownerEmail)))
+      Ok(views.html.post_index(blog, blog.author, page, drafts=false, user, PostAux.avatarUrl(ownerEmail)))
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
 
@@ -26,7 +26,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     Blogs.findByAlias(alias).map { blog =>
 
       Posts.find(blog, slug, year, month, day) match {
-        case Some(post) =>Ok(views.html.posts_view(blog, post, user))
+        case Some(post) =>Ok(views.html.posts_view(blog, blog.author, post, user))
         case None => NotFound
       }
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))

@@ -1,12 +1,12 @@
-@(blog:Blog, currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
+@(blog:Blog, author:Option[Author], currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
     if (drafts)
         routes.PostsController.drafts(blog.alias, pageNum=newPage)
     else
         routes.PostsGuestController.index(blog.alias, pageNum=newPage)
 }
-@main(blog.alias, user){
-    @views.html.blogs_menu(blog.alias, user)
+@main(blog.alias, Some(blog), author, user){
+    @views.html.blogs_menu(blog.name, user)
 }{
 <ul class="nav navbar-nav navbar-right">
     <li><a href="@routes.ImportController.importPosts(blog.alias)"><i class="fa fa-upload"></i>&nbsp; @Messages("menu.import")</a></li>

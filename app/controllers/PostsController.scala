@@ -16,7 +16,7 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.list(blog, draft = false, page = pageNum)
       val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
-      Ok(views.html.post_index(blog, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail)))
+      Ok(views.html.post_index(blog, blog.author, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail)))
 
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
   }
@@ -27,7 +27,7 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   def drafts(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.list(blog, draft = true, page = pageNum)
-      Ok(views.html.post_index(blog, page, drafts=true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
+      Ok(views.html.post_index(blog, blog.author, page, drafts=true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
     } getOrElse BlogNotFound
   }
 

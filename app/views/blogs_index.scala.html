@@ -1,5 +1,5 @@
-@(caption:String, page:Page[Blog], user:Visitor)(implicit flash:Flash)
-@main(caption, user) {
+@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash)
+@main(caption, None, None, user) {
     @views.html.blogs_menu(null, user)
 }{
 <ul class="nav navbar-nav navbar-right">

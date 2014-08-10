@@ -1,5 +1,5 @@
 @(form: Form[BlogsController.BlogData], user:Visitor)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
-@main("Blogs New", user) {
+@main("Blogs New", None, None, user) {
 @views.html.blogs_menu(null, user)
 }{
 <form method="post" id="blog-create-form" action="@routes.BlogsController.create" class="navbar-form navbar-right">

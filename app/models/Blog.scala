@@ -13,7 +13,11 @@ case class Blog(
   url:Option[String],
   useAvatarAsLogo:Option[Boolean],
   owner:String
-)
+)  {
+
+  def author(implicit s:Session) = Authors.findById(owner)
+
+}
 
 class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
   def id = column[String]("id", O.PrimaryKey)

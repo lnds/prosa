@@ -1,15 +1,27 @@
-@(title: String, user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, blogOpt: Option[Blog], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    @blogOpt.map { blog =>
+    <meta name="description" content="@blog.description" >
+    }.getOrElse {
+    <meta name="description" content="@Messages("prosa.description")">}
+    @authorOpt.map { author =>
+    <meta name="author" content="@author.fullname" >
+    }.getOrElse {
+    <meta name="author" content="">}
     <title>@title</title>
-    <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
 
+    @blogOpt.map { blog =>
+    <link rel="canonical" href="@blog.url">
+    <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
+    }.getOrElse {
+    <link rel="canonical" href="@Messages("prosa.canonical.url")">
+    }
+    <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
     <link rel='stylesheet' href='@routes.Assets.at("css/font-awesome.css")'>
     <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>

@@ -16,7 +16,7 @@ object ImportController extends Controller with DBElement with TokenValidateElem
 
   def importPosts(alias:String) = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).map { blog =>
-      Ok(views.html.posts_import(blog, loggedIn))
+      Ok(views.html.posts_import(blog, blog.author, loggedIn))
     } getOrElse BlogNotFound
   }
 
@@ -26,7 +26,7 @@ object ImportController extends Controller with DBElement with TokenValidateElem
     Blogs.findByAlias(alias).map { blog =>
       request.body.file("file").map { file =>
         fileFormatForm.bindFromRequest.fold(
-          formWithErrors => BadRequest(views.html.posts_import(blog, loggedIn)),
+          formWithErrors => BadRequest(views.html.posts_import(blog, blog.author, loggedIn)),
           formOk => {
             Posts.importPosts(loggedIn, blog, file.ref.file, formOk)
             Redirect(routes.PostsController.index(alias)).flashing("success" -> Messages("posts.success.imported"))

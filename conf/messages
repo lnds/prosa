@@ -2,6 +2,10 @@
 prosa.main.title=Esto es Prosa
 prosa.main.subtitle=
 prosa.main.content.index=Lo último publicado
+prosa.description=Esto es Prosa
+
+# Debes cambiar esto en tu instalación
+prosa.canonical.url=http://www.prosa.io/
 
 # date formatting
 dates.year= año

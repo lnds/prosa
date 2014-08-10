@@ -28,6 +28,13 @@ object PostAux {
       routes.PostsGuestController.view(alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.get).url
   }
 
+  def atomUrl(urlBase:String) = {
+    if (urlBase.endsWith("/"))
+      urlBase + "atom.xml"
+    else
+      urlBase + "/atom.xml"
+  }
+
   val EXCERPT_SIZE = 250
 
   def excerpt(content: String) = {
