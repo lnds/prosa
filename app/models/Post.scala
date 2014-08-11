@@ -87,8 +87,8 @@ object Posts {
   }
 
   def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean)(implicit s:Session)  {
-    def published = if (publish) Some(new Timestamp(DateTime.now.getMillis)) else None
-    def slug = if (publish) Some(tools.PostAux.slugify(title)) else None
+    def published = if (publish)  Some(post.published.getOrElse(new Timestamp(DateTime.now.getMillis)))  else None
+    def slug = if (publish) Some(post.slug.getOrElse(tools.PostAux.slugify(title))) else None
     def isDraft = !publish
     update(post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug))
   }

@@ -1,10 +1,9 @@
 @(alias:String, user:Visitor)
-<li>
-    @if(alias == null) {
-    <a href="@routes.Application.index"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
+@if(alias == null) {
+<li><a href="@routes.Application.index"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
 <li><a href="@routes.BlogsGuestController.index()"><i class="glyphicon glyphicon-th"></i>&nbsp;  @Messages("menu.blogs")</a></li>
 } else {
-<a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
+<li><a href="@routes.PostsGuestController.index(alias)"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
 }
 
 <li></li>
