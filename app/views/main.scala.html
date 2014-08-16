@@ -1,14 +1,18 @@
-@(title:String, blogOpt: Option[Blog], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, subtitle:String, blogOpt: Option[Blog], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    @blogOpt.map { blog =>
-    <meta name="description" content="@blog.description" >
-    }.getOrElse {
-    <meta name="description" content="@Messages("prosa.description")">}
+    @if(subtitle != null) {
+        <meta name="description" content="@subtitle" >
+    } else {
+        @blogOpt.map { blog =>
+        <meta name="description" content="@blog.description" >
+        }.getOrElse {
+        <meta name="description" content="@Messages("prosa.description")">}
+    }
     @authorOpt.map { author =>
     <meta name="author" content="@author.fullname" >
     }.getOrElse {

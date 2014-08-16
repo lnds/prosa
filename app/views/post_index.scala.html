@@ -5,7 +5,7 @@
     else
         routes.PostsGuestController.index(blog.alias, pageNum=newPage)
 }
-@main(blog.alias, Some(blog), author, user){
+@main(blog.alias, null, Some(blog), author, user){
     @views.html.blogs_menu(blog.name, user)
 }{
 <ul class="nav navbar-nav navbar-right">

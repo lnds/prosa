@@ -1,5 +1,5 @@
 @(blog:Blog, author:Option[Author], post:Post, user:Visitor)(implicit flash:Flash)
-@main(post.title, Some(blog), author, user) {
+@main(post.title, post.subtitle.getOrElse(""), Some(blog), author, user) {
 @views.html.blogs_menu(blog.alias, user)
 }{
 <ul class="nav navbar-nav navbar-right">
