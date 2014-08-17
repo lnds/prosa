@@ -1,0 +1,182 @@
+@(blog:Option[Blog], form: Form[BlogsController.BlogData], user:Visitor)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@main("Blog", null, None, None, user) {
+@views.html.blogs_menu(null, user)
+}{
+@blog match {
+    case None => {
+        <form method="post" id="blog-save-form" action="@routes.BlogsController.create" class="navbar-form navbar-right">
+            <input type="hidden" id="name" name="name" value="@form("name").value" />
+            <input type="hidden" id="description" name="description" value="@form("description").value" />
+            <input type="hidden" id="alias" name="alias" value="@form("alias").value" />
+            <input type="hidden" id="url" name="url" value="@form("url").value" />
+            <input type="hidden" id="blog_image" name="image" value="@form("image").value" />
+            <input type="hidden" id="disqus" name="disqus" value="@form("disqus").value" />
+            <input type="hidden" id="google_analytics" name="google_analytics" value="@form("google_analytics").value" />
+            <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+            <a class="btn" href="@routes.BlogsGuestController.index()">@Messages("blogs.action.cancel")</a>
+            <button class="btn btn-primary" onclick="sbmt();">@Messages("blogs.action.create")</button>
+        </form>
+    }
+    case Some(blog) =>{
+        <form method="post" id="blog-save-form" action="@routes.BlogsController.update(blog.id)" class="navbar-form navbar-right">
+            <input type="hidden" id="id" name="id" value="@form("id").value" />
+            <input type="hidden" id="name" name="name" value="@form("name").value" />
+            <input type="hidden" id="description" name="description" value="@form("description").value" />
+            <input type="hidden" id="alias" name="alias" value="@form("alias").value" />
+            <input type="hidden" id="url" name="url" value="@form("url").value" />
+            <input type="hidden" id="blog_image" name="image" value="@form("image").value" />
+            <input type="hidden" id="disqus" name="disqus" value="@form("disqus").value" />
+            <input type="hidden" id="google_analytics" name="google_analytics" value="@form("google_analytics").value" />
+            <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+            <a class="btn" href="@routes.BlogsGuestController.index()">@Messages("blogs.action.cancel")</a>
+            <button class="btn btn-primary" onclick="sbmt();">@Messages("blogs.action.save")</button>
+        </form>
+    }
+}
+
+
+}{
+<div id="banner-image" class="jumbotron cover-image image-loaded" data-load-image="@if(blog.nonEmpty){@blog.get.image}">
+    <div class="container blog-cover-container">
+        <div class="blog-top-cover-upload">
+            <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
+                <span class="screen-reader-text">$Messages("blogs.action.upload_image")</span>
+            </button>
+            @form("name").error match {
+            case None => {
+            <h1 class="blog-title-cover editable" id="blog_name"  style="text-align: left"  contenteditable="true" placeholder="@Messages("blogs.input.blog_name")">@form("name").value</h1>
+            }
+            case Some(error) =>   {
+            <h1 class="blog-title-cover editable text-danger" id="blog_name"  style="text-align: left;color:darkred"  contenteditable="true" placeholder="@Messages("blogs.input.blog_name")">@form("name").value</h1>
+            }
+            }
+
+            @form("description").error match {
+            case None => {
+            <h2 class="blog-description-cover editable" style="text-align: left" id="blog_description" contenteditable="true" placeholder="@Messages("blogs.input.blog_description")">@form("description").value</h2>
+            }
+            case Some(error) =>   {
+            <h2 class="blog-description-cover editable" style="text-align: left;color:darkred" id="blog_description" contenteditable="true" placeholder="@Messages("blogs.input.blog_description")">@form("description").value</h2>
+            }
+            }
+            @form("alias").error match {
+            case None => {
+            <h3 class="blog-alias-cover editable" id="blog_alias" style="text-align: left"  contenteditable="true" placeholder="@Messages("blogs.input.blog_alias")">@form("alias").value</h3>
+            }
+            case Some(error) =>   {
+            <h3 class="blog-alias-cover editable" id="blog_alias" style="text-align: left;color:darkred"  contenteditable="true" placeholder="@Messages("blogs.input.blog_alias") @Messages(error.message)">@form("alias").value</h3>
+            }
+            }
+            @form("url").error match {
+            case None => {
+            <h4 class="blog-url-cover editable" id="blog_url" style="text-align: left" contenteditable="true" placeholder="@Messages("blogs.input.blog_url")">@form("url").value</h4>
+            }
+            case Some(error) => {
+            <h4 class="blog-url-cover editable" id="blog_url" style="text-align: left;color:darkred" contenteditable="true" placeholder="@Messages("blogs.input.blog_url")">@form("url").value</h4>
+            }
+            }
+
+            @form("disqus").error match {
+            case None => {
+                <h5 class="blog-disqus-cover editable" id="blog_disqus" style="text-align: left" contenteditable="true" placeholder="@Messages("blogs.input.disqus")">@form("disqus").value</h5>
+                }
+            case Some(error) => {
+                <h5 class="blog-disqus-cover editable" id="blog_disqus" style="text-align: left; color:darkred" contenteditable="true" placeholder="@Messages("blogs.input.disqus")">@form("disqus").value <span class="small text-danger" style="color:red">@Messages(error.message)</span></h5>
+                }
+            }
+
+            @form("google_analytics").error match {
+            case None => {
+            <h6 class="blog-google-analytics-cover editable" id="blog_google_analytics" style="text-align: left" contenteditable="true" placeholder="@Messages("blogs.input.google_analytics")">@form("google_analytics").value</h6>
+            }
+            case Some(error) => {
+            <h6 class="blog-google-analytics-cover editable" id="blog_google_analytics" style="text-align: left; color:darkred" contenteditable="true" placeholder="@Messages("blogs.input.google_analytics")">@form("google_analytics").value <span class="small text-danger" style="color:red">@Messages(error.message)</span></h6>
+            }}
+
+        </div>
+
+        <div class="fileupload-process">
+            <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                <div class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress></div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            @form.globalError.map { error =>
+            <div class="textbox-wrap text-danger">
+                <span>@error.message</span>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function sbmt() {
+        $("#name").val($("#blog_name").text());
+        $("#description").val($("#blog_description").text());
+        $("#alias").val($("#blog_alias").text());
+        $("#url").val($("#blog_url").text());
+        $("#disqus").val($("#blog_disqus").text());
+        $("#google_analytics").val($("#blog_google_analytics").text());
+        $("#blog-save-form").submit();
+    }
+</script>
+<script src="@routes.Assets.at("js/dropzone.js")"></script>
+<script language="javascript">
+
+        document.querySelector("#total-progress").style.opacity = "0";
+
+
+var myDropzone = new Dropzone(document.body, {
+    url: "@routes.ImagesController.upload()",
+    paramName: "file",
+    thumbnailWidth: 80,
+    thumbnailHeight: 80,
+    parallelUploads:1,
+    autoQueue:true,
+    clickable: ".fileinput-button"
+});
+myDropzone.on("addedfile", function(file) {
+    // Hookup the start button
+    //document.body.style.backgroundImage = file;
+    ///  file.previewElement.querySelector(".start").onclick = function() { myDropzone.enqueueFile(file); };
+});
+
+// Update the total progress bar
+myDropzone.on("totaluploadprogress", function(progress) {
+    document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
+});
+
+myDropzone.on("sending", function(file) {
+    // Show the total progress bar when upload starts
+    document.querySelector("#total-progress").style.opacity = "1";
+    // And disable the start button
+});
+
+myDropzone.on("success", function(file, response, e) {
+    var url = response;
+    $("#blog_image").val(url);
+    $("#banner-image").css("background-image", "url("+url+")" );
+    // $("#banner-image" ).height(file.height);
+
+    myDropzone.removeAllFiles(true);
+    document.querySelector("#total-progress").style.opacity = "0";
+});
+
+// Hide the total progress bar when nothing's uploading anymore
+myDropzone.on("queuecomplete", function(progress) {
+    document.querySelector("#total-progress").style.opacity = "0";
+    myDropzone.removeAllFiles(true);
+});
+
+
+        </script>
+}

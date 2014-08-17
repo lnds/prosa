@@ -49,12 +49,21 @@ blogs.action.upload_image=subir imagen
 blogs.action.create=Crear Blog
 blogs.action.cancel=Cancelar
 blogs.action.config=configurar
+blogs.action.save=Grabar
 
 blogs.success.created=Blog Creado
+blogs.success.updated=Blog Actualizado
 blogs.error.not_found=Blog no encontrado
+blogs.error.duplicate_alias=Alias del Blog ya existe
+blogs.error.alias_format=Alias debe contener sólo letras y números y no exceder un largo de 32 carácteres
 
 # Blogs Input
 blogs.input.blog_name=Nombra tu blog aquí
+blogs.input.blog_description=Describe tu blog aquí
+blogs.input.blog_url=Ingresa url de tu blog (ej: http://www.prosa.io/alias)
+blogs.input.blog_alias=Alias de tu blog (max 32 caracteres, sin espacios)
+blogs.input.disqus=Si usas disqus ingresa nombre corto acá
+blogs.input.google_analytics=Si usas Google Analytics ingresa tu tracking id aquí
 
 # Posts Pagination
 posts.newer=Nuevos
@@ -106,7 +115,9 @@ posts.success.imported=Artículo Importados
 #footer
 
 footer.copyright=© 2014 Eduardo Díaz. Todos los derechos reservados.
-footer.prosa=Publicado usando Prosa - release 0.1
+footer.prosa=Publicado usando Prosa - release 0.1.7
 footer.image.copyright=Imagen de portada (CC) Indi Samarajiva
 
 placeholders.editor.type_here=Escriba su texto
+
+error.required=Se requiere este campo

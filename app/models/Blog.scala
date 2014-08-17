@@ -1,6 +1,5 @@
 package models
 
-import play.api.Logger
 import play.api.db.slick.Config.driver.simple._
 
 case class Blog(
@@ -12,6 +11,8 @@ case class Blog(
   logo:Option[String],
   url:Option[String],
   useAvatarAsLogo:Option[Boolean],
+  disqus:Option[String],
+  googleAnalytics:Option[String],
   owner:String
 )  {
 
@@ -28,9 +29,12 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
   def logo = column[String]("logo", O.Nullable)
   def url = column[String]("url", O.Nullable)
   def useAvatarAsLogo = column[Boolean]("use_avatar_as_logo", O.Nullable)
+  def disqus = column[String]("disqus", O.Nullable)
+  def googleAnalytics = column[String]("google_analytics", O.Nullable)
+  def published = column[Boolean]("published", O.Nullable)
   def owner = column[String]("owner", O.Length(45, varying = true))
 
-  def * = (id,name,alias,description,image.?, logo.?, url.?, useAvatarAsLogo.?, owner) <> (Blog.tupled, Blog.unapply)
+  def * = (id,name,alias,description,image.?, logo.?, url.?, useAvatarAsLogo.?, disqus.?, googleAnalytics.?, owner) <> (Blog.tupled, Blog.unapply)
 }
 
 
@@ -48,15 +52,28 @@ object Blogs {
 
   def count()(implicit s:Session) : Int = Query(blogs.length).first
 
+  def findById(id:String)(implicit s:Session) = blogs.filter(_.id === id).firstOption
+
   def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
-  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String])(implicit s:Session) {
-    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, Some(false), owner.id)
+  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String])(implicit s:Session) {
+    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, Some(false), disqus, gogleAnalytics, owner.id)
     insert(blog)
+  }
+
+  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String])(implicit s:Session) {
+    update (blog.copy(name=name, alias=alias, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=gogleAnalytics))
   }
 
   def insert(blog:Blog)(implicit s:Session) {
     blogs.insert(blog)
   }
 
+  def update(blog:Blog)(implicit s:Session) {
+    blogs.filter(_.id===blog.id).update(blog)
+  }
+
+  def delete(blog:Blog)(implicit s:Session): Unit = {
+    blogs.filter(_.id === blog.id).delete
+  }
 }

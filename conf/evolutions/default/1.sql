@@ -3,7 +3,7 @@
 # --- !Ups
 
 CREATE TABLE author (
-    id character varying(250) NOT NULL,
+    id character varying(45) NOT NULL,
     bio text,
     email text,
     fullname text,
@@ -14,19 +14,21 @@ CREATE TABLE author (
 );
 
 CREATE TABLE blog (
-    id character varying(250) NOT NULL,
-    alias character varying(250),
+    id character varying(45) NOT NULL,
+    alias character varying(45),
     description text,
     image text,
     logo text,
     name text,
     owner character varying(45),
     url text,
+    disqus text,
+    google_analytics text,
     PRIMARY KEY(id)
 );
 
 CREATE TABLE image (
-    id character varying(250) NOT NULL,
+    id character varying(45) NOT NULL,
     contentType text,
     filename text,
     url text,
@@ -34,7 +36,7 @@ CREATE TABLE image (
 );
 
 CREATE TABLE post (
-    id character varying(250) NOT NULL,
+    id character varying(45) NOT NULL,
     author character varying(45),
     blog character varying(45),
     content text,
@@ -52,9 +54,12 @@ INSERT INTO author (id, bio, email, fullname, nickname, password, permission) VA
 
 CREATE UNIQUE INDEX idx_alias ON blog (alias);
 CREATE INDEX idx_post_blog ON post (blog);
+CREATE INDEX idx_blog_owner ON blog(owner);
 
 # --- !Downs
 
+DROP INDEX IF EXISTS idx_alias;
+DROP INDEX IF EXISTS idx_post_blog;
 DROP TABLE IF EXISTS author;
 DROP TABLE IF EXISTS blog;
 DROP TABLE IF EXISTS image;
