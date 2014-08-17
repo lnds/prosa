@@ -110,7 +110,7 @@ body {
 .cover-image {
     position: absolute;
     max-height: 800px;
-    min-height: 450px;
+    min-height: 550px;
     width: 100%;
     top: 0;
     left: 0;
@@ -290,7 +290,7 @@ body {
     word-wrap: break-word;
     font-size: 48.5px;
     position: absolute;
-    bottom: 48%;
+    bottom: 60%;
     left:20%;
     text-align: center;
     width: 60%;
@@ -324,6 +324,27 @@ body {
     position: absolute;
     left: 20%;
     bottom: 20%;
+    display:block;
+    width: 60%;
+    text-shadow: 0 1px 2px rgba(0,0,0,.3);
+    color: #ccc;
+}
+
+
+.blog-disqus-cover {
+    position: absolute;
+    left: 20%;
+    bottom: 12%;
+    display:block;
+    width: 60%;
+    text-shadow: 0 1px 2px rgba(0,0,0,.3);
+    color: #ccc;
+}
+
+.blog-google-analytics-cover {
+    position: absolute;
+    left: 20%;
+    bottom: 5%;
     display:block;
     width: 60%;
     text-shadow: 0 1px 2px rgba(0,0,0,.3);

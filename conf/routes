@@ -17,6 +17,8 @@ GET         /blogs                                      controllers.BlogsGuestCo
 
 GET         /blogs/create                               controllers.BlogsController.create()
 POST        /blogs/create                               controllers.BlogsController.save()
+GET         /blogs/edit/:id                             controllers.BlogsController.edit(id:String)
+POST        /blogs/edit/:id                             controllers.BlogsController.update(id:String)
 
 POST        /images/uploadImage                         controllers.ImagesController.upload()
 GET         /images/get/:id                             controllers.ContentController.getImage(id)
