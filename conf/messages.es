@@ -77,6 +77,9 @@ posts.index.no-published=No hay artículos publicados
 # Posts Drafts
 posts.index.drafts=Borradores
 
+# Posts Views
+posts.view.comments=Comentarios
+
 # Posts Actions
 posts.action.new=Nuevo Artículo
 posts.action.cancel=Cancelar
@@ -115,7 +118,7 @@ posts.success.imported=Artículo Importados
 #footer
 
 footer.copyright=© 2014 Eduardo Díaz. Todos los derechos reservados.
-footer.prosa=Publicado usando Prosa - release 0.1
+footer.prosa=Publicado usando Prosa - release 0.1.7
 footer.image.copyright=Imagen de portada (CC) Indi Samarajiva
 
 placeholders.editor.type_here=Escriba su texto

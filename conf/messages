@@ -77,6 +77,9 @@ posts.index.no-published=No hay artículos publicados
 # Posts Drafts
 posts.index.drafts=Borradores
 
+# Posts Views
+posts.view.comments=Comentarios
+
 # Posts Actions
 posts.action.new=Nuevo Artículo
 posts.action.cancel=Cancelar

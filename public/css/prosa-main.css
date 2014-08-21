@@ -401,6 +401,12 @@ body {
     margin: 0 auto;
 }
 
+.comments {
+    max-width: 700px;
+    width: 700px;
+    margin: 0 auto;
+}
+
 @media only screen and (min-device-width : 720px) {
     .post-content {
         font-style: normal;
@@ -410,6 +416,11 @@ body {
         line-height: 1.5;
         font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
         -webkit-font-smoothing: antialiased;
+        max-width: 700px;
+        width: 95%;
+        margin: 0 auto;
+    }
+    .comments {
         max-width: 700px;
         width: 95%;
         margin: 0 auto;
@@ -426,5 +437,10 @@ and (max-device-width : 568px) {
     .post-content{
         font-weight: 200;
         font-size: 14px;
+    }
+    .comments {
+        max-width: 700px;
+        width: 95%;
+        margin: 0 auto;
     }
 }
