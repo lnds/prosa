@@ -109,7 +109,7 @@ body {
 /** Cover Image **/
 .cover-image {
     position: absolute;
-    max-height: 800px;
+    max-height: 700px;
     min-height: 550px;
     width: 100%;
     top: 0;
@@ -117,6 +117,7 @@ body {
     -webkit-box-shadow: inset -1px 0 0 rgba(0,0,0,.3);
     box-shadow: inset -1px 0 0 rgba(0,0,0,.3);
 }
+
 .blog-cover-image {
     position: absolute;
     width: 100%;
@@ -445,4 +446,9 @@ and (max-device-width : 480px) {
         width: 95%;
         margin: 0 auto;
     }
+    .cover-image {
+        min-height: 320px;
+        max-height: 480px;
+    }
+
 }
