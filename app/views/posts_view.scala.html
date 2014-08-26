@@ -13,7 +13,9 @@
 <div id="banner-image" class="jumbotron cover-image" data-load-image="@post.image">
     <div class="container cover-container">
         <h1>@post.title</h1>
-        <h2>@post.subtitle</h2>
+        @post.subtitle.map { subtitle =>
+        <h2>@subtitle</h2>
+        }
     </div>
 </div>
 <div class="row ">
