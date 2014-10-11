@@ -49,9 +49,9 @@ object Blogs {
 
   val blogs = TableQuery[Blogs]
 
-  def list(page: Int = 0, pageSize: Int = 10)(implicit s:Session) : Page[Blog] = {
+  def list(user:Visitor, page: Int = 0, pageSize: Int = 10)(implicit s:Session) : Page[Blog] = {
     val offset = pageSize * page
-    val query = (for { blog <- blogs } yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
+    val query = (for { blog <- blogs if blog.status === BLOG_STATUS_PUBLISHED || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
     val totalRows = count()
     val result = query.list.map(row => row)
     Page(result, page, offset, totalRows, pageSize)

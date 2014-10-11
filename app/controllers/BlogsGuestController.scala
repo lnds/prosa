@@ -8,7 +8,7 @@ object BlogsGuestController extends Controller with DBElement with OptionalAuthE
 
   def index(pageNum:Int=0) = StackAction { implicit request =>
     val user : Visitor = loggedIn.getOrElse(Guest)
-    Ok(views.html.blogs_index("Blogs", Blogs.list(page = pageNum), user))
+    Ok(views.html.blogs_index("Blogs", Blogs.list(user, page = pageNum), user))
   }
 
 }
