@@ -64,6 +64,11 @@ blogs.input.blog_url=Ingresa url de tu blog (ej: http://www.prosa.io/alias)
 blogs.input.blog_alias=Alias de tu blog (max 32 caracteres, sin espacios)
 blogs.input.disqus=Si usas disqus ingresa nombre corto acá
 blogs.input.google_analytics=Si usas Google Analytics ingresa tu tracking id aquí
+blogs.input.label.use_gravatar=Usar gravatar en portada
+blogs.input.label.status=Estado del Blog
+blogs.input.option.status.created=Blog Creado - No Publicado
+blogs.input.option.status.published=Blog Publicado
+blogs.input.option.status.inactive=Blog Inactivo
 
 # Posts Pagination
 posts.newer=Nuevos

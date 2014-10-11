@@ -71,6 +71,10 @@ blogs.input.placeholder.disqus=Si usas disqus ingresa nombre corto acá
 blogs.input.label.google_analytics=Google Analytics Tracking Id
 blogs.input.placeholder.google_analytics=Si usas Google Analytics ingresa tu tracking id aquí
 blogs.input.label.use_gravatar=Usar gravatar en portada
+blogs.input.label.status=Estado del Blog
+blogs.input.option.status.created=Blog Creado - No Publicado
+blogs.input.option.status.published=Blog Publicado
+blogs.input.option.status.inactive=Blog Inactivo
 
 
 # Posts Pagination

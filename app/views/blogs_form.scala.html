@@ -143,6 +143,17 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
+                    <div class="col-sm-9">
+                        <select class="form-control" name="status" id="status">
+                            <option value="@models.Blogs.BLOG_STATUS_CREATED" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
+                            <option value="@models.Blogs.BLOG_STATUS_PUBLISHED" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
+                            <option value="@models.Blogs.BLOG_STATUS_INACTIVE" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div>
                     <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
                     <input type="hidden" id="id" name="id" value="@form("id").value" />
