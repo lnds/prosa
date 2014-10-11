@@ -1,17 +1,19 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{Editor, Blogs}
+import models.{Authors, Editor, Blogs}
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
 import play.api.db.slick.DB
 import play.api.Play.current
+import tools.PostAux
 
 object BlogsController extends Controller with DBElement with TokenValidateElement with AuthElement with AuthConfigImpl {
 
-  case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String])
+  case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean])
 
   val blogForm = Form(
     mapping(
@@ -23,7 +25,8 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
       "logo" -> optional(text),
       "url" -> optional(text),
       "disqus" -> optional(text),
-      "google_analytics" -> optional(text)
+      "google_analytics" -> optional(text),
+      "use_avatar_as_logo" -> optional(boolean)
     )
     (BlogData.apply)(BlogData.unapply)
     .verifying(Messages("blogs.error.duplicate_alias"), result => result match {
@@ -54,21 +57,27 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def create = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Ok(views.html.blogs_form(None, blogForm, loggedIn))
+    val ownerEmail = Authors.findById(loggedIn.id).map { _.email }.orNull
+    Ok(views.html.blogs_form(None, blogForm, loggedIn, PostAux.avatarUrl(ownerEmail)))
   }
 
   def edit(id:String) = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findById(id).map { blog =>
-      val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics))
-      Ok(views.html.blogs_form(Some(blog), form, loggedIn))
+      Logger.info("gravatar: "+blog.useAvatarAsLogo)
+      val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo))
+      Logger.info("form: "+form)
+      Logger.info("form(use_avatar_as_logo)="+form("use_avatar_as_logo").value)
+      val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
+      Ok(views.html.blogs_form(Some(blog), form, loggedIn,  PostAux.avatarUrl(ownerEmail)))
     }.getOrElse (Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
   }
 
   def save = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     blogForm.bindFromRequest.fold(
-      formWithErrors => BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn)),
+      formWithErrors => BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, null)),
       blogData => {
-        Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics)
+        Logger.info("save gravatar: "+blogData.useAvatarAsLogo)
+        Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo)
         Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
       }
     )
@@ -77,9 +86,11 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
   def update(id:String) = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findById(id).map { blog =>
       blogForm.bindFromRequest.fold(
-        formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn)),
+        formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null)),
         blogData => {
-          Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics)
+          Logger.info("save gravatar: "+blogData.useAvatarAsLogo)
+
+          Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo)
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))
         }
       )

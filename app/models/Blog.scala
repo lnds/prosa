@@ -56,13 +56,13 @@ object Blogs {
 
   def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
-  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String])(implicit s:Session) {
-    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, Some(false), disqus, gogleAnalytics, owner.id)
+  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean])(implicit s:Session) {
+    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, gogleAnalytics, owner.id)
     insert(blog)
   }
 
-  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String])(implicit s:Session) {
-    update (blog.copy(name=name, alias=alias, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=gogleAnalytics))
+  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean])(implicit s:Session) {
+    update (blog.copy(name=name, alias=alias,  useAvatarAsLogo=useAvatarAsLogo, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=gogleAnalytics))
   }
 
   def insert(blog:Blog)(implicit s:Session) {
