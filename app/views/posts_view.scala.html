@@ -10,14 +10,26 @@
     <li>&nbsp;</li>
 </ul>
 }{
-<div id="banner-image" class="jumbotron cover-image" data-load-image="@post.image">
-    <div class="container cover-container">
-        <h1>@post.title</h1>
-        @post.subtitle.map { subtitle =>
-        <h2>@subtitle</h2>
-        }
-    </div>
-</div>
+@post.image match {
+    case None => {
+        <div id="banner" class="jumbotron">
+            <h1 class="text-center">@post.title</h1>
+            @post.subtitle.map { subtitle =>
+            <h2 class="text-center">@subtitle</h2>
+            }
+        </div>
+    }
+    case Some(image) => {
+            <div id="banner-image" class="jumbotron cover-image" data-load-image="@post.image">
+                <div class="container cover-container">
+                    <h1>@post.title</h1>
+                    @post.subtitle.map { subtitle =>
+                    <h2>@subtitle</h2>
+                    }
+                </div>
+            </div>
+    }
+}
 <div class="row ">
     <div class="col-xs-10 col-sm-10 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1">
         <div class="post-content">
