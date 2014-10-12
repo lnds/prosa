@@ -8,15 +8,24 @@ import tools.PostAux
 
 object PostsGuestController extends Controller with DBElement with OptionalAuthElement with AuthConfigImpl  {
 
+
+  val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+
   def index(alias:String, pageNum:Int=0) = StackAction { implicit request =>
 
     val user: Visitor = loggedIn.getOrElse(Guest)
 
     Blogs.findByAlias(alias).map { blog =>
-      val page = Posts.list(blog, draft = false, page = pageNum)
-      val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
-      Ok(views.html.post_index(blog, blog.author, page, drafts=false, user, PostAux.avatarUrl(ownerEmail)))
-    } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+      if (blog.status != Blogs.BLOG_STATUS_PUBLISHED)
+        BlogNotFound
+      else {
+        val page = Posts.list(blog, draft = false, page = pageNum)
+        val ownerEmail = Authors.findById(blog.owner).map {
+          _.email
+        }.orNull
+        Ok(views.html.post_index(blog, blog.author, page, drafts = false, user, PostAux.avatarUrl(ownerEmail)))
+      }
+    } getOrElse BlogNotFound
   }
 
   def view(alias:String, year:Int, month:Int, day:Int, slug:String) = StackAction { implicit request =>
@@ -29,7 +38,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
         case Some(post) =>Ok(views.html.posts_view(blog, blog.author, post, user))
         case None => NotFound
       }
-    } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+    } getOrElse BlogNotFound
 
   }
 
@@ -39,7 +48,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.last(blog, 10)
       Ok(views.xml.posts_atom(blog, page))
-    }  getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+    }  getOrElse BlogNotFound
   }
 
 }

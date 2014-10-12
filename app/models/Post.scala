@@ -38,7 +38,7 @@ object Posts {
   lazy val posts = TableQuery[Posts]
 
   def last(n:Int)(implicit s:Session) : List[(Post,Blog)] = {
-    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false } yield (p,b) ).sortBy(_._1.published.desc).take(n)
+    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false && b.status === Blogs.BLOG_STATUS_PUBLISHED} yield (p,b) ).sortBy(_._1.published.desc).take(n)
     q.list.map(p => p)
   }
 

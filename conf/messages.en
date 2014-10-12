@@ -56,6 +56,16 @@ blogs.error.not_found=Blog not found
 
 # Blogs Input
 blogs.input.blog_name=Blog name
+blogs.input.blog_description=Describe yout blog here
+blogs.input.blog_url=Put your blog url (eg: http://www.prosa.io/alias)
+blogs.input.blog_alias=Blog Alias (max 32 characters, no spaces)
+blogs.input.disqus=Disqus shortname (if you use it)
+blogs.input.google_analytics=Google Analytics Tracking Id
+blogs.input.label.use_gravatar=Use Gravatar on front page
+blogs.input.label.status=Blog Status
+blogs.input.option.status.created=Blog Created - Not Publishedd
+blogs.input.option.status.published=Blog Published
+blogs.input.option.status.inactive=Blog Inactive
 
 # Posts Pagination
 posts.newer=News
