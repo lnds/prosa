@@ -3,7 +3,6 @@ package tools
 import controllers.routes
 import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
-import play.api.Logger
 import play.api.i18n.Messages
 import scravatar.Gravatar
 
@@ -13,8 +12,6 @@ object PostAux {
 
   def canonical(blog:Blog, post:Post) = {
     val base = blog.url.getOrElse(Messages("prosa.canonical.url"))
-    Logger.info("base es= "+base)
-    Logger.info("last char de base es="+base.last)
     if (base.endsWith("/"))
       base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
     else
@@ -52,7 +49,7 @@ object PostAux {
     val text = org.jsoup.Jsoup.parse(content).text()
     val exc = text.take(EXCERPT_SIZE)
     if (exc.length < text.length)
-      exc + "..."
+      exc +  "&hellip;"
     else
       exc
   }
