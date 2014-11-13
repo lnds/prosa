@@ -1,14 +1,25 @@
 package tools
 
 import controllers.routes
-import models.Post
+import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
+import play.api.Logger
 import play.api.i18n.Messages
 import scravatar.Gravatar
 
 import scala.annotation.tailrec
 
 object PostAux {
+
+  def canonical(blog:Blog, post:Post) = {
+    val base = blog.url.getOrElse(Messages("prosa.canonical.url"))
+    Logger.info("base es= "+base)
+    Logger.info("last char de base es="+base.last)
+    if (base.endsWith("/"))
+      base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
+    else
+      base + "/" + slug(blog.alias, post, drafts=false)
+  }
 
   // build slugs for links
   def slug(blog: String, post: Post, drafts:Boolean) = {
