@@ -49,7 +49,7 @@ object PostAux {
     val text = org.jsoup.Jsoup.parse(content).text()
     val exc = text.take(EXCERPT_SIZE)
     if (exc.length < text.length)
-      exc +  "&hellip;"
+      exc +  "..."
     else
       exc
   }
