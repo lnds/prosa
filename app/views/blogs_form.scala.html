@@ -1,5 +1,5 @@
 @(blog:Option[Blog], form: Form[BlogsController.BlogData], user:Visitor, avatarUrl:String)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
-@main("Blog", null, None, None, user) {
+@main("Blog", "blog", None, None,  None, user){
 @views.html.blogs_menu(null, user)
 }{
 <div class="navbar-form navbar-right">

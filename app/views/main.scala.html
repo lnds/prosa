@@ -1,4 +1,4 @@
-@(title:String, subtitle:String, blogOpt: Option[Blog], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, subtitle:String, blogOpt: Option[Blog], canonicalOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -19,11 +19,17 @@
     <meta name="author" content="">}
     <title>@title</title>
 
-    @blogOpt.map { blog =>
-    <link rel="canonical" href="@blog.url">
-    <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
+    @canonicalOpt.map { url =>
+        <link rel="canonical" href="@url" />
     }.getOrElse {
-    <link rel="canonical" href="@Messages("prosa.canonical.url")">
+        @blogOpt.map { blog =>
+            <link rel="canonical" href="@blog.url.getOrElse(Messages("prosa.canonical.url")+blog.alias)" />
+        }.getOrElse {
+            <link rel="canonical" href="@Messages("prosa.canonical.url")">
+        }
+    }
+    @blogOpt.map { blog =>
+        <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
     }
     <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
