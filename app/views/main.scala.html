@@ -1,6 +1,6 @@
 @(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
-<html lang="es">
+<html class="no-js" lang="es">
 <head>
     <meta charset="utf-8">
     <title>@title</title>
@@ -45,15 +45,16 @@
     <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>
     <link rel='stylesheet' href='@routes.Assets.at("css/prosa-main.css")'>
 
+    @blogOpt.map { blog =>
+    <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
+    }
+
 
     <script src="@routes.Assets.at("js/jquery-1.10.2.js")" ></script>
     <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
     <script src="@routes.Assets.at("js/prosa.js")"> </script>
     <script src="@routes.Assets.at("js/docs.min.js")"></script>
 
-    @blogOpt.map { blog =>
-        <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
-    }
 
     @user match {
         case Guest => {}
