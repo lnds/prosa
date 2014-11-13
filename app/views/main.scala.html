@@ -3,8 +3,12 @@
 <html lang="es">
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@title</title>
+    @authorOpt.map { author =>
+    <meta name="author" content="@author.fullname" >
+    }.getOrElse {
+    <meta name="author" content="">
+    }
     @if(description != null) {
         <meta name="description" content="@description" >
     } else {
@@ -14,11 +18,9 @@
             <meta name="description" content="@Messages("prosa.description")">
         }
     }
-    @authorOpt.map { author =>
-    <meta name="author" content="@author.fullname" >
-    }.getOrElse {
-    <meta name="author" content="">}
-    <title>@title</title>
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @canonicalOpt.map { url =>
         <link rel="canonical" href="@url" />
@@ -29,18 +31,22 @@
             <link rel="canonical" href="@Messages("prosa.canonical.url")">
         }
     }
-    @blogOpt.map { blog =>
-        <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
-    }
+
     <link rel='stylesheet' href='@routes.Assets.at("css/bootstrap.css")'>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
     <link rel='stylesheet' href='@routes.Assets.at("css/font-awesome.css")'>
     <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>
     <link rel='stylesheet' href='@routes.Assets.at("css/prosa-main.css")'>
+
+
     <script src="@routes.Assets.at("js/jquery-1.10.2.js")" ></script>
     <script src="@routes.Assets.at("js/bootstrap.min.js")"></script>
     <script src="@routes.Assets.at("js/prosa.js")"> </script>
     <script src="@routes.Assets.at("js/docs.min.js")"></script>
+
+    @blogOpt.map { blog =>
+        <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
+    }
 
     @user match {
         case Guest => {}
