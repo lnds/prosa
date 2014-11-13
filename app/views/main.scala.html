@@ -19,15 +19,22 @@
         }
     }
 
+    <meta property="og:title" content="@title" />
+    <meta property="og:description" content="@description" />
+
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     @canonicalOpt.map { url =>
+        <meta property="og:url" content="@url" />
         <link rel="canonical" href="@url" />
     }.getOrElse {
         @blogOpt.map { blog =>
+            <meta property="og:url" content="@blog.url.getOrElse(Messages("prosa.canonical.url")+blog.alias)" />
             <link rel="canonical" href="@blog.url.getOrElse(Messages("prosa.canonical.url")+blog.alias)" />
         }.getOrElse {
+            <meta property="og:url" content="@Messages("prosa.canonical.url")" />
             <link rel="canonical" href="@Messages("prosa.canonical.url")">
         }
     }
