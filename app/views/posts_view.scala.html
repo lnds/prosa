@@ -1,5 +1,5 @@
 @(blog:Blog, author:Option[Author], post:Post, user:Visitor)(implicit flash:Flash)
-@main(post.title, tools.PostAux.excerpt(post.content), Some(blog), Some(tools.PostAux.canonical(blog, post)), author, user) {
+@main(post.title, tools.PostAux.excerpt(post.content), Some(blog), Some(tools.PostAux.canonical(blog, post)), post.image, author, user) {
 @views.html.blogs_menu(blog.alias, user)
 }{
 <ul class="nav navbar-nav navbar-right">

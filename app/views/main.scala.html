@@ -1,4 +1,4 @@
-@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
 <!DOCTYPE html>
 <html class="no-js" lang="es">
 <head>
@@ -21,7 +21,14 @@
 
     <meta property="og:title" content="@title" />
     <meta property="og:description" content="@description" />
+    <meta property="og:type" content="blog" />
+    @imgOpt.map { img =>
+    <meta property="og:image" content="@img" />
+    }
 
+    @blogOpt.map { blog =>
+    <meta property="og:site_name" content="@blog.name" />
+    }
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
