@@ -113,8 +113,4 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
     } getOrElse BlogNotFound
   }
 
-
-
-
-
 }

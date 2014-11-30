@@ -69,7 +69,6 @@ object Posts {
 
   def findById(id:String)(implicit s:Session) : Option[Post] = {
     val result = posts.filter(p => p.id === id).firstOption
-    Logger.info("post findById("+id+") = "+result)
     result
   }
 
@@ -82,7 +81,6 @@ object Posts {
                     created=Some(new Timestamp(DateTime.now.getMillis)),
                     published=published,slug=slug,draft=draft )
     val result = insert(post)
-    Logger.info("create result = "+result)
     post
   }
 
@@ -106,8 +104,6 @@ object Posts {
   }
 
   def importPosts(author:Author, blog:Blog, file:File, format:String)(implicit s:Session) {
-
-    Logger.info("formato: "+format)
     if (format == "ghost")
       importGhostFormat(author, blog, file)
   }

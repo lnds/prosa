@@ -1,6 +1,6 @@
 
 @font-face {
-    font-family:  "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+    font-family: "Raleway",  "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
 }
 
 
@@ -10,7 +10,7 @@ body {
     height: 100%;
 }
 body {
-    font-family: "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+    font-family: "Raleway", "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
     padding: 0;
     margin: 0;
 }
@@ -21,7 +21,6 @@ body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    overflow-y: auto;
     padding: 0;
     margin: 0;
 }
@@ -29,7 +28,7 @@ body {
 #site-canvas {
     width: 100%;
     height: 100%;
-    position: relative;
+    position: absolute;
 
     -webkit-transform: translateX(0);
     transform: translateX(0);
@@ -45,6 +44,7 @@ body {
 
     padding: 0 0;
 }
+
 .show-nav #site-canvas {
     -webkit-transform: translateX(280px);
     transform: translateX(280px);
@@ -57,6 +57,7 @@ body {
 #site-menu {
     width: 280px;
     height: 100%;
+    min-height: 100%;
     position: absolute;
     top: 0;
     left: -280px;
@@ -138,7 +139,8 @@ body {
 }
 [data-load-image]{
     position:relative;background-position:center;-webkit-background-size:cover;background-size:cover;
-    background-color:#333;background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
+    background-color:#333;
+    background-image:url(data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7);
     -webkit-transition:background-image .5s ease-in-out;transition:background-image .5s ease-in-out
 }
 [data-load-image]:before{
@@ -186,7 +188,7 @@ body {
     left: 0;
     width: 30%;
     height: 100%;
-    z-indez: 100;
+    z-index: 100;
     background: #57a3e8;
 }
 
@@ -228,7 +230,7 @@ body {
 .post-list-pagination {
     text-align: center;
     font-size: 14px;
-    font-family: "Open Sans", "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, san-serif;
+    font-family: "Raleway", "Open Sans", "Myriad Pro", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, san-serif;
     padding: 25px 0;
     overflow: hidden;
     border-top: 1px solid #f2f2f2;
@@ -248,9 +250,9 @@ body {
     font-style: normal;
     letter-spacing: 0.01rem;
     font-weight: 400;
-    font-size: 22px;
+    font-size: 20px;
     line-height: 1.5;
-    font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+    font-family: "Raleway", Georgia, Cambria, "Times New Roman", Time, serif;
     -webkit-font-smoothing: antialiased;
     text-align: justify;
 }
@@ -262,7 +264,7 @@ body {
         font-weight: 200;
         font-size: 18px;
         line-height: 1.5;
-        font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+        font-family: "Raleway", Georgia, Cambria, "Times New Roman", Time, serif;
         -webkit-font-smoothing: antialiased;
         text-align: justify;
 
@@ -270,7 +272,7 @@ body {
 }
 
 .footer {
-    font-family: "Open Sans","Myriad Pro","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
+    font-family: "Raleway", "Open Sans","Myriad Pro","Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;
     padding: 20px 0;
     border-top: 2px solid #f2f2f2;
     color: #b3b3b3;
@@ -393,9 +395,9 @@ body {
     font-style: normal;
     letter-spacing: 0.01rem;
     font-weight: 400;
-    font-size: 22px;
+    font-size: 18px;
     line-height: 1.5;
-    font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+    font-family: "Raleway", Georgia, Cambria, "Times New Roman", Time, serif;
     -webkit-font-smoothing: antialiased;
     max-width: 700px;
     width: 700px;
@@ -413,9 +415,9 @@ body {
         font-style: normal;
         letter-spacing: 0.01rem;
         font-weight: 400;
-        font-size: 22px;
+        font-size: 20px;
         line-height: 1.5;
-        font-family: "Droid Serif", Georgia, Cambria, "Times New Roman", Time, serif;
+        font-family: "Raleway", Georgia, Cambria, "Times New Roman", Time, serif;
         -webkit-font-smoothing: antialiased;
         max-width: 700px;
         width: 95%;
