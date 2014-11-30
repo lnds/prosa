@@ -50,6 +50,7 @@ blogs.action.create=Crear Blog
 blogs.action.cancel=Cancelar
 blogs.action.config=configurar
 blogs.action.save=Grabar
+blogs.action.search=Buscar
 
 blogs.success.created=Blog Creado
 blogs.success.updated=Blog Actualizado

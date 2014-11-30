@@ -1,6 +1,6 @@
 @(blog:Blog, author:Option[Author], post:Post, user:Visitor)(implicit flash:Flash)
 @main(post.title, tools.PostAux.excerpt(post.content), Some(blog), Some(tools.PostAux.canonical(blog, post)), post.image, author, user) {
-@views.html.blogs_menu(blog.alias, user)
+@views.html.blogs_menu(Some(blog), user)
 }{
 <ul class="nav navbar-nav navbar-right">
     <li><a href="@routes.PostsController.drafts(blog.alias)"><i class="fa fa-tasks"></i>&nbsp; @Messages("menu.drafts")</a></li>
@@ -42,10 +42,25 @@
                 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
             </div>
         </div>
+        }.getOrElse {
+            <div><p>&nbsp;</p></div>
         }
     </div>
 </div>
 
+<div class="row">
+    <div class="col-sm-offset-1 col-sm-10">
+        <footer role="contentinfo" class="footer">
+            <p>
+                <small>@blog.name</small>
+                <small>@author.map { a => &copy; @a.fullname }</small>
+            </p>
+            <p>
+                <small>@Messages("footer.prosa")</small>
+            </p>
+        </footer>
+    </div>
+</div>
 
 @blog.disqus.map { disqus_short_name =>
 <script type="text/javascript">

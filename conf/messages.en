@@ -50,6 +50,7 @@ blogs.action.upload_image=Upload Image
 blogs.action.create=Create Blog
 blogs.action.cancel=Cancel
 blogs.action.config=Configure
+blogs.action.search=Buscar
 
 blogs.success.created=Blog created
 blogs.error.not_found=Blog not found

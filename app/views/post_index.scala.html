@@ -6,7 +6,7 @@
         routes.PostsGuestController.index(blog.alias, pageNum=newPage)
 }
 @main(blog.name, blog.description, Some(blog), None, None, author, user){
-    @views.html.blogs_menu(blog.alias, user)
+    @views.html.blogs_menu(Some(blog), user)
 }{
 <ul class="nav navbar-nav navbar-right">
     <li><a href="@routes.ImportController.importPosts(blog.alias)"><i class="fa fa-upload"></i>&nbsp; @Messages("menu.import")</a></li>

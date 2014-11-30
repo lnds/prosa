@@ -1,6 +1,6 @@
 @(blog:Blog, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
 @main_editor("Posts New", user) {
-    @views.html.blogs_menu(blog.alias, user)
+    @views.html.blogs_menu(Some(blog), user)
 }{
 <form id="post-save" method="post" action="@routes.PostsController.save(blog.alias)" class="navbar-form navbar-right">
     <input type="hidden" id="blog" name="blog" value="@blog.alias" />
