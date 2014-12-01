@@ -76,6 +76,11 @@ object PostAux {
     Gravatar(email).avatarUrl
   }
 
+  def extractDomain(url:String) = {
+    val u = new java.net.URL(url)
+    u.getHost
+  }
+
 
   lazy val year = Messages("dates.year")
   lazy val years = Messages("dates.years")
