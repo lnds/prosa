@@ -1,0 +1,20 @@
+test:
+  - jscs
+  - jshint
+  - jasmine
+  - coveralls
+
+js:
+  - concat
+  - test
+  - uglify
+
+css:
+  - sass
+  - autoprefixer
+  - cssmin
+
+default:
+  - css
+  - js
+  - watch
