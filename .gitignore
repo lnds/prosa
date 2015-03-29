@@ -4,7 +4,6 @@ project/target
 target
 tmp
 .history
-dist
 /.idea
 /*.iml
 /out
@@ -13,3 +12,4 @@ dist
 /.project
 /RUNNING_PID
 /.settings
+node_modules

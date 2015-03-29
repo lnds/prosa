@@ -1,0 +1,51 @@
+{
+  "name": "medium-editor-tables",
+  "version": "0.2.0",
+  "homepage": "http://daviferreira.github.io/medium-editor/",
+  "authors": [
+    "Davi Ferreira <hi@daviferreira.com>"
+  ],
+  "description": "MediumEditor extension to allow tables.",
+  "main": [
+    "dist/js/medium-editor-tables.js",
+    "dist/css/medium-editor-tables.css"
+  ],
+  "keywords": [
+    "wysiwyg",
+    "medium",
+    "rich-text",
+    "editor",
+    "table",
+    "tables"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "spec",
+    "coverage",
+    "reports",
+    "_SpecRunner.html",
+    "Gruntfile.js",
+    "demo",
+    "package.json",
+    "src/js",
+    "README.md",
+    "CHANGES.md"
+  ],
+  "dependencies": {
+    "medium-editor": "^4.1.0",
+    "normalize.css": "~3.0.2"
+  },
+  "_release": "0.2.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.2.0",
+    "commit": "0b20963c275491b72579ec74ce86555f6f721280"
+  },
+  "_source": "git://github.com/daviferreira/medium-editor-tables.git",
+  "_target": "~0.2.0",
+  "_originalSource": "medium-editor-tables",
+  "_direct": true
+}
