@@ -21,6 +21,7 @@ GET         /blogs/edit/:id                             controllers.BlogsControl
 POST        /blogs/edit/:id                             controllers.BlogsController.update(id:String)
 
 POST        /images/uploadImage                         controllers.ImagesController.upload()
+POST        /images/editorUploadImage                   controllers.ImagesController.editorUpload()
 GET         /images/get/:id                             controllers.ContentController.getImage(id)
 
 GET         /blog/:alias                                controllers.PostsGuestController.index(alias:String, pageNum:Int ?=0)
