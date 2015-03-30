@@ -7,6 +7,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.Controller
 import tools.ContentManager
+import play.api.libs.json._
 
 
 object ImagesController extends Controller with DBElement with AuthElement with AuthConfigImpl  {
@@ -35,6 +36,18 @@ object ImagesController extends Controller with DBElement with AuthElement with 
         Ok(url)
       }
     )
+  }
+
+  case class ImageFile(url:String)
+
+  def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
+    val tempFile = File.createTempFile("image_", ".img")
+    val image = request.body.files.head
+    image.ref.moveTo(tempFile, replace=true)
+    val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
+    val url = ContentManager.putFile(img.id, tempFile, img.contentType)
+    Images.update(img.copy(url = Some(url)))
+    Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
   }
 
 
