@@ -1,6 +1,6 @@
 @(blog:Option[Blog], form: Form[BlogsController.BlogData], user:Visitor, avatarUrl:String)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
 @main("Blog", "blog", None, None, None, None, user){
-@views.html.blogs_menu(null, user)
+@views.html.blogs_menu(None, user)
 }{
 <div class="navbar-form navbar-right">
     <a class="btn" href="@routes.BlogsGuestController.index()">@Messages("blogs.action.cancel")</a>
@@ -143,13 +143,14 @@
                     </div>
                 </div>
 
+
                 <div class="form-group">
                     <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="status" id="status">
-                            <option value="@models.Blogs.BLOG_STATUS_CREATED" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
-                            <option value="@models.Blogs.BLOG_STATUS_PUBLISHED" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
-                            <option value="@models.Blogs.BLOG_STATUS_INACTIVE" @if(form("status").value.get == s"${models.Blogs.BLOG_STATUS_INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
+                            <option value="@models.Blogs.BLOG_STATUS_CREATED" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
+                            <option value="@models.Blogs.BLOG_STATUS_PUBLISHED" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
+                            <option value="@models.Blogs.BLOG_STATUS_INACTIVE" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
                         </select>
                     </div>
                 </div>
