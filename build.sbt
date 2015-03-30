@@ -1,6 +1,6 @@
 name := """prosa-blog-server"""
 
-version := "0.2.11.1"
+version := "0.2.12.2"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
