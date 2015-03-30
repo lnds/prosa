@@ -59,17 +59,24 @@ blogs.error.duplicate_alias=Alias del Blog ya existe
 blogs.error.alias_format=Alias debe contener sólo letras y números y no exceder un largo de 32 carácteres
 
 # Blogs Input
-blogs.input.blog_name=Nombra tu blog aquí
-blogs.input.blog_description=Describe tu blog aquí
-blogs.input.blog_url=Ingresa url de tu blog (ej: http://www.prosa.io/alias)
-blogs.input.blog_alias=Alias de tu blog (max 32 caracteres, sin espacios)
-blogs.input.disqus=Si usas disqus ingresa nombre corto acá
-blogs.input.google_analytics=Si usas Google Analytics ingresa tu tracking id aquí
+blogs.input.label.name=Nombre del Blog
+blogs.input.placeholder.name=Nombra tu blog aquí
+blogs.input.label.description=Descripción
+blogs.input.placeholder.description=Describe tu blog aquí
+blogs.input.label.url=Url
+blogs.input.placeholder.url=Ingresa url de tu blog (ej: http://www.prosa.io/alias)
+blogs.input.label.alias=Alias
+blogs.input.placeholder.alias=Alias de tu blog (max 32 caracteres, sin espacios)
+blogs.input.label.disqus=Nombre Corto Disqus
+blogs.input.placeholder.disqus=Si usas disqus ingresa nombre corto acá
+blogs.input.label.google_analytics=Google Analytics Tracking Id
+blogs.input.placeholder.google_analytics=Si usas Google Analytics ingresa tu tracking id aquí
 blogs.input.label.use_gravatar=Usar gravatar en portada
 blogs.input.label.status=Estado del Blog
 blogs.input.option.status.created=Blog Creado - No Publicado
 blogs.input.option.status.published=Blog Publicado
 blogs.input.option.status.inactive=Blog Inactivo
+
 
 # Posts Pagination
 posts.newer=Nuevos
@@ -124,7 +131,7 @@ posts.success.imported=Artículo Importados
 #footer
 
 footer.copyright=© 2014 Eduardo Díaz. Todos los derechos reservados.
-footer.prosa=Publicado usando Prosa - release 0.2.11.0
+footer.prosa=Publicado usando Prosa - release 0.2.11.1
 footer.image.copyright=Imagen de portada (CC) Indi Samarajiva
 
 placeholders.editor.type_here=Escriba su texto
