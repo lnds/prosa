@@ -1,6 +1,6 @@
 package controllers
 
-import jp.t2v.lab.play2.auth.AuthConfig
+import jp.t2v.lab.play2.auth.{CookieTokenAccessor, AuthConfig}
 import models._
 import play.api.Play.current
 import play.api.db.slick.DB
@@ -15,7 +15,6 @@ trait AuthConfigImpl extends AuthConfig {
 
   type Id = String
   type User = Author
-
   type Authority = Permission
 
   val idTag : ClassTag[Id] = classTag[Id]
@@ -28,17 +27,17 @@ trait AuthConfigImpl extends AuthConfig {
     }
   }
 
-  def authenticationFailed(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =
-    Future.successful(Redirect(routes.AuthController.login).withSession("access_uri" -> request.uri))
-
   def loginSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =  {
     val uri = request.session.get("access_uri").getOrElse(routes.BlogsGuestController.index().url.toString)
     Future.successful(Redirect(uri).withSession(request.session - "access_uri"))
   }
 
-  def logoutSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) = Future.successful(Redirect(routes.Application.index))
+  def logoutSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) = Future.successful(Redirect(routes.Application.index()))
 
-  def authorizationFailed(request:RequestHeader)(implicit ctx:ExecutionContext) = Future(Redirect(routes.AuthController.login))
+  def authenticationFailed(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =
+    Future.successful(Redirect(routes.AuthController.login()).withSession("access_uri" -> request.uri))
+
+  def authorizationFailed(request:RequestHeader)(implicit ctx:ExecutionContext) = Future(Redirect(routes.AuthController.login()))
 
   def authorize(user:User, authority:Authority)(implicit ctx:ExecutionContext) = Future.successful((Permission.valueOf(user.permission), authority) match {
     case (Administrator, _) => true
@@ -47,4 +46,9 @@ trait AuthConfigImpl extends AuthConfig {
     case (Writer, Writer) => true
     case _ => false
   })
+
+  override lazy val tokenAccessor = new CookieTokenAccessor(
+    cookieSecureOption = false,
+    cookieMaxAge       = Some(sessionTimeoutInSeconds)
+  )
 }

@@ -48,19 +48,8 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-sm-offset-1 col-sm-10">
-        <footer role="contentinfo" class="footer">
-            <p>
-                <small>@blog.name</small>
-                <small>@author.map { a => &copy; @a.fullname }</small>
-            </p>
-            <p>
-                <small>@Messages("footer.prosa")</small>
-            </p>
-        </footer>
-    </div>
-</div>
+@tags.post_footer(blog, author)
+
 
 @blog.disqus.map { disqus_short_name =>
 <script type="text/javascript">

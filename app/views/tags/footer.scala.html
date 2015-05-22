@@ -1,0 +1,14 @@
+@()
+@import play.api.Play
+<div class="row">
+  <div class="col-sm-12">
+    <footer role="contentinfo" class="footer">
+      <p>
+        <small>@Messages("footer.copyright")</small>
+      </p>
+      <p>
+        <small>@Messages("footer.prosa", Play.current.configuration.getString("app.version").orNull)</small>
+      </p>
+    </footer>
+  </div>
+</div>
