@@ -8,6 +8,7 @@ import play.api.db.slick._
 import scala.concurrent.Future
 import play.api.Play.current
 
+
 trait DBElement extends StackableController {
   self:Controller =>
 

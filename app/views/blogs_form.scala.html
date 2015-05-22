@@ -148,9 +148,9 @@
                     <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="status" id="status">
-                            <option value="@models.Blogs.BLOG_STATUS_CREATED" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
-                            <option value="@models.Blogs.BLOG_STATUS_PUBLISHED" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
-                            <option value="@models.Blogs.BLOG_STATUS_INACTIVE" @if(form("status").value.getOrElse("") == s"${models.Blogs.BLOG_STATUS_INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
+                            <option value="@models.BlogStatus.CREATED" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
+                            <option value="@models.BlogStatus.PUBLISHED" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
+                            <option value="@models.BlogStatus.INACTIVE" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
                         </select>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
+import services.AuthorService
 import tools.PostAux
 
 
@@ -15,7 +16,7 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
 
     Blogs.findByAlias(alias).map { blog =>
       val page = Posts.list(blog, draft = false, page = pageNum)
-      val ownerEmail = Authors.findById(blog.owner).map { _.email }.orNull
+      val ownerEmail = AuthorService.findById(blog.owner).map { _.email }.orNull
       Ok(views.html.post_index(blog, blog.author, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail)))
 
     } getOrElse Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))

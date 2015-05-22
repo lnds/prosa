@@ -4,6 +4,7 @@ import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
+import services.AuthorService
 import tools.PostAux
 
 object PostsGuestController extends Controller with DBElement with OptionalAuthElement with AuthConfigImpl  {
@@ -16,11 +17,11 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
     val user: Visitor = loggedIn.getOrElse(Guest)
 
     Blogs.findByAlias(alias).map { blog =>
-      if (blog.status != Blogs.BLOG_STATUS_PUBLISHED)
+      if (blog.status != BlogStatus.PUBLISHED)
         BlogNotFound
       else {
         val page = Posts.list(blog, draft = false, page = pageNum)
-        val ownerEmail = Authors.findById(blog.owner).map {
+        val ownerEmail = AuthorService.findById(blog.owner).map {
           _.email
         }.orNull
         Ok(views.html.post_index(blog, blog.author, page, drafts = false, user, PostAux.avatarUrl(ownerEmail)))

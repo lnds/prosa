@@ -7,6 +7,8 @@ import play.api.Logger
 import play.api.db.slick.Config.driver.simple._
 import play.api.libs.Files.TemporaryFile
 import play.api.libs.json.{JsString, JsObject, JsArray, Json}
+import services.AuthorService
+import tools.IdGenerator
 
 import scala.io.{Codec, Source}
 
@@ -38,12 +40,12 @@ object Posts {
   lazy val posts = TableQuery[Posts]
 
   def last(n:Int)(implicit s:Session) : List[(Post,Blog)] = {
-    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false && b.status === Blogs.BLOG_STATUS_PUBLISHED} yield (p,b) ).sortBy(_._1.published.desc).take(n)
+    val q = (for { (p,b) <- posts innerJoin Blogs.blogs on (_.blog === _.id) if p.draft === false && b.status === BlogStatus.PUBLISHED} yield (p,b) ).sortBy(_._1.published.desc).take(n)
     q.list.map(p => p)
   }
 
   def last(blog:Blog, n:Int)(implicit s:Session) : List[(Post,Author)] = {
-    val q = (for { (p,a) <- posts innerJoin Authors.authors on (_.author === _.id) if p.blog === blog.id && p.draft === false } yield (p,a) ).sortBy(_._1.published.desc).take(n)
+    val q = (for { (p,a) <- posts innerJoin AuthorService.authors on (_.author === _.id) if p.blog === blog.id && p.draft === false } yield (p,a) ).sortBy(_._1.published.desc).take(n)
     q.list.map(p => p)
   }
 

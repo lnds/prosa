@@ -1,12 +1,13 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{Authors, Writer}
+import models.Writer
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
+import services.AuthorService
 
 object AuthorsController extends Controller with DBElement  with TokenValidateElement with AuthElement with AuthConfigImpl {
 
@@ -34,7 +35,7 @@ object AuthorsController extends Controller with DBElement  with TokenValidateEl
         if (!BCrypt.checkpw(password, loggedIn.password))
           BadRequest(views.html.change_password(changePasswordForm.withError("password", "main.error.bad_current_password")))
         else {
-          Authors.changePassword(loggedIn, new_password)
+          AuthorService.changePassword(loggedIn, new_password)
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> "main.success.password_changed")
         }
       })

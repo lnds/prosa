@@ -1,6 +1,23 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
+import play.api.i18n.Messages
+import services.AuthorService
+import tools.IdGenerator
+
+
+object BlogStatus extends Enumeration {
+
+  val CREATED = Value(0, Messages("blog.status.created"))
+  val PUBLISHED = Value(1, Messages("blog.status.published"))
+  val INACTIVE = Value(-1, Messages("blog.status.published"))// <- reserved for administator
+
+  implicit val BlogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
+    s => s.id,
+    i => BlogStatus.apply(i)
+  )
+}
+
 
 case class Blog(
   id:String,
@@ -13,11 +30,11 @@ case class Blog(
   useAvatarAsLogo:Option[Boolean],
   disqus:Option[String],
   googleAnalytics:Option[String],
-  status:Int, //
+  status:BlogStatus.Value, //
   owner:String
 )  {
 
-  def author(implicit s:Session) = Authors.findById(owner)
+  def author(implicit s:Session) = AuthorService.findById(owner)
 
 }
 
@@ -32,7 +49,7 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
   def useAvatarAsLogo = column[Boolean]("use_avatar_as_logo", O.Nullable)
   def disqus = column[String]("disqus", O.Nullable)
   def googleAnalytics = column[String]("google_analytics", O.Nullable)
-  def status = column[Int]("status")
+  def status = column[BlogStatus.Value]("status")
   def owner = column[String]("owner", O.Length(45, varying = true))
 
   def * = (id,name,alias,description,image.?, logo.?, url.?, useAvatarAsLogo.?, disqus.?, googleAnalytics.?, status, owner) <> (Blog.tupled, Blog.unapply)
@@ -41,17 +58,11 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") {
 
 object Blogs {
 
-  val BLOG_STATUS_CREATED:Int = 0
-  val BLOG_STATUS_PUBLISHED:Int = 1
-  val BLOG_STATUS_INACTIVE:Int = -1 // <- reserved for administator
-
-
-
   val blogs = TableQuery[Blogs]
 
   def list(user:Visitor, page: Int = 0, pageSize: Int = 10)(implicit s:Session) : Page[Blog] = {
     val offset = pageSize * page
-    val query = (for { blog <- blogs if blog.status === BLOG_STATUS_PUBLISHED || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
+    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
     val totalRows = count()
     val result = query.list.map(row => row)
     Page(result, page, offset, totalRows, pageSize)
@@ -64,11 +75,11 @@ object Blogs {
   def findByAlias(alias:String)(implicit s:Session) = blogs.filter(_.alias === alias).firstOption
 
   def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean])(implicit s:Session) {
-    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, gogleAnalytics, BLOG_STATUS_CREATED, owner.id)
+    val blog = Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, gogleAnalytics, BlogStatus.CREATED, owner.id)
     insert(blog)
   }
 
-  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], status:Int)(implicit s:Session) {
+  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], status:BlogStatus.Value)(implicit s:Session) {
     update (blog.copy(name=name, alias=alias,  useAvatarAsLogo=useAvatarAsLogo, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=gogleAnalytics, status=status))
   }
 

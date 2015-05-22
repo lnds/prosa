@@ -1,6 +1,7 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
+import tools.IdGenerator
 
 case class Image(id:String, filename:String, contentType:String, url:Option[String])
 

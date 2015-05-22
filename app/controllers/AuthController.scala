@@ -1,11 +1,12 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.LoginLogout
-import models.{Authors, Author}
+import models.{AuthorEntity$, Author}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
+import services.AuthorService
 import scala.concurrent.Future
 import play.api.Play.current
 
@@ -20,7 +21,7 @@ object AuthController extends Controller with LoginLogout with AuthConfigImpl {
 
   def authenticateAuthor(nickname:String, password:String) : Option[Author] = {
     play.api.db.slick.DB.withSession { implicit session =>
-      Authors.findByNickname(nickname).map { author =>
+      AuthorService.findByNickname(nickname).map { author =>
         if (BCrypt.checkpw(password, author.password))
           Some(author)
         else
