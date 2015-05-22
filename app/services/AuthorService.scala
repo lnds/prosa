@@ -1,8 +1,8 @@
 package services
 
-import play.api.db.slick.Config.driver.simple._
-import models.{AuthorEntity, Author}
+import models.{Author, AuthorEntity}
 import org.mindrot.jbcrypt.BCrypt
+import play.api.db.slick.Config.driver.simple._
 import tools.IdGenerator
 
 /**
@@ -26,7 +26,7 @@ object AuthorService extends EntityService[Author]  {
     update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
   }
 
-  def queryFilter(qry: String, c: AuthorEntity): Column[Boolean] = c.nickname like "%" + qry + "%"
+  def queryFilter(qry: String, c: AuthorEntity) = c.nickname like "%" + qry + "%"
 
   def queryOrder(c: EntityType) = c.nickname.asc
 }

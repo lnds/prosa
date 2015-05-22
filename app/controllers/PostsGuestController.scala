@@ -4,7 +4,7 @@ import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
-import services.AuthorService
+import services.{AuthorService, BlogService, PostService}
 import tools.PostAux
 
 object PostsGuestController extends Controller with DBElement with OptionalAuthElement with AuthConfigImpl  {
@@ -16,11 +16,11 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
 
     val user: Visitor = loggedIn.getOrElse(Guest)
 
-    Blogs.findByAlias(alias).map { blog =>
+    BlogService.findByAlias(alias).map { blog =>
       if (blog.status != BlogStatus.PUBLISHED)
         BlogNotFound
       else {
-        val page = Posts.list(blog, draft = false, page = pageNum)
+        val page = PostService.list(blog, draft = false, page = pageNum)
         val ownerEmail = AuthorService.findById(blog.owner).map {
           _.email
         }.orNull
@@ -33,9 +33,9 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
 
     val user : Visitor = loggedIn.getOrElse(Guest)
 
-    Blogs.findByAlias(alias).map { blog =>
+    BlogService.findByAlias(alias).map { blog =>
 
-      Posts.find(blog, slug, year, month, day) match {
+      PostService.find(blog, slug, year, month, day) match {
         case Some(post) =>Ok(views.html.posts_view(blog, blog.author, post, user))
         case None => NotFound
       }
@@ -46,8 +46,8 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
   def atom(alias:String) = StackAction { implicit request =>
     val user : Visitor = loggedIn.getOrElse(Guest)
 
-    Blogs.findByAlias(alias).map { blog =>
-      val page = Posts.last(blog, 10)
+    BlogService.findByAlias(alias).map { blog =>
+      val page = PostService.last(blog, 10)
       Ok(views.xml.posts_atom(blog, page))
     }  getOrElse BlogNotFound
   }

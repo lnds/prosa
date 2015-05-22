@@ -2,7 +2,6 @@ package models
 
 import play.api.db.slick.Config.driver.simple._
 
-trait HasId {
-
-   def id: Column[String]
+trait HasOwner extends HasId {
+   def owner: Column[String]
  }

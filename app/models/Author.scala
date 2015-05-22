@@ -1,10 +1,6 @@
 package models
 
 import play.api.db.slick.Config.driver.simple._
-import org.mindrot.jbcrypt.BCrypt
-import services.EntityService
-import tools.IdGenerator
-
 
 sealed trait Visitor
 

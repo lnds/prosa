@@ -1,14 +1,15 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.LoginLogout
-import models.{AuthorEntity$, Author}
+import models.Author
 import org.mindrot.jbcrypt.BCrypt
+import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.mvc.{Action, Controller}
 import services.AuthorService
+
 import scala.concurrent.Future
-import play.api.Play.current
 
 
 object AuthController extends Controller with LoginLogout with AuthConfigImpl {

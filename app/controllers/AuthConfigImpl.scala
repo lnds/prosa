@@ -1,14 +1,15 @@
 package controllers
 
-import play.api.db.slick.DB
-import play.api.mvc._
-import play.api.mvc.Results._
 import jp.t2v.lab.play2.auth.AuthConfig
 import models._
-import services.AuthorService
-import scala.reflect.{ClassTag, classTag}
-import scala.concurrent.{ExecutionContext, Future}
 import play.api.Play.current
+import play.api.db.slick.DB
+import play.api.mvc.Results._
+import play.api.mvc._
+import services.AuthorService
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.{ClassTag, classTag}
 
 trait AuthConfigImpl extends AuthConfig {
 

@@ -1,4 +1,4 @@
-package models
+package services
 
 case class Page[A](items: Seq[A], page: Int, offset: Long, total: Long, pageSize: Int) {
   lazy val prev = Option(page - 1).filter(_ >= 0)

@@ -1,12 +1,12 @@
 package controllers
 
 
-import jp.t2v.lab.play2.stackc.{RequestWithAttributes, RequestAttributeKey, StackableController}
-import play.api.mvc.{Result, Controller}
+import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
+import play.api.Play.current
 import play.api.db.slick._
+import play.api.mvc.{Controller, Result}
 
 import scala.concurrent.Future
-import play.api.Play.current
 
 
 trait DBElement extends StackableController {

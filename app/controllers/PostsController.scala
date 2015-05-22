@@ -6,7 +6,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.Messages
 import play.api.mvc.Controller
-import services.AuthorService
+import services.{AuthorService, BlogService, PostService}
 import tools.PostAux
 
 
@@ -14,8 +14,8 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
 
   def index(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
 
-    Blogs.findByAlias(alias).map { blog =>
-      val page = Posts.list(blog, draft = false, page = pageNum)
+    BlogService.findByAlias(alias).map { blog =>
+      val page = PostService.list(blog, draft = false, page = pageNum)
       val ownerEmail = AuthorService.findById(blog.owner).map { _.email }.orNull
       Ok(views.html.post_index(blog, blog.author, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail)))
 
@@ -26,8 +26,8 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
   def drafts(alias:String, pageNum:Int=0) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
-      val page = Posts.list(blog, draft = true, page = pageNum)
+    BlogService.findByAlias(alias).map { blog =>
+      val page = PostService.list(blog, draft = true, page = pageNum)
       Ok(views.html.post_index(blog, blog.author, page, drafts=true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
     } getOrElse BlogNotFound
   }
@@ -46,17 +46,17 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   )
 
   def create(alias:String) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
+    BlogService.findByAlias(alias).map { blog =>
       Ok(views.html.posts_new(blog, postForm, loggedIn))
     } getOrElse BlogNotFound
   }
 
   def save(alias:String) = StackAction(AuthorityKey -> Writer) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
+    BlogService.findByAlias(alias).map { blog =>
       postForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
         postData => {
-          val post = Posts.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
+          val post = PostService.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
           if (postData.draft)
             Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created"))
           else
@@ -67,8 +67,8 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def edit(alias:String, id:String) = StackAction(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
-      Posts.findById(id).map { post =>
+    BlogService.findByAlias(alias).map { blog =>
+      PostService.findById(id).map { post =>
         if (post.author != loggedIn.id)
           Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
         else {
@@ -80,12 +80,12 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def update(alias:String, id:String) = StackAction(AuthorityKey -> Writer) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
-      Posts.findById(id).map { post =>
+    BlogService.findByAlias(alias).map { blog =>
+      PostService.findById(id).map { post =>
         postForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
           postData => {
-            Posts.update(post, postData.title, postData.subtitle, postData.content, postData.draft, postData.image, postData.publish.getOrElse(false))
+            PostService.update(post, postData.title, postData.subtitle, postData.content, postData.draft, postData.image, postData.publish.getOrElse(false))
             Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.saved"))
           }
         )
@@ -94,9 +94,9 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def delete(alias:String, id:String) = StackAction(AuthorityKey -> Writer) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
-      Posts.findById(id).map { post =>
-        Posts.delete(post)
+    BlogService.findByAlias(alias).map { blog =>
+      PostService.findById(id).map { post =>
+        PostService.delete(post)
         if (post.draft)
           Redirect(routes.PostsController.drafts(alias)).flashing("success" -> Messages("posts.success.deleted"))
         else
@@ -106,9 +106,9 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   }
 
   def unpublish(alias:String, id:String) = StackAction(AuthorityKey -> Writer) { implicit request =>
-    Blogs.findByAlias(alias).map { blog =>
-      Posts.findById(id).map { post =>
-        Posts.update(post.copy(draft = true, published = None))
+    BlogService.findByAlias(alias).map { blog =>
+      PostService.findById(id).map { post =>
+        PostService.update(post.copy(draft = true, published = None))
         Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished"))
       } getOrElse PostNotFound(alias)
     } getOrElse BlogNotFound

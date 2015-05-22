@@ -1,8 +1,9 @@
 package controllers
 
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Images, Guest, Visitor, Posts}
+import models.{Guest, Visitor}
 import play.api.mvc._
+import services.PostService
 
 object Application extends Controller with DBElement  with OptionalAuthElement with AuthConfigImpl {
 
@@ -10,7 +11,7 @@ object Application extends Controller with DBElement  with OptionalAuthElement w
 
   def index = StackAction { implicit request =>
     val user : Visitor = loggedIn.getOrElse(Guest)
-    Ok(views.html.index("Prosa",  Posts.last(MAX_POSTS), user))
+    Ok(views.html.index("Prosa",  PostService.last(MAX_POSTS), user))
   }
 
 

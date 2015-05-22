@@ -1,6 +1,6 @@
 package services
 
-import models.{Identifiable, Page}
+import models.Identifiable
 import play.api.db.slick.Config.driver.simple._
 
 import scala.slick.lifted.ColumnOrdered

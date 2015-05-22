@@ -1,3 +1,5 @@
+@import services.Page
+
 @(blog:Blog, author:Option[Author], currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
     if (drafts)

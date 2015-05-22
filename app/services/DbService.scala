@@ -1,6 +1,6 @@
 package services
 
-import models.{Identifiable, HasId}
+import models.{HasId, Identifiable}
 import play.api.db.slick.Config.driver.simple._
 import tools.IdGenerator
 
