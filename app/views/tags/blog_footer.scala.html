@@ -1,0 +1,15 @@
+@(blog:Blog, author:Option[Author])
+@import play.api.Play
+<div class="row">
+  <div class="col-sm-12">
+    <footer role="contentinfo" class="footer">
+      <p>
+        <small>@blog.name</small>
+        <small>@author.map { a => &copy; @a.fullname }</small>
+      </p>
+      <p>
+        <small>@Messages("footer.prosa", Play.current.configuration.getString("app.version").orNull)</small>
+      </p>
+    </footer>
+  </div>
+</div>

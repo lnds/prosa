@@ -1,13 +1,15 @@
 package controllers
 
 import java.io.File
+
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{Images, Writer}
+import models.Writer
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.mvc.Controller
-import tools.ContentManager
 import play.api.libs.json._
+import play.api.mvc.Controller
+import services.ImageService
+import tools.ContentManager
 
 
 object ImagesController extends Controller with DBElement with AuthElement with AuthConfigImpl  {
@@ -30,9 +32,9 @@ object ImagesController extends Controller with DBElement with AuthElement with 
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
-        val img = Images.addImage(imageData._1, imageData._2)
+        val img = ImageService.addImage(imageData._1, imageData._2)
         val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-        Images.update(img.copy(url=Some(url)))
+        ImageService.update(img.copy(url=Some(url)))
         Ok(url)
       }
     )
@@ -44,9 +46,9 @@ object ImagesController extends Controller with DBElement with AuthElement with 
     val tempFile = File.createTempFile("image_", ".img")
     val image = request.body.files.head
     image.ref.moveTo(tempFile, replace=true)
-    val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
+    val img = ImageService.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
     val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-    Images.update(img.copy(url = Some(url)))
+    ImageService.update(img.copy(url = Some(url)))
     Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
   }
 
@@ -60,7 +62,7 @@ object ContentController extends Controller with DBElement {
    */
   def getImage(id: String) = StackAction {
     implicit request =>
-      Images.findById(id).map {
+      ImageService.findById(id).map {
         img =>
           val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
           val byteArray = source.map(_.toByte).toArray

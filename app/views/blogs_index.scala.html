@@ -1,9 +1,9 @@
-@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash)
+@(caption:String,  page:services.Page[Blog], user:Visitor)(implicit flash:Flash)
 @main(caption, null, None, Some(Messages("prosa.canonical.url")), None, None, user) {
     @views.html.blogs_menu(None, user)
 }{
 <ul class="nav navbar-nav navbar-right">
-<li><a class="" href="@routes.BlogsController.create">@Messages("blogs.action.create")</a></li>
+<li><a class="" href="@routes.BlogsController.create()">@Messages("blogs.action.create")</a></li>
 </ul>
 }{
 <div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")">
@@ -48,7 +48,7 @@
             <div class="container-fluid">
                 <div class="row">
                     @Option(page.items).filterNot(_.isEmpty).map { blogs  =>
-                    @for(blog <- blogs) {
+                    @for(blog <- blogs){
                     <div class="col-md-4 ">
                         <div class="thumbnail">
                             @blog.image match {
@@ -80,20 +80,6 @@
             </div>
         </div>
     </div>
-    <div id="page-footer" class="row">
-        <div class="col-sm-10 col-sm-offset-1">
-            <footer role="contentinfo" class="footer">
-                <p>
-                    <small>@Messages("footer.copyright")</small>
-                </p>
-                <p>
-                    <small>@Messages("footer.image.copyright")</small>
-                </p>
-                <p>
-                    <small>@Messages("footer.prosa")</small>
-                </p>
-            </footer>
-        </div>
-    </div>
+    @tags.footer()
 </div>
 }

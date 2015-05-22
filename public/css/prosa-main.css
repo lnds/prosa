@@ -177,6 +177,9 @@ body {
     text-shadow: 0 1px 3px rgba(0,0,0.03);
 }
 
+.cover-description {
+    margin: 1em;
+}
 .post-item-footer {
     padding: 0px 0;
 }

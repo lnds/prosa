@@ -1,4 +1,4 @@
-@(blog:Blog, author:Option[Author], currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
+@(blog:Blog, author:Option[Author], currentPage:services.Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
     if (drafts)
         routes.PostsController.drafts(blog.alias, pageNum=newPage)
@@ -117,18 +117,7 @@
                 }
             </div>
        }
-        <div class="row">
-            <div class="col-sm-12">
-                <footer role="contentinfo" class="footer">
-                    <p>
-                        <small>@Messages("footer.copyright")</small>
-                    </p>
-                    <p>
-                        <small>@Messages("footer.prosa")</small>
-                    </p>
-                </footer>
-            </div>
-        </div>
+       @tags.blog_footer(blog, author)
     </div>
 
 </section>

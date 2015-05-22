@@ -24,6 +24,7 @@ libraryDependencies ++= Seq(
   "org.jsoup" % "jsoup" % "1.7.3",
   "com.amazonaws" % "aws-java-sdk" % "1.9.3",
   "com.github.seratch" %% "awscala" % "0.5.+",
+  "com.mohiva" %% "play-html-compressor" % "0.3.1",
   jdbc,
   cache
 )
