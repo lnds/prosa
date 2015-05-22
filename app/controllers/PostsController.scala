@@ -13,13 +13,16 @@ import scala.concurrent.Future
 
 object PostsController extends Controller with DBElement with TokenValidateElement with AuthElement with AuthConfigImpl  {
 
-  def index(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
+  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
 
-    BlogService.findByAlias(alias).map { blog =>
-      val page = PostService.list(blog, draft = false, page = pageNum)
-      val ownerEmail = AuthorService.findById(blog.owner).map { _.email }.orNull
-      Future.successful(Ok(views.html.post_index(blog, blog.author, page, drafts=false, loggedIn, PostAux.avatarUrl(ownerEmail))))
-    } getOrElse Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
+  val indexView = views.html.post_index
+
+  def index(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        Ok(indexView(blog, blog.author, PostService.list(blog, draft = false, page = pageNum), drafts = false, loggedIn, AuthorService.getAvatar(blog.owner)))
+      } getOrElse blogNotFound
+    }
   }
 
   val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
@@ -27,10 +30,11 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
   def drafts(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      val page = PostService.list(blog, draft = true, page = pageNum)
-      Future.successful(Ok(views.html.post_index(blog, blog.author, page, drafts=true, loggedIn, PostAux.avatarUrl(loggedIn.email))))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        Ok(indexView(blog, blog.author, PostService.list(blog, draft = true, page = pageNum), drafts = true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
+      } getOrElse BlogNotFound
+    }
   }
 
   case class PostData(image:Option[String], title:String, subtitle:Option[String], content:String, draft:Boolean, publish:Option[Boolean])
@@ -47,72 +51,82 @@ object PostsController extends Controller with DBElement with TokenValidateEleme
   )
 
   def create(alias:String) = AsyncStack(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      Future.successful(Ok(views.html.posts_new(blog, postForm, loggedIn)))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        Ok(views.html.posts_new(blog, postForm, loggedIn))
+      } getOrElse BlogNotFound
+    }
   }
 
   def save(alias:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      postForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn))),
-        postData => {
-          val post = PostService.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
-          if (postData.draft)
-            Future.successful(Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created")))
-          else
-            Future.successful(Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.created")))
-        }
-      )
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        postForm.bindFromRequest.fold(
+          formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
+          postData => {
+            val post = PostService.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
+            if (postData.draft)
+              Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created"))
+            else
+              Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.created"))
+          }
+        )
+      } getOrElse BlogNotFound
+    }
   }
 
   def edit(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      PostService.findById(id).map { post =>
-        if (post.author != loggedIn.id)
-          Future.successful(Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found")))
-        else {
-          val postData = PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))
-          Future.successful(Ok(views.html.posts_edit(blog, post, postForm.fill(postData), loggedIn)))
-        }
-      } getOrElse Future.successful(PostNotFound(alias))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        PostService.findById(id).map { post =>
+          if (post.author != loggedIn.id)
+            Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
+          else
+            Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
+        } getOrElse PostNotFound(alias)
+      } getOrElse BlogNotFound
+    }
   }
 
   def update(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      PostService.findById(id).map { post =>
-        postForm.bindFromRequest.fold(
-          formWithErrors => Future.successful(BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn))),
-          postData => {
-            PostService.update(post, postData.title, postData.subtitle, postData.content, postData.draft, postData.image, postData.publish.getOrElse(false))
-            Future.successful(Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.saved")))
-          }
-        )
-      } getOrElse Future.successful(PostNotFound(alias))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        PostService.findById(id).map { post =>
+          postForm.bindFromRequest.fold(
+            formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
+            postData => {
+              PostService.update(post, postData.title, postData.subtitle, postData.content, postData.draft, postData.image, postData.publish.getOrElse(false))
+              Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.saved"))
+            }
+          )
+        } getOrElse PostNotFound(alias)
+      } getOrElse BlogNotFound
+    }
   }
 
   def delete(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      PostService.findById(id).map { post =>
-        PostService.delete(post)
-        if (post.draft)
-          Future.successful(Redirect(routes.PostsController.drafts(alias)).flashing("success" -> Messages("posts.success.deleted")))
-        else
-          Future.successful(Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.deleted")))
-      } getOrElse Future.successful(PostNotFound(alias))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        PostService.findById(id).map { post =>
+          PostService.delete(post)
+          if (post.draft)
+            Redirect(routes.PostsController.drafts(alias)).flashing("success" -> Messages("posts.success.deleted"))
+          else
+            Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.deleted"))
+        } getOrElse PostNotFound(alias)
+      } getOrElse BlogNotFound
+    }
   }
 
   def unpublish(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
-    BlogService.findByAlias(alias).map { blog =>
-      PostService.findById(id).map { post =>
-        PostService.update(post.copy(draft = true, published = None))
-        Future.successful(Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished")))
-      } getOrElse Future.successful(PostNotFound(alias))
-    } getOrElse Future.successful(BlogNotFound)
+    Future.successful {
+      BlogService.findByAlias(alias).map { blog =>
+        PostService.findById(id).map { post =>
+          PostService.update(post.copy(draft = true, published = None))
+          Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished"))
+        } getOrElse PostNotFound(alias)
+      } getOrElse BlogNotFound
+    }
   }
 
 }

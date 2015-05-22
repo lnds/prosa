@@ -17,8 +17,7 @@ object PostsGuestController extends Controller with DBElement with OptionalAuthE
   def index(alias:String, pageNum:Int=0) = AsyncStack { implicit request =>
     Future.successful(
       BlogService.findByAlias(alias).filter(blog => blog.status == BlogStatus.PUBLISHED).map { blog =>
-          val ownerEmail = AuthorService.findById(blog.owner).map(_.email).orNull
-          Ok(indexView(blog, blog.author, PostService.list(blog, draft = false, page = pageNum), drafts = false, loggedIn.getOrElse(Guest), PostAux.avatarUrl(ownerEmail)))
+          Ok(indexView(blog, blog.author, PostService.list(blog, draft = false, page = pageNum), drafts = false, loggedIn.getOrElse(Guest), AuthorService.getAvatar(blog.owner)))
       } getOrElse BlogNotFound
     )
   }
