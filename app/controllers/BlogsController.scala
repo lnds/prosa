@@ -2,7 +2,6 @@ package controllers
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models.{BlogStatus, Editor}
-import play.api.Logger
 import play.api.Play.current
 import play.api.data.Form
 import play.api.data.Forms._
@@ -37,8 +36,6 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
     )
   )
 
-
-
   def checkAliasName(alias:String) = alias.matches("[a-zA-Z0-9_-]+")   && alias.length() <= 32
 
   /// this is ugly
@@ -66,9 +63,6 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
   def edit(id:String) = StackAction(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     BlogService.findById(id).map { blog =>
       val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id))
-      Logger.info("form: "+form)
-      Logger.info("form(status)="+form("status").value)
-      Logger.info("form(status)="+form("status").value.getClass)
       val ownerEmail = AuthorService.findById(blog.owner).map { _.email }.orNull
       Ok(views.html.blogs_form(Some(blog), form, loggedIn,  PostAux.avatarUrl(ownerEmail)))
     }.getOrElse (Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
@@ -78,7 +72,6 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
     blogForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, null)),
       blogData => {
-        Logger.info("save gravatar: "+blogData.useAvatarAsLogo)
         BlogService.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo)
         Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
       }
@@ -90,14 +83,11 @@ object BlogsController extends Controller with DBElement with TokenValidateEleme
       blogForm.bindFromRequest.fold(
         formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null)),
         blogData => {
-          Logger.info("save gravatar: "+blogData.useAvatarAsLogo)
-
           BlogService.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))
         }
       )
     }.getOrElse (Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
   }
-
 
 }

@@ -22,12 +22,12 @@ object AuthController extends Controller with LoginLogout with AuthConfigImpl {
 
   def authenticateAuthor(nickname:String, password:String) : Option[Author] = {
     play.api.db.slick.DB.withSession { implicit session =>
-      AuthorService.findByNickname(nickname).map { author =>
+      AuthorService.findByNickname(nickname).flatMap { author =>
         if (BCrypt.checkpw(password, author.password))
           Some(author)
         else
           None
-      }.getOrElse(None)
+      }
     }
   }
 

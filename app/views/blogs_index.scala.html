@@ -1,10 +1,9 @@
-@import services.Page
-@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash)
+@(caption:String,  page:services.Page[Blog], user:Visitor)(implicit flash:Flash)
 @main(caption, null, None, Some(Messages("prosa.canonical.url")), None, None, user) {
     @views.html.blogs_menu(None, user)
 }{
 <ul class="nav navbar-nav navbar-right">
-<li><a class="" href="@routes.BlogsController.create">@Messages("blogs.action.create")</a></li>
+<li><a class="" href="@routes.BlogsController.create()">@Messages("blogs.action.create")</a></li>
 </ul>
 }{
 <div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")">
@@ -49,7 +48,7 @@
             <div class="container-fluid">
                 <div class="row">
                     @Option(page.items).filterNot(_.isEmpty).map { blogs  =>
-                    @for(blog <- blogs) {
+                    @for(blog <- blogs){
                     <div class="col-md-4 ">
                         <div class="thumbnail">
                             @blog.image match {
