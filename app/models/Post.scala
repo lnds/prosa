@@ -11,7 +11,7 @@ case class Post(id:String, blog:String, image:Option[String], title:String, subt
 
 }
 
-class PostEntity(tag:Tag) extends Table[Post](tag, "post") {
+class PostEntity(tag:Tag) extends Table[Post](tag, "post") with HasId {
 
   def id = column[String]("id", O.PrimaryKey, O.NotNull)
   def blog = column[String]("blog", O.Length(45, varying = true))
