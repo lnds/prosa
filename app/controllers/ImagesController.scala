@@ -4,6 +4,7 @@ import java.io.File
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models.Writer
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json._
@@ -32,9 +33,11 @@ object ImagesController extends Controller with DBElement with AuthElement with 
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
+        Logger.info("imageData = "+imageData._1+" , "+imageData._2)
         val img = ImageService.addImage(imageData._1, imageData._2)
         val url = ContentManager.putFile(img.id, tempFile, img.contentType)
         ImageService.update(img.copy(url=Some(url)))
+        Logger.info("upload url = "+url)
         Ok(url)
       }
     )
@@ -49,6 +52,7 @@ object ImagesController extends Controller with DBElement with AuthElement with 
     val img = ImageService.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
     val url = ContentManager.putFile(img.id, tempFile, img.contentType)
     ImageService.update(img.copy(url = Some(url)))
+    Logger.info("editor upload url = "+url)
     Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
   }
 
