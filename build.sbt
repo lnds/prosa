@@ -22,7 +22,7 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.3",
   "com.fasterxml.uuid" % "java-uuid-generator" % "3.1.3",
   "org.jsoup" % "jsoup" % "1.7.3",
-  "com.amazonaws" % "aws-java-sdk" % "1.9.3",
+  "com.amazonaws" % "aws-java-sdk" % "1.10.0",
   "com.github.seratch" %% "awscala" % "0.5.+",
   "com.mohiva" %% "play-html-compressor" % "0.3.1",
   jdbc,

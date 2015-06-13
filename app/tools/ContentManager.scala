@@ -4,7 +4,7 @@ import awscala._
 import awscala.s3.{Bucket, S3}
 import com.amazonaws.services.s3.model.ObjectMetadata
 import controllers.routes
-import play.api.Play
+import play.api.{Logger, Play}
 import play.api.Play.current
 
 
@@ -27,10 +27,12 @@ object ContentManager {
 
 private object AmazonS3 {
 
-  lazy implicit val s3 = S3()
+  lazy implicit val s3 = S3.at(Region.US_EAST_1)
 
   def putFile(cdnurl: String, key: String, file: File, contentType: String) = {
+    Logger.info("@ putFile")
     val bucket: Bucket = s3.bucket("prosa-bucket").getOrElse(s3.createBucket("prosa-bucket"))
+    Logger.info("Bucket = "+bucket)
     val source = scala.io.Source.fromFile(file)(scala.io.Codec.ISO8859)
     val byteArray = source.map(_.toByte).toArray
     val metadata: ObjectMetadata = new ObjectMetadata()
