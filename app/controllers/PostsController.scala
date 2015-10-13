@@ -4,6 +4,7 @@ import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
+import play.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
@@ -92,7 +93,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
     BlogService.findByAlias(alias).flatMap {
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
-        PostService.findById(blog.id).map {
+        PostService.findById(id).map {
           case None => BlogNotFound
           case Some(post) =>
             if (post.author != loggedIn.id)
