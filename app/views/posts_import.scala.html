@@ -1,4 +1,4 @@
-@(blog:Blog, author:Option[Author], user:Visitor)(implicit  token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Blog, author:Option[Author], user:Visitor)(implicit  token:controllers.PreventingCsrfToken, flash:Flash, messages:Messages)
 @main(Messages("posts.import.caption"), blog.description, Some(blog), None, None,  author,user) {
 @views.html.blogs_menu(Some(blog), user)
 }{

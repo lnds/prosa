@@ -1,4 +1,4 @@
-@(blog:Blog, post:Post, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Blog, post:Post, form:Form[PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash,  messages:Messages)
 @main_editor(Messages("posts.action.edit")+" - "+form("title").value.get, user) {
     @views.html.blogs_menu(Some(blog), user)
 }{

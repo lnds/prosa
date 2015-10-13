@@ -11,7 +11,7 @@ import scala.annotation.tailrec
 object PostAux {
 
   def canonical(blog:Blog, post:Post) = {
-    val base = blog.url.getOrElse(Messages("prosa.canonical.url"))
+    val base = blog.url.getOrElse("prosa.canonical.url")
     if (base.endsWith("/"))
       base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
     else
@@ -82,20 +82,20 @@ object PostAux {
   }
 
 
-  lazy val year = Messages("dates.year")
-  lazy val years = Messages("dates.years")
-  lazy val month = Messages("dates.month")
-  lazy val months = Messages("dates.months")
-  lazy val week = Messages("dates.week")
-  lazy val weeks = Messages("dates.weeks")
-  lazy val day = Messages("dates.day")
-  lazy val days = Messages("dates.days")
-  lazy val hour = Messages("dates.hour")
-  lazy val hours = Messages("dates.hours")
-  lazy val minute = Messages("dates.minute")
-  lazy val minutes = Messages("dates.minutes")
-  lazy val second = Messages("dates.second")
-  lazy val seconds = Messages("dates.seconds")
+  lazy val year = "dates.year"
+  lazy val years = "dates.years"
+  lazy val month = "dates.month"
+  lazy val months = "dates.months"
+  lazy val week = "dates.week"
+  lazy val weeks = "dates.weeks"
+  lazy val day = "dates.day"
+  lazy val days = "dates.days"
+  lazy val hour = "dates.hour"
+  lazy val hours = "dates.hours"
+  lazy val minute = "dates.minute"
+  lazy val minutes = "dates.minutes"
+  lazy val second = "dates.second"
+  lazy val seconds = "dates.seconds"
 
   def formatElapsed(date:Option[java.util.Date]) = {
     date match {

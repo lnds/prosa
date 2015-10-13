@@ -1,41 +1,95 @@
 package services
 
-import models.{HasId, Identifiable}
-import play.api.db.slick.Config.driver.simple._
+import models.Identifiable
+import play.api.Play
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import slick.driver.JdbcProfile
+import slick.driver.PostgresDriver.api._
+import slick.lifted.ColumnOrdered
 import tools.IdGenerator
+import scala.concurrent.Future
+
+trait HasId {
+
+  def id: Rep[String]
+}
 
 
-trait DbService[C <: Identifiable] {
+trait HasOwner extends HasId {
+  def owner: Rep[String]
+}
 
-  type EntityType <: Table[C]
+trait DAOService[Entity <: Identifiable, I] {
+
+  def insert(item: Entity): Future[Int]
+  def update(item: Entity): Future[Int]
+  def delete(id: I): Future[Int]
+  def findById(id: I): Future[Option[Entity]]
+  def count: Future[Int]
+  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[Entity]]
+
+}
+
+trait DbService[Entity <: Identifiable] extends DAOService[Entity,String] {
+
+  type EntityType <: Table[Entity]
   type TableType = TableQuery[EntityType]
 
   val items: TableType
 
-  def genId(c: Class[C]) = IdGenerator.nextId(c)
+  def genId(c: Class[Entity]) = IdGenerator.nextId(c)
 
-  def findById(id: String)(implicit s: Session) = {
-    items.filter(e => e.asInstanceOf[HasId].id === id).firstOption
+  protected val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
+
+  override def count : Future[Int] = dbConfig.db.run(items.length.result)
+
+  private def filterQuery(id:String) : Query[EntityType, Entity, Seq] = items.filter(i => i.asInstanceOf[HasId].id === id)
+
+
+  def findById(id: String) : Future[Option[Entity]]= dbConfig.db.run(filterQuery(id).result.headOption)
+
+  override def insert(item: Entity) : Future[Int] = dbConfig.db.run(items += item)
+
+  override def update(item: Entity) : Future[Int] = dbConfig.db.run(filterQuery(item.id).update(item))
+
+  override def delete(id:String) : Future[Int] = dbConfig.db.run(filterQuery(id).delete)
+
+  override def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[Entity]] = {
+    val offset = pageSize * page
+    val query = (for {item <- items} yield item).drop(offset).take(pageSize)
+    val totalRows = count
+    val result = dbConfig.db.run(query.result)
+    result flatMap (items => totalRows map (rows => Page(items, page, offset, rows, pageSize)))
   }
 
-  def count()(implicit s: Session): Int = Query(items.length).first
+}
 
-  def insert(item: EntityType#TableElementType)(implicit s: Session) {
-    items.insert(item)
 
+trait EntityService[T <: Identifiable] extends DbService[T] {
+
+  def queryFilter(qry: String, c: EntityType): Rep[Boolean]
+
+  def queryOrder(c: EntityType): ColumnOrdered[String]
+
+  def countQuery(qryStr: String): Future[Int] =
+    dbConfig.db.run(items.filter(c => queryFilter(qryStr, c)).length.result)
+
+  def pageQuery(page: Int, offset: Int, pageSize: Int, filter: Option[String]): Query[EntityType, T, Seq] = {
+    (if (filter.isEmpty) for {i <- items} yield i
+    else for {i <- items if queryFilter(filter.get, i)} yield i)
+      .sortBy(queryOrder)
+      .drop(offset)
+      .take(pageSize)
   }
 
-  def update(item: EntityType#TableElementType)(implicit s: Session) {
-    items.filter(e => e.asInstanceOf[HasId].id === item.asInstanceOf[Identifiable].id).update(item)
-  }
 
-
-  def delete(item: EntityType#TableElementType)(implicit s: Session) {
-    items.filter(e => e.asInstanceOf[HasId].id === item.asInstanceOf[Identifiable].id).delete
-  }
-
-  def delete(id: String)(implicit s: Session) {
-    items.filter(e => e.asInstanceOf[HasId].id === id).delete
+  def search(queryStr: String, page: Int = 0, pageSize: Int = 50)(implicit s: Session): Future[Page[T]] = {
+    val offset = pageSize * page
+    val query = pageQuery(page, offset, pageSize, Some(queryStr))
+    val totalRows = countQuery(queryStr)
+    val result = dbConfig.db.run(query.result)
+    result flatMap (items => totalRows map (rows => Page(items, page, offset, rows, pageSize)))
   }
 
 }

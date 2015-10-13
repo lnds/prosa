@@ -1,15 +1,18 @@
 package controllers
 
+import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.AuthElement
 import models.Writer
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
 import services.AuthorService
 
-object AuthorsController extends Controller with DBElement  with TokenValidateElement with AuthElement with AuthConfigImpl {
+class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
   val changePasswordForm = Form(
     tuple(

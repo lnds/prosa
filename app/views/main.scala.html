@@ -1,4 +1,4 @@
-@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)(implicit  messages:Messages)
 <!DOCTYPE html>
 <html class="no-js" lang="es">
 <head>

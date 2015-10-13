@@ -1,4 +1,4 @@
-@(blog:Option[Blog], form: Form[BlogsController.BlogData], user:Visitor, avatarUrl:String)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:String)(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash)
 @main("Blog", "blog", None, None, None, None, user){
 @views.html.blogs_menu(None, user)
 }{

@@ -1,37 +1,68 @@
 package services
 
-import models.{Author, AuthorEntity}
+import models.Author
 import org.mindrot.jbcrypt.BCrypt
-import play.api.db.slick.Config.driver.simple._
+import slick.driver.PostgresDriver.api._
 import tools.{PostAux, IdGenerator}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
  * AuthorService
  * Created by ediaz on 21-05-15.
  */
+
+
+class AuthorEntity(tag:Tag) extends Table[Author](tag, "author") with HasId {
+
+  def id = column[String]("id", O.PrimaryKey)
+  def nickname = column[String]("nickname")
+  def email = column[String]("email")
+  def password = column[String]("password")
+  def permission = column[String]("permission")
+  def fullname = column[Option[String]]("fullname")
+  def bio = column[Option[String]]("bio")
+
+  def * = (id,nickname,email,password,permission,fullname,bio) <> (Author.tupled, Author.unapply)
+
+}
+
 object AuthorService extends EntityService[Author]  {
 
   type EntityType = AuthorEntity
   val items = TableQuery[AuthorEntity]
   lazy val authors = items
 
-  def findByNickname(nickname: String)(implicit  s:Session) = authors.filter(_.nickname === nickname).firstOption
+  def authenticate(username: String, password:String) =
+    findByNickname(username).map {
+      case None => None
+      case Some(a) =>
+        if (BCrypt.checkpw(password, a.password))
+          Some(a)
+        else
+          None
+    }
+
+
+  def findByNickname(nickname: String) : Future[Option[Author]] =
+    dbConfig.db.run(authors.filter(a => a.nickname === nickname).result.headOption)
 
   def create(nickname:String, email:String, password:String, permission:String)(implicit  s:Session)  = {
     val pass = BCrypt.hashpw(password, BCrypt.gensalt())
     insert(Author(IdGenerator.nextId(classOf[Author]), nickname, email, pass, permission, None, None))
   }
 
-  def changePassword(author:Author, newPassword:String)(implicit s:Session) {
+  def changePassword(author:Author, newPassword:String) {
     update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
   }
 
-  def getAvatar(authorId:String)(implicit  s:Session)  =
-    findById(authorId).map { author =>
-      PostAux.avatarUrl(author.email)
-    }.orNull
+  def getAvatar(authorId:String)  =
+    findById(authorId).map {
+      case Some(a) => PostAux.avatarUrl(a.email)
+      case None => null
+    }
 
-  def queryFilter(qry: String, c: AuthorEntity) = c.nickname like "%" + qry + "%"
+  override def queryFilter(qry: String, c: AuthorEntity) = c.nickname like "%" + qry + "%"
 
-  def queryOrder(c: EntityType) = c.nickname.asc
+  override def queryOrder(c: EntityType) = c.nickname.asc
 }
