@@ -1,6 +1,5 @@
 package models
 
-import services.AuthorService
 import slick.driver.PostgresDriver.api._
 
 
