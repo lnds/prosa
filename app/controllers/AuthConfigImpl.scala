@@ -5,8 +5,6 @@ import models._
 import play.api.Play.current
 import play.api.mvc.Results._
 import play.api.mvc._
-import services.AuthorService
-
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.{ClassTag, classTag}
 
@@ -21,7 +19,7 @@ trait AuthConfigImpl extends AuthConfig {
   val sessionTimeoutInSeconds = 3600
 
   def resolveUser(id:Id)(implicit ctx:ExecutionContext) : Future[Option[User]] =
-        AuthorService.findById(id)
+        Authors.findById(id)
 
   def loginSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =  {
     val uri = request.session.get("access_uri").getOrElse(routes.BlogsGuestController.index().url.toString)

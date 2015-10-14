@@ -3,14 +3,13 @@ package controllers
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
-import models.Writer
+import models.{Authors, Writer}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
-import services.AuthorService
 
 class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
@@ -38,7 +37,7 @@ class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvide
         if (!BCrypt.checkpw(password, loggedIn.password))
           BadRequest(views.html.change_password(changePasswordForm.withError("password", "main.error.bad_current_password")))
         else {
-          AuthorService.changePassword(loggedIn, new_password)
+          Authors.changePassword(loggedIn, new_password)
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> "main.success.password_changed")
         }
       })

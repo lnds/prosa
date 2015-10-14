@@ -1,6 +1,5 @@
-package services
+package models
 
-import models.Identifiable
 import play.api.Play
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -8,6 +7,7 @@ import slick.driver.JdbcProfile
 import slick.driver.PostgresDriver.api._
 import slick.lifted.ColumnOrdered
 import tools.IdGenerator
+
 import scala.concurrent.Future
 
 trait HasId {
@@ -20,6 +20,13 @@ trait HasOwner extends HasId {
   def owner: Rep[String]
 }
 
+
+trait Identifiable {
+
+  val id: String
+
+}
+
 trait DAOService[Entity <: Identifiable, I] {
 
   def insert(item: Entity): Future[Int]
@@ -30,6 +37,7 @@ trait DAOService[Entity <: Identifiable, I] {
   def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[Entity]]
 
 }
+
 
 trait DbService[Entity <: Identifiable] extends DAOService[Entity,String] {
 

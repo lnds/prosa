@@ -1,9 +1,9 @@
-package services
+package models
 
-import models.Author
 import org.mindrot.jbcrypt.BCrypt
 import slick.driver.PostgresDriver.api._
-import tools.{PostAux, IdGenerator}
+import tools.{IdGenerator, PostAux}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -13,7 +13,25 @@ import scala.concurrent.Future
  */
 
 
-class AuthorEntity(tag:Tag) extends Table[Author](tag, "author") with HasId {
+sealed trait Visitor
+
+case object Guest extends Visitor
+
+case class Author(
+                   id:String,
+                   nickname:String,
+                   email:String,
+                   password:String,
+                   permission: String,
+                   fullname:Option[String],
+                   bio:Option[String]
+                 ) extends Visitor with Identifiable
+
+
+
+
+
+class Authors(tag:Tag) extends Table[Author](tag, "author") with HasId {
 
   def id = column[String]("id", O.PrimaryKey)
   def nickname = column[String]("nickname")
@@ -27,10 +45,10 @@ class AuthorEntity(tag:Tag) extends Table[Author](tag, "author") with HasId {
 
 }
 
-object AuthorService extends EntityService[Author]  {
+object Authors extends EntityService[Author]  {
 
-  type EntityType = AuthorEntity
-  val items = TableQuery[AuthorEntity]
+  type EntityType = Authors
+  val items = TableQuery[Authors]
   lazy val authors = items
 
   def authenticate(username: String, password:String) =
@@ -62,7 +80,7 @@ object AuthorService extends EntityService[Author]  {
       case None => null
     }
 
-  override def queryFilter(qry: String, c: AuthorEntity) = c.nickname like "%" + qry + "%"
+  override def queryFilter(qry: String, c: Authors) = c.nickname like "%" + qry + "%"
 
   override def queryOrder(c: EntityType) = c.nickname.asc
 }

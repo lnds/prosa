@@ -1,12 +1,12 @@
-package services
+package models
 
 import slick.driver.PostgresDriver.api._
-
-import models.{Image}
 import tools.IdGenerator
 
+case class Image(id:String, filename:String, contentType:String, url:Option[String]) extends Identifiable
 
-class ImageEntity(tag:Tag) extends Table[Image](tag, "image") with HasId {
+
+class Images(tag:Tag) extends Table[Image](tag, "image") with HasId {
 
   def id = column[String]("id", O.PrimaryKey)
   def filename = column[String]("filename")
@@ -16,10 +16,10 @@ class ImageEntity(tag:Tag) extends Table[Image](tag, "image") with HasId {
   def * = (id,filename,contentType,url) <> (Image.tupled, Image.unapply)
 }
 
-object ImageService extends DbService[Image] {
+object Images extends DbService[Image] {
 
-  type EntityType = ImageEntity
-  val items = TableQuery[ImageEntity]
+  type EntityType = Images
+  val items = TableQuery[Images]
   lazy val images = items
 
   def addImage(filename:String, contentType:String)= {

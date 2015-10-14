@@ -1,13 +1,41 @@
-package services
+package models
 
-import models._
-import tools.IdGenerator
 import slick.driver.PostgresDriver.api._
+import tools.IdGenerator
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-class BlogEntity(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
+object BlogStatus extends Enumeration {
+
+  val CREATED = Value(0, "blog.status.created")
+  val PUBLISHED = Value(1, "blog.status.published")
+  val INACTIVE = Value(-1, "blog.status.published")// <- reserved for administator
+
+  implicit val BlogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
+    s => s.id,
+    i => BlogStatus.apply(i)
+  )
+}
+
+case class Blog(
+                 id:String,
+                 name:String,
+                 alias:String,
+                 description:String,
+                 image:Option[String],
+                 logo:Option[String],
+                 url:Option[String],
+                 useAvatarAsLogo:Option[Boolean],
+                 disqus:Option[String],
+                 googleAnalytics:Option[String],
+                 status:BlogStatus.Value, //
+                 owner:String
+               ) extends Identifiable
+
+
+class Blogs(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
 
   def id = column[String]("id", O.PrimaryKey)
   def name = column[String]("name")
@@ -26,11 +54,11 @@ class BlogEntity(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
 }
 
 
-object BlogService extends DbService[Blog]{
+object Blogs extends DbService[Blog]{
 
-  type EntityType = BlogEntity
+  type EntityType = Blogs
 
-  val items = TableQuery[BlogEntity]
+  val items = TableQuery[Blogs]
 
   lazy val blogs = items
 

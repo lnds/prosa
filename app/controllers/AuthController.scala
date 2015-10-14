@@ -3,12 +3,12 @@ package controllers
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.LoginLogout
+import models.Authors
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, Controller}
-import services.AuthorService
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -34,7 +34,7 @@ class AuthController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: 
     loginForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.login(formWithErrors))),
       data =>
-        AuthorService.authenticate(data.username, data.password).flatMap {
+        Authors.authenticate(data.username, data.password).flatMap {
           case Some(user) => gotoLoginSucceeded(user.id)
           case None => Future.successful(BadRequest(views.html.login(loginForm.fill(data).withGlobalError("user.not_authenticated"))))
         }

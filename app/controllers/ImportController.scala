@@ -3,13 +3,12 @@ package controllers
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
-import models.Editor
+import models.{Posts, Blogs, Authors, Editor}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
-import services.{AuthorService, BlogService, PostService}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -19,9 +18,9 @@ class ImportController @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
 
   def importPosts(alias:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    Blogs.findByAlias(alias).flatMap {
       case Some(blog) =>
-        AuthorService.findById(blog.owner).flatMap { author =>
+        Authors.findById(blog.owner).flatMap { author =>
           Future.successful(Ok(views.html.posts_import(blog, author, loggedIn)))
         }
       case None =>
@@ -32,16 +31,16 @@ class ImportController @Inject() (val messagesApi: MessagesApi, dbConfigProvider
   val fileFormatForm = Form(single("file_format" -> nonEmptyText))
 
   def loadPosts(alias:String) = AsyncStack(parse.multipartFormData, AuthorityKey -> Editor) { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    Blogs.findByAlias(alias).flatMap {
       case Some(blog) =>
         request.body.file("file").map { file =>
           fileFormatForm.bindFromRequest.fold(
             formWithErrors =>
-              AuthorService.findById(blog.owner).flatMap { author =>
+              Authors.findById(blog.owner).flatMap { author =>
                 Future.successful(BadRequest(views.html.posts_import(blog, author, loggedIn)))
               },
             formOk => {
-              PostService.importPosts(loggedIn, blog, file.ref.file, formOk)
+              Posts.importPosts(loggedIn, blog, file.ref.file, formOk)
               Future.successful(Redirect(routes.PostsController.index(alias)).flashing("success" -> Messages("posts.success.imported")))
             }
           )

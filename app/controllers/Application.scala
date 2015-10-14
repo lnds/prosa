@@ -2,11 +2,10 @@ package controllers
 
 import javax.inject.Inject
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Post, Guest}
+import models.{Posts, Post, Guest}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.db.slick.DatabaseConfigProvider
-import services.PostService
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -15,7 +14,7 @@ class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:Databa
   val MAX_POSTS = 10
 
   def index = AsyncStack { implicit request =>
-    PostService.last(MAX_POSTS).flatMap { posts =>
+    Posts.last(MAX_POSTS).flatMap { posts =>
       Future.successful(Ok(views.html.index("Prosa", posts, loggedIn.getOrElse(Guest))))
     }
   }

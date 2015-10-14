@@ -4,7 +4,7 @@ import java.io.File
 import javax.inject.Inject
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
-import models.Writer
+import models.{Images, Writer}
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
@@ -12,7 +12,6 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.libs.json._
 import play.api.mvc.Controller
-import services.ImageService
 import tools.ContentManager
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -39,9 +38,9 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
       formWithErrors => NotFound,
       imageData => {
         Logger.info("imageData = " + imageData._1 + " , " + imageData._2)
-        val img = ImageService.addImage(imageData._1, imageData._2)
+        val img = Images.addImage(imageData._1, imageData._2)
         val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-        ImageService.update(img.copy(url = Some(url)))
+        Images.update(img.copy(url = Some(url)))
         Logger.info("upload url = " + url)
         Ok(url)
       }
@@ -54,9 +53,9 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
     val tempFile = File.createTempFile("image_", ".img")
     val image = request.body.files.head
     image.ref.moveTo(tempFile, replace = true)
-    val img = ImageService.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
+    val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
     val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-    ImageService.update(img.copy(url = Some(url)))
+    Images.update(img.copy(url = Some(url)))
     Logger.info("editor upload url = " + url)
     Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
   }
@@ -71,7 +70,7 @@ class ContentController @Inject()(val messagesApi: MessagesApi, dbConfigProvider
    */
   def getImage(id: String) = AsyncStack {
     implicit request =>
-      ImageService.findById(id).flatMap {
+      Images.findById(id).flatMap {
         case Some(img) =>
           val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
           val byteArray = source.map(_.toByte).toArray

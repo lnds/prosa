@@ -2,13 +2,12 @@ package controllers
 
 import javax.inject.Inject
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{BlogStatus, Editor}
+import models.{Blogs, Authors, BlogStatus, Editor}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
-import services.{AuthorService, BlogService}
 import tools.PostAux
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -38,7 +37,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   def checkAliasName(alias:String) = alias.matches("[a-zA-Z0-9_-]+")   && alias.length() <= 32
 
   def create = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    AuthorService.findById(loggedIn.id).flatMap {
+    Authors.findById(loggedIn.id).flatMap {
       case Some(author) =>
         Future.successful(Ok(views.html.blogs_form(None, blogForm, loggedIn, PostAux.avatarUrl(author.email))))
       case None =>
@@ -47,12 +46,12 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def edit(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findById(id).flatMap {
+    Blogs.findById(id).flatMap {
       case None =>
         Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
       case Some(blog) =>
         val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id))
-        AuthorService.findById(blog.owner).map {
+        Authors.findById(blog.owner).map {
           case None =>
             Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
           case Some(owner) =>
@@ -65,9 +64,9 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
     blogForm.bindFromRequest.fold(
       formWithErrors => Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, null))),
       blogData =>
-        BlogService.findByAlias(blogData.alias).flatMap {
+        Blogs.findByAlias(blogData.alias).flatMap {
           case None =>
-            BlogService.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo).map { i =>
+            Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo).map { i =>
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
           case Some(blog) =>
@@ -77,12 +76,12 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def update(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findById(id).flatMap {
+    Blogs.findById(id).flatMap {
       case Some(blog) =>
       blogForm.bindFromRequest.fold(
         formWithErrors => Future.successful(BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null))),
         blogData => {
-          BlogService.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
+          Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
           Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated")))
         }
       )

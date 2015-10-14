@@ -6,7 +6,6 @@ import models._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.mvc.Controller
-import services.{AuthorService, BlogService, PostService}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -19,12 +18,12 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
   val indexView = views.html.post_index
 
   def index(alias:String, pageNum:Int=0) = AsyncStack { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    Blogs.findByAlias(alias).flatMap {
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
-        AuthorService.findById(blog.owner).flatMap { author =>
-          AuthorService.getAvatar(blog.owner).flatMap { avatar =>
-            PostService.listForBlog(blog, draft = false, page = pageNum).map { list =>
+        Authors.findById(blog.owner).flatMap { author =>
+          Authors.getAvatar(blog.owner).flatMap { avatar =>
+            Posts.listForBlog(blog, draft = false, page = pageNum).map { list =>
               Ok(indexView(blog, author, list, drafts = false, loggedIn.getOrElse(Guest), avatar))
             }
           }
@@ -33,13 +32,13 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
   }
 
   def view(alias:String, year:Int, month:Int, day:Int, slug:String) = AsyncStack { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    Blogs.findByAlias(alias).flatMap {
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
-        PostService.find(blog, slug, year, month, day).flatMap {
+        Posts.find(blog, slug, year, month, day).flatMap {
           case None => Future.successful(PostNotFound(alias))
           case Some(post) =>
-            AuthorService.findById(blog.owner).map { author =>
+            Authors.findById(blog.owner).map { author =>
               Ok(views.html.posts_view(blog, author, post, loggedIn.getOrElse(Guest)))
             }
         }
@@ -47,10 +46,10 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
   }
 
   def atom(alias:String) = AsyncStack { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    Blogs.findByAlias(alias).flatMap {
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
-        PostService.last(blog, 10).map { list =>
+        Posts.last(blog, 10).map { list =>
           Ok(views.xml.posts_atom(blog, list))
         }
     }
