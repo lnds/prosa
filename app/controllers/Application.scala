@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{Posts, Post, Guest}
+import models.{Posts, Guest}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.Controller
 import play.api.db.slick.DatabaseConfigProvider
@@ -14,8 +14,8 @@ class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:Databa
   val MAX_POSTS = 10
 
   def index = AsyncStack { implicit request =>
-    Posts.last(MAX_POSTS).flatMap { posts =>
-      Future.successful(Ok(views.html.index("Prosa", posts, loggedIn.getOrElse(Guest))))
+    Posts.last(MAX_POSTS).map { posts =>
+      Ok(views.html.index("Prosa", posts, loggedIn.getOrElse(Guest)))
     }
   }
 

@@ -70,14 +70,14 @@ class ContentController @Inject()(val messagesApi: MessagesApi, dbConfigProvider
    */
   def getImage(id: String) = AsyncStack {
     implicit request =>
-      Images.findById(id).flatMap {
+      Images.findById(id).map {
         case Some(img) =>
           val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
           val byteArray = source.map(_.toByte).toArray
           source.close()
-          Future.successful(Ok(byteArray).as(img.contentType))
+          Ok(byteArray).as(img.contentType)
         case None =>
-          Future.successful(NotFound)
+          NotFound
       }
   }
 

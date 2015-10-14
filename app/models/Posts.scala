@@ -18,7 +18,7 @@ import org.joda.time.DateTime
 
 case class Post(id:String, blog:String, image:Option[String], title:String, subtitle:Option[String], content:String, slug:Option[String], draft:Boolean, created:Option[Timestamp], published:Option[Timestamp], author:String) extends Identifiable {
 
-  def publishedDate() = new DateTime(published.getOrElse(0))
+  def publishedDate() = published.map { ts => new DateTime(ts) }.getOrElse(new DateTime() )
 
 }
 
@@ -79,7 +79,7 @@ object Posts extends DbService[Post]{
     dbConfig.db.run(query.result.headOption)
   }
 
-  def create(author:Author, blog:Blog,  title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String]) = {
+  def create(author:Author, blog:Blog,  title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String]) : Future[Post] = {
     def published = if (draft) None else Some(new Timestamp(DateTime.now.getMillis))
     def slug = if (draft) None else Some(tools.PostAux.slugify(title))
     def post = Post(id=IdGenerator.nextId(classOf[Post]), blog=blog.id, title=title, subtitle=subtitle,
@@ -87,8 +87,7 @@ object Posts extends DbService[Post]{
                     content=content,
                     created=Some(new Timestamp(DateTime.now.getMillis)),
                     published=published,slug=slug,draft=draft )
-    insert(post)
-    post
+    insert(post).map { i => post }
   }
 
   def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean) {

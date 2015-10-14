@@ -8,7 +8,20 @@ version := conf.getString("app.version")
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.11.7"
+
+scalacOptions ++= Seq(
+  // Emit warning for usages of deprecated APIs
+  "-deprecation"
+  // Emit warning for usages of features that should be imported explicitly
+  , "-feature"
+  // Enable additional warnings where generated code depends on assumptions
+  , "-unchecked"
+  // Fail the compilation if there are any warnings
+  , "-Xfatal-warnings"
+  // Enable or disable specific warnings
+  , "-Xlint:_"
+)
 
 libraryDependencies ++= Seq(
   jdbc,
@@ -25,8 +38,8 @@ libraryDependencies ++= Seq(
   "joda-time" % "joda-time" % "2.7",
   "org.joda" % "joda-convert" % "1.7",
   "com.github.tototoshi" %% "slick-joda-mapper" % "2.0.0",
-  "jp.t2v" %% "play2-auth"      % "0.14.0",
-  "jp.t2v" %% "play2-auth-test" % "0.14.0" % "test",
+  "jp.t2v" %% "play2-auth"      % "0.14.1",
+  "jp.t2v" %% "play2-auth-test" % "0.14.1" % "test",
   "com.andersen-gott" %% "scravatar" % "1.0.3",
   "org.jsoup" % "jsoup" % "1.8.3",
   "com.amazonaws" % "aws-java-sdk" % "1.10.0",
@@ -36,7 +49,8 @@ libraryDependencies ++= Seq(
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
-routesGenerator := InjectedRoutesGenerator
-
 incOptions := incOptions.value.withNameHashing(true)
 
+pipelineStages := Seq(rjs, digest, gzip)
+
+routesGenerator := InjectedRoutesGenerator

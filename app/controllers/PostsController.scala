@@ -76,11 +76,12 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
         postForm.bindFromRequest.fold(
           formWithErrors => Future.successful(BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn))),
           postData => {
-            val post = Posts.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image)
-            if (postData.draft)
-              Future.successful(Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created")))
-            else
-              Future.successful(Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.created")))
+            Posts.create(loggedIn, blog, postData.title, postData.subtitle, postData.content, postData.draft, postData.image).map { post =>
+              if (post.draft)
+                Redirect(routes.PostsController.drafts(blog.alias)).flashing("success" -> Messages("posts.success.created"))
+              else
+                Redirect(routes.PostsGuestController.index(alias)).flashing("success" -> Messages("posts.success.created"))
+            }
           })
     }
   }

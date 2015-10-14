@@ -2,7 +2,6 @@ package controllers
 
 import jp.t2v.lab.play2.auth.{CookieTokenAccessor, AuthConfig}
 import models._
-import play.api.Play.current
 import play.api.mvc.Results._
 import play.api.mvc._
 import scala.concurrent.{ExecutionContext, Future}

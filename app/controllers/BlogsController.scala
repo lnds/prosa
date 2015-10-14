@@ -37,11 +37,11 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   def checkAliasName(alias:String) = alias.matches("[a-zA-Z0-9_-]+")   && alias.length() <= 32
 
   def create = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Authors.findById(loggedIn.id).flatMap {
+    Authors.findById(loggedIn.id).map {
       case Some(author) =>
-        Future.successful(Ok(views.html.blogs_form(None, blogForm, loggedIn, PostAux.avatarUrl(author.email))))
+        Ok(views.html.blogs_form(None, blogForm, loggedIn, PostAux.avatarUrl(author.email)))
       case None =>
-        Future.successful(Redirect(routes.BlogsGuestController.index()))
+        Redirect(routes.BlogsGuestController.index())
     }
   }
 
@@ -76,17 +76,17 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def update(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Blogs.findById(id).flatMap {
+    Blogs.findById(id).map {
       case Some(blog) =>
-      blogForm.bindFromRequest.fold(
-        formWithErrors => Future.successful(BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null))),
-        blogData => {
-          Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
-          Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated")))
-        }
-      )
+        blogForm.bindFromRequest.fold(
+          formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null)),
+          blogData => {
+            Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
+            Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))
+          }
+        )
       case None =>
-        Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
+        Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
     }
   }
 

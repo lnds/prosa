@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.AuthElement
 import models.{Authors, Writer}
 import org.mindrot.jbcrypt.BCrypt
@@ -24,12 +23,12 @@ class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvide
     )
   )
 
-  def changePassword = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
+  def changePassword() = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
     Ok(views.html.change_password(changePasswordForm))
   }
 
 
-  def savePassword = StackAction(AuthorityKey -> Writer) { implicit request =>
+  def savePassword() = StackAction(AuthorityKey -> Writer) { implicit request =>
     changePasswordForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.change_password(formWithErrors)),
       formOk => {
