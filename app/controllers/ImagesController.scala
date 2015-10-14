@@ -18,7 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 
-class ImagesController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
+class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
 
   val createForm = Form(
     tuple(
@@ -32,39 +32,39 @@ class ImagesController @Inject() (val messagesApi: MessagesApi, dbConfigProvider
     val image =
       request.body.file("file").map { file =>
         val contentType = file.contentType.getOrElse("")
-        file.ref.moveTo(tempFile, replace=true)
+        file.ref.moveTo(tempFile, replace = true)
         Map("filename" -> tempFile.getAbsolutePath, "contentType" -> contentType)
       }
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
-        Logger.info("imageData = "+imageData._1+" , "+imageData._2)
+        Logger.info("imageData = " + imageData._1 + " , " + imageData._2)
         val img = ImageService.addImage(imageData._1, imageData._2)
         val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-        ImageService.update(img.copy(url=Some(url)))
-        Logger.info("upload url = "+url)
+        ImageService.update(img.copy(url = Some(url)))
+        Logger.info("upload url = " + url)
         Ok(url)
       }
     )
   }
 
-  case class ImageFile(url:String)
+  case class ImageFile(url: String)
 
   def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     val tempFile = File.createTempFile("image_", ".img")
     val image = request.body.files.head
-    image.ref.moveTo(tempFile, replace=true)
+    image.ref.moveTo(tempFile, replace = true)
     val img = ImageService.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
     val url = ContentManager.putFile(img.id, tempFile, img.contentType)
     ImageService.update(img.copy(url = Some(url)))
-    Logger.info("editor upload url = "+url)
+    Logger.info("editor upload url = " + url)
     Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
   }
 
 
 }
 
-class ContentController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with StackableController {
+class ContentController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with StackableController {
 
   /**
    * This method get temporal file, you should configure a CDN in application.conf

@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.db.slick.DatabaseConfigProvider
@@ -14,8 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
   val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
-  def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
+  def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
   val indexView = views.html.post_index
 
