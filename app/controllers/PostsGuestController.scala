@@ -8,13 +8,14 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.mvc.Controller
 import services.{AuthorService, BlogService, PostService}
-import tools.PostAux
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
   val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+  def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
+
 
   val indexView = views.html.post_index
 
@@ -37,7 +38,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
         PostService.find(blog, slug, year, month, day).flatMap {
-          case None => Future.successful(NotFound)
+          case None => Future.successful(PostNotFound(alias))
           case Some(post) =>
             AuthorService.findById(blog.owner).map { author =>
               Ok(views.html.posts_view(blog, author, post, loggedIn.getOrElse(Guest)))

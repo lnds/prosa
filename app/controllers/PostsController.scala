@@ -4,7 +4,6 @@ import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
-import play.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
@@ -19,38 +18,36 @@ case class PostData(image:Option[String], title:String, subtitle:Option[String],
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller  with TokenValidateElement with AuthElement with AuthConfigImpl  with I18nSupport {
 
-  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
-
-  val indexView = views.html.post_index
-
-  def index(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
-      BlogService.findByAlias(alias).flatMap {
-        case Some(blog) =>
-          AuthorService.findById(blog.owner).flatMap { author =>
-            AuthorService.getAvatar(blog.owner).flatMap { avatar =>
-              PostService.listForBlog(blog, draft = false, page = pageNum).map { list =>
-                Ok(indexView(blog, author, list, drafts = false, loggedIn, avatar))
-              }
-            }
-          }
-        case None => Future.successful(blogNotFound)
-      }
-  }
-
   val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
 
   def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
-  def drafts(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
-      BlogService.findByAlias(alias).flatMap {
-        case Some(blog) =>
-          AuthorService.findById(blog.owner).flatMap { author =>
-            PostService.listForBlog(blog, draft = true, page = pageNum).map { list =>
-             Ok(indexView(blog, author, list, drafts = true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
+  val indexView = views.html.post_index
+
+  def index(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
+    BlogService.findByAlias(alias).flatMap {
+      case None => Future.successful(BlogNotFound)
+      case Some(blog) =>
+        AuthorService.findById(blog.owner).flatMap { author =>
+          AuthorService.getAvatar(blog.owner).flatMap { avatar =>
+            PostService.listForBlog(blog, draft = false, page = pageNum).map { list =>
+              Ok(indexView(blog, author, list, drafts = false, loggedIn, avatar))
             }
           }
-        case None =>  Future.successful(BlogNotFound)
-      }
+        }
+    }
+  }
+
+  def drafts(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
+    BlogService.findByAlias(alias).flatMap {
+      case None => Future.successful(BlogNotFound)
+      case Some(blog) =>
+        AuthorService.findById(blog.owner).flatMap { author =>
+          PostService.listForBlog(blog, draft = true, page = pageNum).map { list =>
+            Ok(indexView(blog, author, list, drafts = true, loggedIn, PostAux.avatarUrl(loggedIn.email)))
+          }
+        }
+    }
   }
 
 
@@ -66,10 +63,10 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
   )
 
   def create(alias:String) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
-    BlogService.findByAlias(alias).flatMap {
+    BlogService.findByAlias(alias).map {
+      case None => BlogNotFound
       case Some(blog) =>
-        Future.successful(Ok(views.html.posts_new(blog, postForm, loggedIn)))
-      case None => Future.successful(BlogNotFound)
+        Ok(views.html.posts_new(blog, postForm, loggedIn))
     }
   }
 
@@ -97,7 +94,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
           case None => BlogNotFound
           case Some(post) =>
             if (post.author != loggedIn.id)
-              Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
+              PostNotFound(alias)
             else
              Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
         }
@@ -109,7 +106,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
         PostService.findById(id).map {
-          case None => BlogNotFound
+          case None => PostNotFound(alias)
           case Some(post) =>
             postForm.bindFromRequest.fold(
               formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
@@ -127,7 +124,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
         case None => Future.successful(BlogNotFound)
         case Some(blog) =>
           PostService.findById(id).map {
-            case None => BlogNotFound
+            case None => PostNotFound(alias)
             case Some(post) =>
               PostService.delete(post.id)
               if (post.draft)
@@ -143,7 +140,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
       case None => Future.successful(BlogNotFound)
       case Some(blog) =>
         PostService.findById(id).map {
-          case None => BlogNotFound
+          case None => PostNotFound(alias)
           case Some(post) =>
             PostService.update(post.copy(draft = true, published = None))
             Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished"))

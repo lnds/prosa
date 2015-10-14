@@ -48,16 +48,16 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
 
   def edit(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     BlogService.findById(id).flatMap {
+      case None =>
+        Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
       case Some(blog) =>
         val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id))
         AuthorService.findById(blog.owner).map {
+          case None =>
+            Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
           case Some(owner) =>
             Ok(views.html.blogs_form(Some(blog), form, loggedIn,  PostAux.avatarUrl(owner.email)))
-          case None =>
-           Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
         }
-      case None =>
-        Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
     }
   }
 
@@ -67,8 +67,9 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       blogData =>
         BlogService.findByAlias(blogData.alias).flatMap {
           case None =>
-            BlogService.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo)
-            Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created")))
+            BlogService.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo).map { i =>
+              Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
+            }
           case Some(blog) =>
             Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, null)))
         }
