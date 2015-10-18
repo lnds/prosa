@@ -23,6 +23,32 @@ scalacOptions ++= Seq(
   , "-Xlint:_"
 )
 
+scalacOptions ++= Seq(
+  // Do not adapt an argument list to match the receiver
+  "-Yno-adapted-args"
+  // Warn when dead code is identified
+  , "-Ywarn-dead-code"
+  // Warn when local and private vals, vars, defs, and types are are unused
+  , "-Ywarn-unused"
+  // Warn when imports are unused
+  //, "-Ywarn-unused-import"
+  // Warn when non-Unit expression results are unused
+  //, "-Ywarn-value-discard"
+)
+
+scalacOptions ++= Seq(
+  // Specify character encoding used by source files
+  "-encoding", "UTF-8"
+  // Target platform for object files
+  , "-target:jvm-1.8"
+  // Turn on future language features
+  , "-Xfuture"
+  // Compile without importing scala.*, java.lang.*, or Predef
+  //, "-Yno-imports"
+  // Compile without importing Predef
+  //, "-Yno-predef"
+)
+
 libraryDependencies ++= Seq(
   jdbc,
   cache,

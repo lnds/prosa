@@ -70,7 +70,7 @@ object Authors extends EntityService[Author]  {
     insert(Author(IdGenerator.nextId(classOf[Author]), nickname, email, pass, permission, None, None))
   }
 
-  def changePassword(author:Author, newPassword:String) {
+  def changePassword(author:Author, newPassword:String) : Future[Int] = {
     update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
   }
 

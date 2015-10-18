@@ -90,19 +90,22 @@ object Posts extends DbService[Post]{
     insert(post).map { i => post }
   }
 
-  def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean) {
+  def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean) : Future[Post] = {
     def published = if (publish)  Some(post.published.getOrElse(new Timestamp(DateTime.now.getMillis)))  else None
     def slug = if (publish) Some(post.slug.getOrElse(tools.PostAux.slugify(title))) else None
     def isDraft = !publish
-    update(post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug))
+    val newPost =  post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug)
+    update(newPost).map { i =>
+       newPost
+    }
   }
 
-  def importPosts(author:Author, blog:Blog, file:File, format:String) {
+  def importPosts(author:Author, blog:Blog, file:File, format:String) : Unit = {
     if (format == "ghost")
       importGhostFormat(author, blog, file)
   }
 
-  def importGhostFormat(author:Author, blog:Blog, file:File){
+  def importGhostFormat(author:Author, blog:Blog, file:File) : Unit = {
     val data = Source.fromFile(file)(scala.io.Codec.UTF8).mkString
     val json = Json.parse(data)
     val jsonPosts = (json \ "data" \ "posts").as[JsArray]
