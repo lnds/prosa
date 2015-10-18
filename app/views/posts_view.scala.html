@@ -1,4 +1,4 @@
-@(blog:Blog, author:Option[Author], post:Post, user:Visitor)(implicit flash:Flash)
+@(blog:Blog, author:Option[Author], post:Post, user:Visitor)(implicit flash:Flash, messages:Messages)
 @main(post.title, tools.PostAux.excerpt(post.content), Some(blog), Some(tools.PostAux.canonical(blog, post)), post.image, author, user) {
 @views.html.blogs_menu(Some(blog), user)
 }{

@@ -1,13 +1,13 @@
-@(form:Form[Option[Author]])(implicit flash:Flash)
+@(form:Form[LoginData])(implicit flash:Flash,  messages:Messages)
 <!DOCTYPE html>
 <html>
 <head lang="en">
     <meta charset="UTF-8">
     <title>@Messages("Login")</title>
-    <link rel='stylesheet' href='@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.css")'>
-    <link rel='stylesheet' href='@routes.Assets.at("css/signin.css")'>
-    <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")" ></script>
-    <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/bootstrap/dist/css/bootstrap.css")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("css/signin.css")'>
+    <script src="@routes.Assets.versioned("bower_components/jquery/dist/jquery.min.js")" ></script>
+    <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
 </head>
 <body>
 

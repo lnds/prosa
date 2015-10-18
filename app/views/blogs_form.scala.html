@@ -1,4 +1,4 @@
-@(blog:Option[Blog], form: Form[BlogsController.BlogData], user:Visitor, avatarUrl:String)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:String)(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash)
 @main("Blog", "blog", None, None, None, None, user){
 @views.html.blogs_menu(None, user)
 }{
@@ -13,7 +13,7 @@
         <div class="cover-container">
             <div class="blog-top-cover-upload">
                 <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
-                    <span class="screen-reader-text">$Messages("blogs.action.upload_image")</span>
+                    <span class="screen-reader-text">@Messages("blogs.action.upload_image")</span>
                 </button>
                 <div class="fileupload-process">
                     <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -26,11 +26,11 @@
         </div>
         }
     case Some(blog) => {
-        <div id="banner-image" data-load-image="@blog.image.orNull" class="blog-cover-image"></div>
+        <div id="banner-image" data-load-image="@blog.image.getOrElse("")" class="blog-cover-image"></div>
         <div class="cover-container">
             <div class="blog-top-cover-upload">
                 <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
-                    <span class="screen-reader-text">$Messages("blogs.action.upload_image")</span>
+                    <span class="screen-reader-text">@Messages("blogs.action.upload_image")</span>
                 </button>
                 <div class="fileupload-process">
                     <div id="total-progress" class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
@@ -148,9 +148,9 @@
                     <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="status" id="status">
-                            <option value="@models.BlogStatus.CREATED" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
-                            <option value="@models.BlogStatus.PUBLISHED" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
-                            <option value="@models.BlogStatus.INACTIVE" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
+                            <option value="@Messages(models.BlogStatus.CREATED.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
+                            <option value="@Messages(models.BlogStatus.PUBLISHED.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
+                            <option value="@Messages(models.BlogStatus.INACTIVE.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
                         </select>
                     </div>
                 </div>
@@ -174,7 +174,7 @@
     </div>
 </section>
 
-<script src="@routes.Assets.at("js/dropzone.js")"></script>
+<script src="@routes.Assets.versioned("js/dropzone.js")"></script>
 <script language="javascript">
 
         document.querySelector("#total-progress").style.opacity = "0";

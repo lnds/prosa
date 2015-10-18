@@ -1,4 +1,4 @@
-@(blog:Blog, form:Form[PostsController.PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Blog, form:Form[PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash,  messages:Messages)
 @main_editor("Posts New", user) {
     @views.html.blogs_menu(Some(blog), user)
 }{
@@ -27,7 +27,7 @@
         <div class="top-cover-container">
             <div class="top-cover-upload">
                 <button class="btn fileinput-button"><i class="fa fa-image fa-3x"></i>
-                    <span class="screen-reader-text">$Messages("posts.action.upload_image")</span>
+                    <span class="screen-reader-text">@Messages("posts.action.upload_image")</span>
                 </button>
             </div>
         </div>
@@ -86,7 +86,7 @@
     }
 </script>
 
-<script src="@routes.Assets.at("js/dropzone.js")"></script>
+<script src="@routes.Assets.versioned("js/dropzone.js")"></script>
 
 <script language="javascript">
 
