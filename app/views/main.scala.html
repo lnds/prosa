@@ -1,4 +1,4 @@
-@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)
+@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)(implicit  messages:Messages)
 <!DOCTYPE html>
 <html class="no-js" lang="es">
 <head>
@@ -47,21 +47,21 @@
     }
 
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
-    <link rel='stylesheet' href='@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.css")'>
-    <link rel='shortcut icon' type='image/png' href='@routes.Assets.at("images/favicon.png")'>
-    <link rel='stylesheet' href='@routes.Assets.at("css/font-awesome.css")'>
-    <link rel="stylesheet" href='@routes.Assets.at("css/dropzone.css")'>
-    <link rel='stylesheet' href='@routes.Assets.at("css/prosa-main.css")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/bootstrap/dist/css/bootstrap.css")'>
+    <link rel='shortcut icon' type='image/png' href='@routes.Assets.versioned("images/favicon.png")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("css/font-awesome.css")'>
+    <link rel="stylesheet" href='@routes.Assets.versioned("css/dropzone.css")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("css/prosa-main.css")'>
 
     @blogOpt.map { blog =>
     <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
     }
 
 
-    <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")" ></script>
-    <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
-    <script src="@routes.Assets.at("js/prosa.js")"> </script>
-    <script src="@routes.Assets.at("js/docs.min.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/jquery/dist/jquery.min.js")" ></script>
+    <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
+    <script src="@routes.Assets.versioned("js/docs.min.js")"></script>
 
 
     @user match {

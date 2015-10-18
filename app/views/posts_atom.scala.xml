@@ -1,4 +1,4 @@
-@(blog:models.Blog, posts:List[(Post,Author)])<?xml version="1.0" encoding="utf-8"?>
+@(blog:models.Blog, posts:Seq[(Post,Author)])<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <title>@blog.name</title>
     <subtitle>@blog.description</subtitle>

@@ -1,4 +1,4 @@
-@(caption:String,  page:services.Page[Blog], user:Visitor)(implicit flash:Flash)
+@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash,  messages:Messages)
 @main(caption, null, None, Some(Messages("prosa.canonical.url")), None, None, user) {
     @views.html.blogs_menu(None, user)
 }{
@@ -6,7 +6,7 @@
 <li><a class="" href="@routes.BlogsController.create()">@Messages("blogs.action.create")</a></li>
 </ul>
 }{
-<div class="jumbotron cover-image" data-load-image="@routes.Assets.at("images/header.jpg")">
+<div class="jumbotron cover-image" data-load-image="@routes.Assets.versioned("images/header.jpg")">
     <div class="container cover-container">
         <h1>@Messages("blogs.title")</h1>
     </div>

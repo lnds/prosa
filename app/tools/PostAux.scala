@@ -1,17 +1,19 @@
 package tools
 
+import javax.inject.Inject
+
 import controllers.routes
 import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
-import play.api.i18n.Messages
+import play.api.i18n.{MessagesApi, Messages}
 import scravatar.Gravatar
-
 import scala.annotation.tailrec
 
-object PostAux {
+object PostAux  {
+
 
   def canonical(blog:Blog, post:Post) = {
-    val base = blog.url.getOrElse(Messages("prosa.canonical.url"))
+    val base = blog.url.getOrElse("prosa.canonical.url")
     if (base.endsWith("/"))
       base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
     else
@@ -82,22 +84,23 @@ object PostAux {
   }
 
 
-  lazy val year = Messages("dates.year")
-  lazy val years = Messages("dates.years")
-  lazy val month = Messages("dates.month")
-  lazy val months = Messages("dates.months")
-  lazy val week = Messages("dates.week")
-  lazy val weeks = Messages("dates.weeks")
-  lazy val day = Messages("dates.day")
-  lazy val days = Messages("dates.days")
-  lazy val hour = Messages("dates.hour")
-  lazy val hours = Messages("dates.hours")
-  lazy val minute = Messages("dates.minute")
-  lazy val minutes = Messages("dates.minutes")
-  lazy val second = Messages("dates.second")
-  lazy val seconds = Messages("dates.seconds")
 
-  def formatElapsed(date:Option[java.util.Date]) = {
+
+  def formatElapsed(date:Option[java.util.Date])(implicit messages:Messages) = {
+    lazy val year = Messages("dates.year")
+    lazy val years = Messages("dates.years")
+    lazy val month = Messages("dates.month")
+    lazy val months = Messages("dates.months")
+    lazy val week = Messages("dates.week")
+    lazy val weeks = Messages("dates.weeks")
+    lazy val day = Messages("dates.day")
+    lazy val days = Messages("dates.days")
+    lazy val hour = Messages("dates.hour")
+    lazy val hours = Messages("dates.hours")
+    lazy val minute = Messages("dates.minute")
+    lazy val minutes = Messages("dates.minutes")
+    lazy val second = Messages("dates.second")
+    lazy val seconds = Messages("dates.seconds")
     date match {
       case None => ""
       case Some(base) =>
@@ -120,4 +123,5 @@ object PostAux {
           period.getSeconds.toString + " " + (if (period.getYears == 1) second else seconds)
     }
   }
+
 }

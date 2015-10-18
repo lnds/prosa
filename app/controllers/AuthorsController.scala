@@ -1,15 +1,16 @@
 package controllers
 
+import javax.inject.Inject
 import jp.t2v.lab.play2.auth.AuthElement
-import models.Writer
+import models.{Authors, Writer}
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.i18n.Messages
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
-import services.AuthorService
 
-object AuthorsController extends Controller with DBElement  with TokenValidateElement with AuthElement with AuthConfigImpl {
+class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
   val changePasswordForm = Form(
     tuple(
@@ -22,12 +23,12 @@ object AuthorsController extends Controller with DBElement  with TokenValidateEl
     )
   )
 
-  def changePassword = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
+  def changePassword() = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
     Ok(views.html.change_password(changePasswordForm))
   }
 
 
-  def savePassword = StackAction(AuthorityKey -> Writer) { implicit request =>
+  def savePassword() = StackAction(AuthorityKey -> Writer) { implicit request =>
     changePasswordForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.change_password(formWithErrors)),
       formOk => {
@@ -35,7 +36,7 @@ object AuthorsController extends Controller with DBElement  with TokenValidateEl
         if (!BCrypt.checkpw(password, loggedIn.password))
           BadRequest(views.html.change_password(changePasswordForm.withError("password", "main.error.bad_current_password")))
         else {
-          AuthorService.changePassword(loggedIn, new_password)
+          Authors.changePassword(loggedIn, new_password)
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> "main.success.password_changed")
         }
       })

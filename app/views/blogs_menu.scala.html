@@ -1,4 +1,4 @@
-@(blogOpt:Option[Blog], user:Visitor)
+@(blogOpt:Option[Blog], user:Visitor)(implicit  messages:Messages)
 @blogOpt.map { blog =>
     <li>
         <form class="navbar-form" role="search" action="http://google.com/search" method="get">

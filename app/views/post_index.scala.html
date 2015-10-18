@@ -1,4 +1,4 @@
-@(blog:Blog, author:Option[Author], currentPage:services.Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash)
+@(blog:Blog, author:Option[Author], currentPage:Page[Post], drafts:Boolean, user:Visitor, avatarUrl:String)(implicit flash:Flash,  messages:Messages)
 @link(newPage: Int, newOrderBy: Option[Int] = None) = @{
     if (drafts)
         routes.PostsController.drafts(blog.alias, pageNum=newPage)
