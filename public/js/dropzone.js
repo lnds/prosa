@@ -146,7 +146,7 @@ Emitter.prototype.removeEventListener = function(event, fn){
   this._callbacks = this._callbacks || {};
 
   // all
-  if (0 == arguments.length) {
+  if (0 === arguments.length) {
     this._callbacks = {};
     return this;
   }
@@ -156,7 +156,7 @@ Emitter.prototype.removeEventListener = function(event, fn){
   if (!callbacks) return this;
 
   // remove all handlers
-  if (1 == arguments.length) {
+  if (1 === arguments.length) {
     delete this._callbacks[event];
     return this;
   }

@@ -13,7 +13,7 @@ object BlogStatus extends Enumeration {
   val PUBLISHED = Value(1, "blog.status.published")
   val INACTIVE = Value(-1, "blog.status.published")// <- reserved for administator
 
-  implicit val BlogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
+  implicit val blogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
     s => s.id,
     i => BlogStatus.apply(i)
   )

@@ -32,11 +32,11 @@ class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvide
     changePasswordForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.change_password(formWithErrors)),
       formOk => {
-        val (password, new_password, _) = formOk
+        val (password, newPassword, _) = formOk
         if (!BCrypt.checkpw(password, loggedIn.password))
           BadRequest(views.html.change_password(changePasswordForm.withError("password", "main.error.bad_current_password")))
         else {
-          Authors.changePassword(loggedIn, new_password)
+          Authors.changePassword(loggedIn, newPassword)
           Redirect(routes.BlogsGuestController.index()).flashing("success" -> "main.success.password_changed")
         }
       })

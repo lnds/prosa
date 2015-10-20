@@ -27,14 +27,14 @@ object IdGenerator {
 
   private def classHashIdsCache = new ConcurrentHashMap[Class[_], String]()
 
-  def getEntityClassHashId(entityClass: Class[_]): String = {
-    var hash = classHashIdsCache.get(entityClass)
-    if (hash == null) {
-      hash = getEntityClassHashId(entityClass.getCanonicalName)
-      classHashIdsCache.put(entityClass, hash)
+  def getEntityClassHashId(entityClass: Class[_]): String =
+    Option(classHashIdsCache.get(entityClass)) match {
+      case Some(hash) => hash
+      case None =>
+        val hash = getEntityClassHashId(entityClass.getCanonicalName)
+        classHashIdsCache.put(entityClass, hash)
+        hash
     }
-    hash
-  }
 
   private def getEntityClassHashId(entityName: String): String =
     normalizeHex(Integer.toHexString(entityName.hashCode))

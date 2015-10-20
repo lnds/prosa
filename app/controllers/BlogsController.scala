@@ -62,7 +62,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
 
   def save = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     blogForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, null))),
+      formWithErrors => Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, None))),
       blogData =>
         Blogs.findByAlias(blogData.alias).flatMap {
           case None =>
@@ -70,7 +70,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
           case Some(blog) =>
-            Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, null)))
+            Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, None)))
         }
     )
   }
@@ -79,7 +79,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
     Blogs.findById(id).map {
       case Some(blog) =>
         blogForm.bindFromRequest.fold(
-          formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, null)),
+          formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, None)),
           blogData => {
             Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, BlogStatus(blogData.status))
             Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))

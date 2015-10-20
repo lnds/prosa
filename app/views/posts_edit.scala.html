@@ -11,7 +11,7 @@
     <input type="hidden" id="content" name="content" value="@form("content").value" />
     <input type="hidden" id="draft" name="draft" value="@form("draft").value" />
     <input type="hidden" id="publish" name="publish" value="@form("publish").value" />
-    <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+    <input type="hidden" name="@controllers.PreventingCsrfToken.formKey" value="@token.value" />
     @form("draft").value.get match  {
         case "true" => {
         <a class="btn btn-default" href="@routes.PostsController.drafts(blog.alias)">@Messages("posts.action.cancel")</a>

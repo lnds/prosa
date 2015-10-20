@@ -11,10 +11,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:DatabaseConfigProvider) extends Controller  with OptionalAuthElement with AuthConfigImpl with I18nSupport {
 
-  val MAX_POSTS = 10
+  val maxPosts = 10
 
   def index = AsyncStack { implicit request =>
-    Posts.last(MAX_POSTS).map { posts =>
+    Posts.last(maxPosts).map { posts =>
       Ok(views.html.index("Prosa", posts, loggedIn.getOrElse(Guest)))
     }
   }

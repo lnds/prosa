@@ -5,7 +5,6 @@ import javax.inject.Inject
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
 import models.{Images, Writer}
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
@@ -14,7 +13,6 @@ import play.api.libs.json._
 import play.api.mvc.Controller
 import tools.ContentManager
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 
 class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
@@ -37,11 +35,9 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
-        Logger.info("imageData = " + imageData._1 + " , " + imageData._2)
         val img = Images.addImage(imageData._1, imageData._2)
         val url = ContentManager.putFile(img.id, tempFile, img.contentType)
         Images.update(img.copy(url = Some(url)))
-        Logger.info("upload url = " + url)
         Ok(url)
       }
     )
@@ -51,13 +47,16 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
 
   def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     val tempFile = File.createTempFile("image_", ".img")
-    val image = request.body.files.head
-    image.ref.moveTo(tempFile, replace = true)
-    val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
-    val url = ContentManager.putFile(img.id, tempFile, img.contentType)
-    Images.update(img.copy(url = Some(url)))
-    Logger.info("editor upload url = " + url)
-    Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
+    if (request.body.files.isEmpty)
+      NotFound
+    else {
+      val image = request.body.files.head
+      image.ref.moveTo(tempFile, replace = true)
+      val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
+      val url = ContentManager.putFile(img.id, tempFile, img.contentType)
+      Images.update(img.copy(url = Some(url)))
+      Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
+    }
   }
 
 

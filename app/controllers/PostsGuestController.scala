@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
-  val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
 
   def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
@@ -19,7 +19,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
 
   def index(alias:String, pageNum:Int=0) = AsyncStack { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Authors.findById(blog.owner).flatMap { author =>
           Authors.getAvatar(blog.owner).flatMap { avatar =>
@@ -33,7 +33,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
 
   def view(alias:String, year:Int, month:Int, day:Int, slug:String) = AsyncStack { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Posts.find(blog, slug, year, month, day).flatMap {
           case None => Future.successful(PostNotFound(alias))
@@ -47,7 +47,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
 
   def atom(alias:String) = AsyncStack { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Posts.last(blog, 10).map { list =>
           Ok(views.xml.posts_atom(blog, list))

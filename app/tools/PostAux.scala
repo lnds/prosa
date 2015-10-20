@@ -1,13 +1,12 @@
 package tools
 
-import javax.inject.Inject
-
 import controllers.routes
 import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
-import play.api.i18n.{MessagesApi, Messages}
+import play.api.i18n.{Messages}
 import scravatar.Gravatar
 import scala.annotation.tailrec
+import java.text.Normalizer
 
 object PostAux  {
 
@@ -45,11 +44,11 @@ object PostAux  {
       urlBase + "/atom.xml"
   }
 
-  val EXCERPT_SIZE = 250
+  val excerptSize = 250
 
   def excerpt(content: String) = {
     val text = org.jsoup.Jsoup.parse(content).text()
-    val exc = text.take(EXCERPT_SIZE)
+    val exc = text.take(excerptSize)
     if (exc.length < text.length)
       exc +  "..."
     else
@@ -57,7 +56,6 @@ object PostAux  {
   }
 
   def slugify(str:String) : String = {
-    import java.text.Normalizer
     Normalizer.normalize(str,Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase()
   }
 
@@ -66,17 +64,16 @@ object PostAux  {
     if (!(existingSlugs contains slug)) {
       slug
     } else {
-      val EndsWithNumber = "(.+-)([0-9]+)$".r
+      val endsWithNumber = "(.+-)([0-9]+)$".r
       slug match {
-        case EndsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
+        case endsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
         case s => generateUniqueSlug(s + "-2", existingSlugs)
       }
     }
   }
 
-  def avatarUrl(email:String) = {
-    Gravatar(email).avatarUrl
-  }
+  def avatarUrl(email:String) : Option[String]=
+    Option(Gravatar(email).avatarUrl)
 
   def extractDomain(url:String) = {
     val u = new java.net.URL(url)

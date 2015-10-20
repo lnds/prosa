@@ -14,8 +14,7 @@ import scala.concurrent.Future
 
 class ImportController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
 
-  val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
-
+  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
 
   def importPosts(alias:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
@@ -24,7 +23,7 @@ class ImportController @Inject() (val messagesApi: MessagesApi, dbConfigProvider
           Future.successful(Ok(views.html.posts_import(blog, author, loggedIn)))
         }
       case None =>
-        Future.successful(BlogNotFound)
+        Future.successful(blogNotFound)
     }
   }
 
@@ -44,8 +43,8 @@ class ImportController @Inject() (val messagesApi: MessagesApi, dbConfigProvider
               Future.successful(Redirect(routes.PostsController.index(alias)).flashing("success" -> Messages("posts.success.imported")))
             }
           )
-        } getOrElse Future.successful(BlogNotFound)
-      case None => Future.successful(BlogNotFound)
+        } getOrElse Future.successful(blogNotFound)
+      case None => Future.successful(blogNotFound)
     }
   }
 

@@ -11,16 +11,19 @@ import play.api.Play.current
 object ContentManager {
 
 
-  val cdnurl = Play.application.configuration.getString("prosa.cdn.url").orNull
+  val cdnurl = Play.application.configuration.getString("prosa.cdn.url")
 
 
-  def putFile(key:String, file:File, contentType:String) = {
-    if (cdnurl == null || cdnurl.isEmpty)
-      routes.ContentController.getImage(key).url
-    else
-      // patch
-      AmazonS3.putFile(cdnurl, key, file, contentType)
-  }
+  def putFile(key:String, file:File, contentType:String) =
+    cdnurl match {
+      case None => routes.ContentController.getImage(key).url
+      case Some(url) =>
+        if (url.isEmpty)
+          routes.ContentController.getImage(key).url
+        else
+          AmazonS3.putFile(url, key, file, contentType)
+    }
+
 
 }
 

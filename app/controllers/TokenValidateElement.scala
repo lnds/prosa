@@ -1,13 +1,10 @@
 package controllers
 
-
 import java.security.SecureRandom
-
 import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
 import play.api.data.Forms._
 import play.api.data._
 import play.api.mvc._
-
 import scala.concurrent.Future
 import scala.util.Random
 
@@ -15,9 +12,9 @@ trait TokenValidateElement extends StackableController {
 
   self: Controller =>
 
-  private val PreventingCsrfTokenSessionKey = "preventingCsrfToken"
+  private val preventingCsrfTokenSessionKey = "preventingCsrfToken"
 
-  private val tokenForm = Form(PreventingCsrfToken.FormKey -> text)
+  private val tokenForm = Form(PreventingCsrfToken.formKey -> text)
 
   private val random = new Random(new SecureRandom)
   private val table = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ "^`~:/?,.{[}}|+_()*^%$#@!"
@@ -31,7 +28,7 @@ trait TokenValidateElement extends StackableController {
 
   private def validateToken(request: Request[_]): Boolean = (for {
     tokenInForm    <- tokenForm.bindFromRequest()(request).value
-    tokenInSession <- request.session.get(PreventingCsrfTokenSessionKey)
+    tokenInSession <- request.session.get(preventingCsrfTokenSessionKey)
   } yield tokenInForm == tokenInSession) getOrElse false
 
   override def proceed[A](request: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
@@ -39,7 +36,7 @@ trait TokenValidateElement extends StackableController {
       implicit val ctx = StackActionExecutionContext(request)
       val newToken = generateToken
       super.proceed(request.set(PreventingCsrfTokenKey, newToken))(f) map {
-        _.withSession(PreventingCsrfTokenSessionKey -> newToken.value)
+        _.withSession(preventingCsrfTokenSessionKey -> newToken.value)
       }
     } else {
       Future.successful(BadRequest("Invalid preventing CSRF token"))
@@ -57,6 +54,6 @@ case class PreventingCsrfToken(value: String)
 
 object PreventingCsrfToken {
 
-  val FormKey = "preventingCsrfToken"
+  val formKey = "preventingCsrfToken"
 
 }
