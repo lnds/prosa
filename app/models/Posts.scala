@@ -2,18 +2,13 @@ package models
 
 import java.io.File
 import java.sql.Timestamp
-
 import org.joda.time.{DateTime, Period}
 import play.api.libs.json.{JsArray, JsObject, Json}
 import slick.driver.PostgresDriver.api._
 import tools.IdGenerator
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.io.Source
-
-
-import java.sql.Timestamp
 import org.joda.time.DateTime
 
 case class Post(id:String, blog:String, image:Option[String], title:String, subtitle:Option[String], content:String, slug:Option[String], draft:Boolean, created:Option[Timestamp], published:Option[Timestamp], author:String) extends Identifiable {

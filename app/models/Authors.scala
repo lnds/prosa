@@ -74,10 +74,10 @@ object Authors extends EntityService[Author]  {
     update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
   }
 
-  def getAvatar(authorId:String)  =
+  def getAvatar(authorId:String) : Future[Option[String]] =
     findById(authorId).map {
       case Some(a) => PostAux.avatarUrl(a.email)
-      case None => null
+      case None => None
     }
 
   override def queryFilter(qry: String, c: Authors) = c.nickname like "%" + qry + "%"

@@ -25,7 +25,7 @@ function toggleNav() {
 
 // ESC key close nav bar
 $(document).keyup(function(e) {
-    if (e.keyCode == 27) {
+    if (e.keyCode === 27) {
         if ($('#site-wrapper').hasClass('show-nav')) {
             toggleNav();
         }

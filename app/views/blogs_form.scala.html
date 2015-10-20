@@ -1,4 +1,4 @@
-@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:String)(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:Option[String])(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash)
 @main("Blog", "blog", None, None, None, None, user){
 @views.html.blogs_menu(None, user)
 }{
@@ -156,7 +156,7 @@
                 </div>
 
                 <div>
-                    <input type="hidden" name="@controllers.PreventingCsrfToken.FormKey" value="@token.value" />
+                    <input type="hidden" name="@controllers.PreventingCsrfToken.formKey" value="@token.value" />
                     <input type="hidden" id="id" name="id" value="@form("id").value" />
                     <input type="hidden" id="blog_image" name="image" value="@form("image").value" />
                     <a class="btn" href="@routes.BlogsGuestController.index()">@Messages("blogs.action.cancel")</a>
