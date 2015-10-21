@@ -1,5 +1,5 @@
 @(blog:Blog, author:Option[Author], user:Visitor)(implicit  token:controllers.PreventingCsrfToken, flash:Flash, messages:Messages)
-@main(Messages("posts.import.caption"), blog.description, Some(blog), None, None,  author,user) {
+@main(Messages("posts.import.caption"), Some(blog.description), Some(blog), None, None,  author,user) {
 @views.html.blogs_menu(Some(blog), user)
 }{
     <ul class="nav navbar-nav navbar-right">

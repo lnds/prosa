@@ -46,18 +46,19 @@ object PostAux  {
 
   val excerptSize = 250
 
-  def excerpt(content: String) = {
-    val text = org.jsoup.Jsoup.parse(content).text()
-    val exc = text.take(excerptSize)
-    if (exc.length < text.length)
-      exc +  "..."
-    else
-      exc
-  }
+  def excerpt(content: String) : Option[String] =
+      Option(org.jsoup.Jsoup.parse(content).text()) flatMap { txt =>
+        val exc = txt.take(excerptSize)
+        if (exc.length < txt.length)
+          Some(exc + "...")
+        else
+          Some(exc)
+      }
 
-  def slugify(str:String) : String = {
-    Normalizer.normalize(str,Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase()
-  }
+  def slugify(plainText:String) : Option[String] =
+    Option(plainText) flatMap { str =>
+      Some(Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase())
+    }
 
   @tailrec
   def generateUniqueSlug(slug: String, existingSlugs: Seq[String]): String = {

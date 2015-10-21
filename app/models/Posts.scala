@@ -87,7 +87,7 @@ object Posts extends DbService[Post]{
 
   def create(author:Author, blog:Blog,  title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String]) : Future[Post] = {
     def published = if (draft) None else Some(new DateTime())
-    def slug = if (draft) None else Some(tools.PostAux.slugify(title))
+    def slug = if (draft) None else tools.PostAux.slugify(title)
     def post = Post(id=IdGenerator.nextId(classOf[Post]), blog=blog.id, title=title, subtitle=subtitle,
                     image=image, author=author.id,
                     content=content,
@@ -97,8 +97,8 @@ object Posts extends DbService[Post]{
   }
 
   def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean) : Future[Post] = {
-    def published = if (publish)  Some(post.published.getOrElse(new DateTime()))  else None
-    def slug = if (publish) Some(post.slug.getOrElse(tools.PostAux.slugify(title))) else None
+    def published = if (publish) { post.published orElse Some(new DateTime()) }  else None
+    def slug = if (publish) { post.slug orElse  tools.PostAux.slugify(title) } else None
     def isDraft = !publish
     val newPost =  post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug)
     update(newPost).map { i =>
