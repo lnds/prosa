@@ -47,7 +47,7 @@ trait TokenValidateElement extends StackableController {
     request.get(IgnoreTokenValidation).isDefined
 
   implicit def preventingCsrfToken(implicit request: RequestWithAttributes[_]): PreventingCsrfToken =
-    request.get(PreventingCsrfTokenKey).get
+    request.get(PreventingCsrfTokenKey).orNull
 
 }
 case class PreventingCsrfToken(value: String)

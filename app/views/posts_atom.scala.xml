@@ -6,25 +6,25 @@
     <link href="@blog.url.getOrElse(routes.PostsGuestController.index(blog.alias).url)"  />
     <id>urn:uuid:@blog.id.dropRight(9)</id>
     @posts.headOption.map { p =>
-        @defining(p._1.publishedDate) { date =>
-        <updated>@date</updated>
+        @p._1.published.map { date =>
+            <updated>@date</updated>
         }
     }
     @for((post,author) <- posts) {
     <entry>
         <title>@post.title</title>
-        @defining(post.publishedDate) { date =>
-        <link href="@blog.url.getOrElse("/").stripSuffix("/")@routes.PostsGuestController.view(blog.alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.getOrElse("")).url" />
-        <id>urn:uuid:@post.id.dropRight(9)</id>
-        <updated>@date</updated>
-        <summary>Summary</summary>
-        <content type="html">
-            @post.content
-        </content>
-        <author>
-            <name>@author.fullname.getOrElse(author.nickname)</name>
-            <email>@author.email</email>
-        </author>
+        @post.published.map { date =>
+            <link href="@blog.url.getOrElse("/").stripSuffix("/")@routes.PostsGuestController.view(blog.alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.getOrElse("")).url" />
+            <id>urn:uuid:@post.id.dropRight(9)</id>
+            <updated>@date</updated>
+            <summary>Summary</summary>
+            <content type="html">
+                @post.content
+            </content>
+            <author>
+                <name>@author.fullname.getOrElse(author.nickname)</name>
+                <email>@author.email</email>
+            </author>
         }
     </entry>
     }

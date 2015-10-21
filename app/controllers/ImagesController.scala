@@ -46,17 +46,14 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
   case class ImageFile(url: String)
 
   def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
-    val tempFile = File.createTempFile("image_", ".img")
-    if (request.body.files.isEmpty)
-      NotFound
-    else {
-      val image = request.body.files.head
+    request.body.files.headOption.map { image =>
+      val tempFile = File.createTempFile("image_", ".img")
       image.ref.moveTo(tempFile, replace = true)
       val img = Images.addImage(tempFile.getAbsolutePath, image.contentType.getOrElse(""))
       val url = ContentManager.putFile(img.id, tempFile, img.contentType)
       Images.update(img.copy(url = Some(url)))
       Ok(Json.obj("files" -> Json.arr(Json.obj("url" -> url))))
-    }
+    } getOrElse NotFound
   }
 
 

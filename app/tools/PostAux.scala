@@ -29,7 +29,7 @@ object PostAux  {
     }
   }
 
-  def slugString(alias: String, d: java.sql.Timestamp, post: Post, draft:Boolean) = {
+  def slugString(alias: String, d: DateTime, post: Post, draft:Boolean) = {
     val date = new DateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
@@ -46,18 +46,19 @@ object PostAux  {
 
   val excerptSize = 250
 
-  def excerpt(content: String) = {
-    val text = org.jsoup.Jsoup.parse(content).text()
-    val exc = text.take(excerptSize)
-    if (exc.length < text.length)
-      exc +  "..."
-    else
-      exc
-  }
+  def excerpt(content: String) : Option[String] =
+      Option(org.jsoup.Jsoup.parse(content).text()) flatMap { txt =>
+        val exc = txt.take(excerptSize)
+        if (exc.length < txt.length)
+          Some(exc + "...")
+        else
+          Some(exc)
+      }
 
-  def slugify(str:String) : String = {
-    Normalizer.normalize(str,Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase()
-  }
+  def slugify(plainText:String) : Option[String] =
+    Option(plainText) flatMap { str =>
+      Some(Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase())
+    }
 
   @tailrec
   def generateUniqueSlug(slug: String, existingSlugs: Seq[String]): String = {
@@ -83,7 +84,7 @@ object PostAux  {
 
 
 
-  def formatElapsed(date:Option[java.util.Date])(implicit messages:Messages) = {
+  def formatElapsed(date:Option[DateTime])(implicit messages:Messages) = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
     lazy val month = Messages("dates.month")

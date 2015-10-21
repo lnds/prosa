@@ -1,17 +1,17 @@
-@(title:String, description:String, blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)(implicit  messages:Messages)
+@(title:String, descOpt:Option[String], blogOpt: Option[Blog], canonicalOpt: Option[String], imgOpt: Option[String], authorOpt:Option[Author], user:Visitor)(menu: Html)(userMenu:Html)(content: => Html)(implicit  messages:Messages)
 <!DOCTYPE html>
 <html class="no-js" lang="es">
 <head>
     <meta charset="utf-8">
     <title>@title</title>
     @authorOpt.map { author =>
-    <meta name="author" content="@author.fullname" >
+        <meta name="author" content="@author.fullname" >
     }.getOrElse {
-    <meta name="author" content="">
+        <meta name="author" content="">
     }
-    @if(description != null) {
+    @descOpt.map { description =>
         <meta name="description" content="@description" >
-    } else {
+    }.getOrElse {
         @blogOpt.map { blog =>
             <meta name="description" content="@blog.description" >
         }.getOrElse {
@@ -20,7 +20,9 @@
     }
 
     <meta property="og:title" content="@title" />
+    @descOpt.map { description =>
     <meta property="og:description" content="@description" />
+    }
     <meta property="og:type" content="blog" />
     @imgOpt.map { img =>
     <meta property="og:image" content="@img" />
