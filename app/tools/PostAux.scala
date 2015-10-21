@@ -29,7 +29,7 @@ object PostAux  {
     }
   }
 
-  def slugString(alias: String, d: java.sql.Timestamp, post: Post, draft:Boolean) = {
+  def slugString(alias: String, d: DateTime, post: Post, draft:Boolean) = {
     val date = new DateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
@@ -83,7 +83,7 @@ object PostAux  {
 
 
 
-  def formatElapsed(date:Option[java.util.Date])(implicit messages:Messages) = {
+  def formatElapsed(date:Option[DateTime])(implicit messages:Messages) = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
     lazy val month = Messages("dates.month")
