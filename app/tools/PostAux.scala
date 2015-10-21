@@ -1,12 +1,12 @@
 package tools
 
 import controllers.routes
+import java.text.Normalizer
 import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
-import play.api.i18n.{Messages}
+import play.api.i18n.Messages
 import scravatar.Gravatar
 import scala.annotation.tailrec
-import java.text.Normalizer
 
 object PostAux  {
 

@@ -17,15 +17,17 @@ case class PostData(image:Option[String], title:String, subtitle:Option[String],
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller  with TokenValidateElement with AuthElement with AuthConfigImpl  with I18nSupport {
 
-  val BlogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
 
-  def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
+  def postNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
   val indexView = views.html.post_index
 
+
+
   def index(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Authors.findById(blog.owner).flatMap { author =>
           Authors.getAvatar(blog.owner).flatMap { avatar =>
@@ -39,7 +41,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def drafts(alias:String, pageNum:Int=0) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Authors.findById(blog.owner).flatMap { author =>
           Posts.listForBlog(blog, draft = true, page = pageNum).map { list =>
@@ -63,7 +65,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def create(alias:String) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).map {
-      case None => BlogNotFound
+      case None => blogNotFound
       case Some(blog) =>
         Ok(views.html.posts_new(blog, postForm, loggedIn))
     }
@@ -71,7 +73,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def save(alias:String) = AsyncStack(AuthorityKey -> models.Writer) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         postForm.bindFromRequest.fold(
           formWithErrors => Future.successful(BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn))),
@@ -88,13 +90,13 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def edit(alias:String, id:String) = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Posts.findById(id).map {
-          case None => BlogNotFound
+          case None => blogNotFound
           case Some(post) =>
             if (post.author != loggedIn.id)
-              PostNotFound(alias)
+              postNotFound(alias)
             else
              Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
         }
@@ -103,10 +105,10 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def update(alias:String, id:String) = AsyncStack(AuthorityKey -> models.Writer) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Posts.findById(id).map {
-          case None => PostNotFound(alias)
+          case None => postNotFound(alias)
           case Some(post) =>
             postForm.bindFromRequest.fold(
               formWithErrors => BadRequest(views.html.posts_new(blog, formWithErrors, loggedIn)),
@@ -121,10 +123,10 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def delete(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
       Blogs.findByAlias(alias).flatMap {
-        case None => Future.successful(BlogNotFound)
+        case None => Future.successful(blogNotFound)
         case Some(blog) =>
           Posts.findById(id).map {
-            case None => PostNotFound(alias)
+            case None => postNotFound(alias)
             case Some(post) =>
               Posts.delete(post.id)
               if (post.draft)
@@ -137,10 +139,10 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
 
   def unpublish(alias:String, id:String) = AsyncStack(AuthorityKey -> models.Writer) { implicit request =>
     Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(BlogNotFound)
+      case None => Future.successful(blogNotFound)
       case Some(blog) =>
         Posts.findById(id).map {
-          case None => PostNotFound(alias)
+          case None => postNotFound(alias)
           case Some(post) =>
             Posts.update(post.copy(draft = true, published = None))
             Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished"))
