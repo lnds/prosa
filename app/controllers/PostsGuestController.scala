@@ -9,11 +9,14 @@ import play.api.mvc.Controller
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
+class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)
+  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
-  val blogNotFound = Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
+  val blogNotFound = Redirect(routes.BlogsGuestController.index())
+                      .flashing("error" -> Messages("blogs.error.not_found"))
 
-  def PostNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
+  def postNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias))
+                                    .flashing("error" -> Messages("posts.error.not_found"))
 
   val indexView = views.html.post_index
 
@@ -31,19 +34,21 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
     }
   }
 
-  def view(alias:String, year:Int, month:Int, day:Int, slug:String) = AsyncStack { implicit request =>
-    Blogs.findByAlias(alias).flatMap {
-      case None => Future.successful(blogNotFound)
-      case Some(blog) =>
-        Posts.find(blog, slug, year, month, day).flatMap {
-          case None => Future.successful(PostNotFound(alias))
-          case Some(post) =>
-            Authors.findById(blog.owner).map { author =>
-              Ok(views.html.posts_view(blog, author, post, loggedIn.getOrElse(Guest)))
-            }
-        }
-    }
+  def view(alias:String, year:Int, month:Int, day:Int, slug:String) = AsyncStack {
+    implicit request =>
+      Blogs.findByAlias(alias).flatMap {
+        case None => Future.successful(blogNotFound)
+        case Some(blog) =>
+          Posts.find(blog, slug, year, month, day).flatMap {
+            case None => Future.successful(postNotFound(alias))
+            case Some(post) =>
+              Authors.findById(blog.owner).map { author =>
+                Ok(views.html.posts_view(blog, author, post, loggedIn.getOrElse(Guest)))
+              }
+          }
+      }
   }
+
 
   def atom(alias:String) = AsyncStack { implicit request =>
     Blogs.findByAlias(alias).flatMap {
