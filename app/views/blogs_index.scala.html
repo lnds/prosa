@@ -1,5 +1,5 @@
 @(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash,  messages:Messages)
-@main(caption, null, None, Some(Messages("prosa.canonical.url")), None, None, user) {
+@main(caption, None, None, Some(Messages("prosa.canonical.url")), None, None, user) {
     @views.html.blogs_menu(None, user)
 }{
 <ul class="nav navbar-nav navbar-right">

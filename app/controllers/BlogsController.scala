@@ -12,9 +12,12 @@ import tools.PostAux
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], status:Int)
+case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],
+                    logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String],
+                    useAvatarAsLogo:Option[Boolean], status:Int, twitter:Option[String])
 
-class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
+class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)
+  extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
 
 
   val blogForm = Form(
@@ -29,7 +32,8 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       "disqus" -> optional(text),
       "google_analytics" -> optional(text),
       "use_avatar_as_logo" -> optional(boolean),
-      "status" -> number(min=BlogStatus.INACTIVE.id, max=BlogStatus.PUBLISHED.id)
+      "status" -> number(min=BlogStatus.INACTIVE.id, max=BlogStatus.PUBLISHED.id),
+      "twitter" -> optional(text)
     )
     (BlogData.apply)(BlogData.unapply)
   )
@@ -50,7 +54,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       case None =>
         Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
       case Some(blog) =>
-        val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo, blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id))
+        val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo,blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id, blog.twitter))
         Authors.findById(blog.owner).map {
           case None =>
             Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
@@ -66,7 +70,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       blogData =>
         Blogs.findByAlias(blogData.alias).flatMap {
           case None =>
-            Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo).map { i =>
+            Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter).map { i =>
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
           case Some(blog) =>

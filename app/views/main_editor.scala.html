@@ -11,32 +11,39 @@
     <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/bootstrap/dist/css/bootstrap.css")'>
 
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.versioned("images/favicon.png")'>
-    <link rel='stylesheet' href='@routes.Assets.versioned("css/font-awesome.css")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/font-awesome/css/font-awesome.min.css")'>
     <link rel="stylesheet" href='@routes.Assets.versioned("css/dropzone.css")'>
 
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href='@routes.Assets.versioned("bower_components/medium-editor/dist/css/medium-editor.min.css")'>
     <link rel="stylesheet" href='@routes.Assets.versioned("bower_components/medium-editor/dist/css/themes/default.min.css")'  id="medium-editor-theme">
-    <link rel="stylesheet" href='@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/css/medium-editor-insert-plugin.min.css")'>
-    <link rel="stylesheet" href='@routes.Assets.versioned("bower_components/medium-editor-tables/dist/css/medium-editor-tables.css")'>
+    <link rel="stylesheet" href='@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/css/medium-editor-insert-plugin.min.css")' >
     <link rel='stylesheet' href='@routes.Assets.versioned("css/prosa-main.css")'>
 
-    <script src="@routes.Assets.versioned("bower_components/jquery/dist/jquery.min.js")" ></script>
-    <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/medium-editor/dist/js/medium-editor.min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/handlebars/handlebars.runtime.min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/jquery-sortable/source/js/jquery-sortable-min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/jquery.iframe-transport.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/jquery.fileupload.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/js/medium-editor-insert-plugin.min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/medium-editor-tables/dist/js/medium-editor-tables.js")"></script>
-    <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
-    <script src="@routes.Assets.versioned("js/docs.min.js")"></script>
+
 
     <style>
         body {
             padding-top: 50px;
+        }
+        .medium-insert-images-slideshow figure {
+        width: 100%;
+        }
+        .medium-insert-images-slideshow figure img {
+        margin: 0;
+        }
+        .medium-insert-images.medium-insert-images-grid.small-grid figure {
+        width: 10%;
+        }
+        @@media (max-width: 750px) {
+        .medium-insert-images.medium-insert-images-grid.small-grid figure {
+        width: 20%;
+        }
+        }
+        @@media (max-width: 450px) {
+        .medium-insert-images.medium-insert-images-grid.small-grid figure {
+        width: 25%;
+        }
         }
     </style>
 </head>
@@ -70,42 +77,80 @@
 
     </div><!-- #site-canvas -->
 </div><!-- #site-wrapper -->
-<!-- scripts -->
+
+    <!-- scripts -->
+
+    <script src="@routes.Assets.versioned("bower_components/jquery/dist/jquery.min.js")" ></script>
+    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/vendor/jquery.ui.widget.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/jquery.iframe-transport.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/blueimp-file-upload/js/jquery.fileupload.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/medium-editor/dist/js/medium-editor.min.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/handlebars/handlebars.runtime.min.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/jquery-sortable/source/js/jquery-sortable-min.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/js/medium-editor-insert-plugin.min.js")"></script>
+    <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
+    <script src="@routes.Assets.versioned("js/docs.min.js")"></script>
 <script>
     $body = document.body;
     $('[data-load-image]', $body).each(function() {
         ImageLoader.load($(this));
     });
 </script>
-<script>var editor = new MediumEditor('.editor', {
-    placeholder:'@Messages("placeholders.editor.type_here")',
+<script>
+var editor = new MediumEditor('.editor', {
     buttonLabels: 'fontawesome',
-    buttons: [
-        'bold',
-        'italic',
-        'underline',
-        'anchor',
-        'header1',
-        'header2',
-        'quote',
-        'table',
-    ],
-    extensions: {
-        'table': new MediumEditorTable()
-    }
+    toolbar: {
+        buttons: [
+            'bold',
+            'italic',
+            'underline',
+            'anchor',
+            'h1',
+            'h2',
+            'h3',
+            'quote',
+            'pre',
+            'orderedlist',
+            'unorderedlist',
+            'indent',
+            'outdent',
+            'justifyLeft',
+            'justifyCenter',
+            'justifyRight',
+        ]
+    },
+
 });
 </script>
-<script>
-    $(function(){
-        $('.editor').mediumInsert({
-            editor: editor,
-            addons: {
-                images: {uploadScript:"@routes.ImagesController.editorUpload"},
-                embeds: {}
+
+    @actions
+
+ <script language="javascript">
+    $('.editor').mediumInsert({
+        editor: editor,
+        enabled: true,
+        addons: {
+            images: {
+                label: '<span class="fa fa-camera"></span>',
+                preview: true, // (boolean) Show an image before it is uploaded (only in browsers that support this feature)
+                captions: true, // (boolean) Enable captions
+                captionPlaceholder: 'Type caption for image (optional)', // (string) Caption placeholder
+                autoGrid: 3,
+                fileUploadOptions:{
+                    url:"@routes.ImagesController.editorUpload",
+                    acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+                }
             }
-        })
-    })
+        },
+        embeds: {
+            label: '<span class="fa fa-youtube-play"></span>',
+            placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter', // (string) Placeholder displayed when entering URL to embed
+            captions: false, // (boolean) Enable captions
+        }
+    });
+
 </script>
-@actions
 </body>
+
 </html>

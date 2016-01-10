@@ -1,5 +1,5 @@
 @(message: String, posts:Seq[(Post,Blog)], user:Visitor)(implicit  messages:Messages)
-@main("Prosa", null, None, None, None, None, user) {
+@main("Prosa", None, None, None, None, None, user) {
 <li><a href="@routes.Application.index()"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
 <li><a href="@routes.BlogsGuestController.index()"><i class="glyphicon glyphicon-th"></i>&nbsp;  @Messages("menu.blogs")</a></li>
 <li></li>

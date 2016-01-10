@@ -6,7 +6,7 @@ val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
 
 version := conf.getString("app.version")
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(SbtWeb)
 
 scalaVersion := "2.11.7"
 

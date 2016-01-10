@@ -85,8 +85,10 @@
             case None => {}
             case Some(error) => {  <p class="text-danger">@Messages(error.message)</p> }
             }
-            <div class="editor" id="post_content">
+            <div id="container">
+                <div class="editor" id="post_content" data-placeholder="@Messages("placeholders.editor.type_here")">
                 @Html(form("content").value.getOrElse(""))
+                </div>
             </div>
         </div>
     </div>
@@ -218,6 +220,7 @@ myDropzone.on("queuecomplete", function(progress) {
 });
 
     $( function() {
+        alert("!!!image banner");
         var bisrc = $("#banner-image" ).css('background-image');
         var rx = /url\((.*)\)/g;
         var a = rx.exec(bisrc);

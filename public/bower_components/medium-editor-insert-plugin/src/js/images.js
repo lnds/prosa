@@ -1,4 +1,6 @@
-;(function ($, window, document, undefined) {
+/*global MediumEditor*/
+
+;(function ($, window, document, Util, undefined) {
 
     'use strict';
 
@@ -7,23 +9,36 @@
         addonName = 'Images', // first char is uppercase
         defaults = {
             label: '<span class="fa fa-camera"></span>',
-            uploadScript: 'upload.php',
+            deleteMethod: 'POST',
             deleteScript: 'delete.php',
             preview: true,
+            captions: true,
             captionPlaceholder: 'Type caption for image (optional)',
             autoGrid: 3,
+            fileUploadOptions: { // See https://github.com/blueimp/jQuery-File-Upload/wiki/Options
+                url: 'upload.php',
+                acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i
+            },
             styles: {
                 wide: {
-                    label: '<span class="fa fa-align-justify"></span>'
+                    label: '<span class="fa fa-align-justify"></span>',
+                    // added: function ($el) {},
+                    // removed: function ($el) {}
                 },
                 left: {
-                    label: '<span class="fa fa-align-left"></span>'
+                    label: '<span class="fa fa-align-left"></span>',
+                    // added: function ($el) {},
+                    // removed: function ($el) {}
                 },
                 right: {
-                    label: '<span class="fa fa-align-right"></span>'
+                    label: '<span class="fa fa-align-right"></span>',
+                    // added: function ($el) {},
+                    // removed: function ($el) {}
                 },
                 grid: {
-                    label: '<span class="fa fa-th"></span>'
+                    label: '<span class="fa fa-th"></span>',
+                    // added: function ($el) {},
+                    // removed: function ($el) {}
                 }
             },
             actions: {
@@ -31,9 +46,9 @@
                     label: '<span class="fa fa-times"></span>',
                     clicked: function () {
                         var $event = $.Event('keydown');
-                        
+
                         $event.which = 8;
-                        $(document).trigger($event);   
+                        $(document).trigger($event);
                     }
                 }
             },
@@ -49,10 +64,15 @@
                     nested: false,
                     vertical: false,
                     afterMove: function () {
-                        that.$el.trigger('input');
+                        that.core.triggerInput();
                     }
                 });
+            },
+            messages: {
+                acceptFileTypesError: 'This file is not in a supported format: ',
+                maxFileSizeError: 'This file is too big: '
             }
+            // uploadCompleted: function ($el, data) {}
         };
 
     /**
@@ -82,6 +102,12 @@
             this.options.preview = false;
         }
 
+        // Extend editor's functions
+        if (this.core.getEditor()) {
+            this.core.getEditor()._serializePreImages = this.core.getEditor().serialize;
+            this.core.getEditor().serialize = this.editorSerialize;
+        }
+
         this.init();
     }
 
@@ -92,6 +118,11 @@
      */
 
     Images.prototype.init = function () {
+        var $images = this.$el.find('.medium-insert-images');
+
+        $images.find('figcaption').attr('contenteditable', true);
+        $images.find('figure').attr('contenteditable', false);
+
         this.events();
         this.backwardsCompatibility();
         this.sorting();
@@ -131,12 +162,23 @@
     };
 
     /**
-     * Get the Core object
+     * Extend editor's serialize function
      *
-     * @return {object} Core object
+     * @return {object} Serialized data
      */
-    Images.prototype.getCore = function () {
-        return this.core;
+
+    Images.prototype.editorSerialize = function () {
+        var data = this._serializePreImages();
+
+        $.each(data, function (key) {
+            var $data = $('<div />').html(data[key].value);
+
+            $data.find('.medium-insert-images').find('figcaption, figure').removeAttr('contenteditable');
+
+            data[key].value = $data.html();
+        });
+
+        return data;
     };
 
     /**
@@ -147,19 +189,16 @@
 
     Images.prototype.add = function () {
         var that = this,
-            $file = $(this.templates['src/js/templates/images-fileupload.hbs']());
-
-        var fileUploadOptions = {
-            url: this.options.uploadScript,
-            dataType: 'json',
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            add: function (e, data) {
-                $.proxy(that, 'uploadAdd', e, data)();
-            },
-            done: function (e, data) {
-                $.proxy(that, 'uploadDone', e, data)();
-            }
-        };
+            $file = $(this.templates['src/js/templates/images-fileupload.hbs']()),
+            fileUploadOptions = {
+                dataType: 'json',
+                add: function (e, data) {
+                    $.proxy(that, 'uploadAdd', e, data)();
+                },
+                done: function (e, data) {
+                    $.proxy(that, 'uploadDone', e, data)();
+                }
+            };
 
         // Only add progress callbacks for browsers that support XHR2,
         // and test for XHR2 per:
@@ -175,7 +214,7 @@
             };
         }
 
-        $file.fileupload(fileUploadOptions);
+        $file.fileupload($.extend(true, {}, this.options.fileUploadOptions, fileUploadOptions));
 
         $file.click();
     };
@@ -192,15 +231,29 @@
     Images.prototype.uploadAdd = function (e, data) {
         var $place = this.$el.find('.medium-insert-active'),
             that = this,
+            uploadErrors = [],
+            file = data.files[0],
+            acceptFileTypes = this.options.fileUploadOptions.acceptFileTypes,
+            maxFileSize = this.options.fileUploadOptions.maxFileSize,
             reader;
 
-        this.getCore().hideButtons();
+        if (acceptFileTypes && !acceptFileTypes.test(file['type'])) {
+            uploadErrors.push(this.options.messages.acceptFileTypesError + file['name']);
+        } else if (maxFileSize && file['size'] > maxFileSize) {
+            uploadErrors.push(this.options.messages.maxFileSizeError + file['name']);
+        }
+        if (uploadErrors.length > 0) {
+            alert(uploadErrors.join("\n"));
+            return;
+        }
+
+        this.core.hideButtons();
 
         // Replace paragraph with div, because figure elements can't be inside paragraph
         if ($place.is('p')) {
             $place.replaceWith('<div class="medium-insert-active">'+ $place.html() +'</div>');
             $place = this.$el.find('.medium-insert-active');
-            this.getCore().moveCaret($place);
+            this.core.moveCaret($place);
         }
 
         $place.addClass('medium-insert-images');
@@ -287,12 +340,14 @@
      */
 
     Images.prototype.uploadDone = function (e, data) {
-        $.proxy(this, 'showImage', data.result.files[0].url, data)();
+        var $el = $.proxy(this, 'showImage', data.result.files[0].url, data)();
 
-        this.getCore().clean();
-        this.$el.trigger('input');
-
+        this.core.clean();
         this.sorting();
+
+        if (this.options.uploadCompleted) {
+            this.options.uploadCompleted($el, data);
+        }
     };
 
     /**
@@ -303,19 +358,24 @@
      */
 
     Images.prototype.showImage = function (img, data) {
-        var $place, domImage;
+        var $place = this.$el.find('.medium-insert-active'),
+            domImage,
+            that;
+
+        // Hide editor's placeholder
+        $place.click();
 
         // If preview is allowed and preview image already exists,
         // replace it with uploaded image
+        that = this;
         if (this.options.preview && data.context) {
             domImage = this.getDOMImage();
             domImage.onload = function () {
                 data.context.find('img').attr('src', domImage.src);
+                that.core.triggerInput();
             };
             domImage.src = img;
         } else {
-            $place = this.$el.find('.medium-insert-active');
-
             data.context = $(this.templates['src/js/templates/images-image.hbs']({
                 img: img,
                 progress: this.options.preview
@@ -324,6 +384,16 @@
             $place.find('br').remove();
 
             if (this.options.autoGrid && $place.find('figure').length >= this.options.autoGrid) {
+                $.each(this.options.styles, function (style, options) {
+                    var className = 'medium-insert-images-'+ style;
+
+                    $place.removeClass(className);
+
+                    if (options.removed) {
+                        options.removed($place);
+                    }
+                });
+
                 $place.addClass('medium-insert-images-grid');
 
                 if (this.options.styles.grid.added) {
@@ -335,6 +405,10 @@
                 data.submit();
             }
         }
+
+        this.core.triggerInput();
+
+        return data.context;
     };
 
     Images.prototype.getDOMImage = function () {
@@ -349,19 +423,24 @@
      */
 
     Images.prototype.selectImage = function (e) {
-        var $image = $(e.target),
-            that = this;
+        if(this.core.options.enabled) {
+            var $image = $(e.target),
+                that = this;
 
-        // Hide keyboard on mobile devices
-        this.$el.blur();
+            // Hide keyboard on mobile devices
+            this.$el.blur();
 
-        $image.addClass('medium-insert-image-active');
-        $image.closest('.medium-insert-images').addClass('medium-insert-active');
+            $image.addClass('medium-insert-image-active');
+            $image.closest('.medium-insert-images').addClass('medium-insert-active');
 
-        setTimeout(function () {
-            that.addToolbar();
-            that.getCore().addCaption($image.closest('figure'), that.options.captionPlaceholder);
-        }, 50);
+            setTimeout(function () {
+                that.addToolbar();
+
+                if (that.options.captions) {
+                    that.core.addCaption($image.closest('figure'), that.options.captionPlaceholder);
+                }
+            }, 50);
+        }
     };
 
     /**
@@ -378,7 +457,7 @@
         if ($el.is('img') && $el.hasClass('medium-insert-image-active')) {
             $image.not($el).removeClass('medium-insert-image-active');
             $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
-            this.getCore().removeCaptions($el);
+            this.core.removeCaptions($el);
             return;
         }
 
@@ -386,9 +465,9 @@
         $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
 
         if ($el.is('.medium-insert-caption-placeholder')) {
-            this.getCore().removeCaptionPlaceholder($image.closest('figure'));
+            this.core.removeCaptionPlaceholder($image.closest('figure'));
         } else if ($el.is('figcaption') === false) {
-            this.getCore().removeCaptions();
+            this.core.removeCaptions();
         }
     };
 
@@ -413,28 +492,23 @@
                 $parent = $image.closest('.medium-insert-images');
                 $image.closest('figure').remove();
 
-                if (this.options.autoGrid && $parent.find('figure').length < this.options.autoGrid) {
-                    $parent.removeClass('medium-insert-images-grid');
-
-                    if (this.options.styles.grid.removed) {
-                        this.options.styles.grid.removed($parent);
-                    }
-                }
-
                 $('.medium-insert-images-toolbar, .medium-insert-images-toolbar2').remove();
 
                 if ($parent.find('figure').length === 0) {
-                    $empty = $(this.templates['src/js/templates/core-empty-line.hbs']().trim());
-                    $parent.before($empty);
+                    $empty = $parent.next();
+                    if ($empty.is('p') === false || $empty.text() !== '') {
+                        $empty = $(this.templates['src/js/templates/core-empty-line.hbs']().trim());
+                        $parent.before($empty);
+                    }
                     $parent.remove();
 
                     // Hide addons
-                    this.getCore().hideAddons();
+                    this.core.hideAddons();
 
-                    this.getCore().moveCaret($empty);
+                    this.core.moveCaret($empty);
                 }
 
-                this.$el.trigger('input');
+                this.core.triggerInput();
             }
         }
     };
@@ -448,7 +522,14 @@
 
     Images.prototype.deleteFile = function (file) {
         if (this.options.deleteScript) {
-            $.post(this.options.deleteScript, { file: file });
+            // If deleteMethod is somehow undefined, defaults to POST
+            var method = this.options.deleteMethod || 'POST';
+
+            $.ajax({
+                url: this.options.deleteScript,
+                type: method,
+                data: { file: file }
+            });
         }
     };
 
@@ -464,7 +545,10 @@
             active = false,
             $toolbar, $toolbar2, top;
 
-        $('body').append(this.templates['src/js/templates/images-toolbar.hbs']({
+        var mediumEditor = this.core.getEditor();
+        var toolbarContainer = mediumEditor.options.elementsContainer || 'body';
+
+        $(toolbarContainer).append(this.templates['src/js/templates/images-toolbar.hbs']({
             styles: this.options.styles,
             actions: this.options.actions
         }).trim());
@@ -539,9 +623,9 @@
             }
         });
 
-        this.getCore().positionButtons('images');
+        this.core.hideButtons();
 
-        this.$el.trigger('input');
+        this.core.triggerInput();
     };
 
     /**
@@ -559,7 +643,9 @@
             callback(this.$el.find('.medium-insert-image-active'));
         }
 
-        this.$el.trigger('input');
+        this.core.hideButtons();
+
+        this.core.triggerInput();
     };
 
     /**
@@ -569,7 +655,7 @@
      */
 
     Images.prototype.sorting = function () {
-        this.options.sorting();
+        $.proxy(this.options.sorting, this)();
     };
 
     /** Plugin initialization */
@@ -582,4 +668,4 @@
         });
     };
 
-})(jQuery, window, document);
+})(jQuery, window, document, MediumEditor.util);
