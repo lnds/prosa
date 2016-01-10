@@ -23,8 +23,8 @@ Uso el siguiente esquema
 
     Major.Minor.Ticket.Build
     
-Major: es el numero de versión, 0 significa que está en etapa de pre-release (etapas alpha y beta), sólo cambia cuando se produce un cambio que es incompatible hacia atrás
-Minor: indica un cambio compatible con versiones anteriores, denota la incorporación de una funcionalidad nueva. Actualmente uso el numero de sprint (ver más abajo)
+Major: es el numero de versión, 0 significa que está en etapa de pre-release (etapas alpha y beta), sólo cambia cuando se produce un cambio que es incompatible hacia atrás (o pasamos a la versión 1).
+Minor: Actualmente uso el numero de sprint (ver más abajo).
 Ticket: número del ticket resuelto en essa versión.
 Build: un número incremental que vuelve a cero cuando se incrementa Minor. Normalmente un incremento en este numero implica un bugfix.
 
