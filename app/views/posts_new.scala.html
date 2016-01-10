@@ -61,7 +61,9 @@
             case None => {}
             case Some(error) => {  <p class="text-danger">@Messages(error.message)</p> }
             }
-            <div class="editor" id="post_content">
+            <div id="container">
+                <div class="editor" id="post_content" data-placeholder="@Messages("placeholders.editor.type_here")">
+                </div>
             </div>
         </div>
     </div>

@@ -24,7 +24,8 @@ case class Author(
                    password:String,
                    permission: String,
                    fullname:Option[String],
-                   bio:Option[String]
+                   bio:Option[String],
+                   twitter:Option[String]
                  ) extends Visitor with Identifiable
 
 
@@ -40,8 +41,9 @@ class Authors(tag:Tag) extends Table[Author](tag, "author") with HasId {
   def permission = column[String]("permission")
   def fullname = column[Option[String]]("fullname")
   def bio = column[Option[String]]("bio")
+  def twitter = column[Option[String]]("twitter_handle")
 
-  def * = (id,nickname,email,password,permission,fullname,bio) <> (Author.tupled, Author.unapply)
+  def * = (id,nickname,email,password,permission,fullname,bio, twitter) <> (Author.tupled, Author.unapply)
 
 }
 
@@ -65,9 +67,10 @@ object Authors extends EntityService[Author]  {
   def findByNickname(nickname: String) : Future[Option[Author]] =
     dbConfig.db.run(authors.filter(a => a.nickname === nickname).result.headOption)
 
-  def create(nickname:String, email:String, password:String, permission:String)(implicit  s:Session)  = {
+  def create(nickname:String, email:String, password:String, permission:String, twitter:Option[String]) : Future[Option[Author]]= {
     val pass = BCrypt.hashpw(password, BCrypt.gensalt())
-    insert(Author(IdGenerator.nextId(classOf[Author]), nickname, email, pass, permission, None, None))
+    val author = Author(IdGenerator.nextId(classOf[Author]), nickname, email, pass, permission, None, None, twitter)
+    insert(author).map { i => Some(author) }
   }
 
   def changePassword(author:Author, newPassword:String) : Future[Int] = {

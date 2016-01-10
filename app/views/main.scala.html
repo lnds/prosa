@@ -32,6 +32,30 @@
     <meta property="og:site_name" content="@blog.name" />
     }
 
+
+
+    <meta name="twitter:card" content="summary_large_image">
+    @blogOpt.map { blog =>
+        @blog.twitter.map { twitter =>
+    <meta name="twitter:site" content="@twitter">
+        }
+    }
+    @authorOpt.map { author =>
+        @author.twitter.map { twitter =>
+    <meta name="twitter:creator" content="@twitter">
+        }
+    }
+
+    <meta property="twitter:title" content="@title">
+    @descOpt.map { description =>
+        <meta property="twitter:description" content="@description" />
+    }
+
+    @imgOpt.map { img =>
+        <meta property="twitter:image" content="@img">
+    }
+
+
     <meta http-equiv="X-UA-Compatible" content="IE=edge" >
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -51,7 +75,7 @@
     <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
     <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/bootstrap/dist/css/bootstrap.css")'>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.versioned("images/favicon.png")'>
-    <link rel='stylesheet' href='@routes.Assets.versioned("css/font-awesome.css")'>
+    <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/font-awesome/css/font-awesome.min.css")'>
     <link rel="stylesheet" href='@routes.Assets.versioned("css/dropzone.css")'>
     <link rel='stylesheet' href='@routes.Assets.versioned("css/prosa-main.css")'>
 
