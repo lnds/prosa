@@ -5,6 +5,14 @@
 - User Administration
 - Profile Editing
 
+## [0.3.18.1] - 2016-01-21
+### Changed
+- prosa.css 
+- master template css
+
+### Fixed
+- Scrolling for Safari on iOS bug #10 on github
+
 ## [0.2.16.11] - 2016-01-10
 ### Changed
 - Medium Editor 5.12.0
