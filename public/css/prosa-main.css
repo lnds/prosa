@@ -6,8 +6,9 @@
 
 html,
 body {
-    overflow-x: hidden;
     height: 100%;
+    overflow-y: scroll; /* has to be scroll, not auto */
+    -webkit-overflow-scrolling: touch;
 }
 body {
     font-family: "Raleway", "Open Sans","Myriad Pro", "Lucida Grande","Lucida Sans Unicode","Lucida Sans",Geneva,Verdana,sans-serif;

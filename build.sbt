@@ -77,6 +77,6 @@ resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
 
 incOptions := incOptions.value.withNameHashing(true)
 
-pipelineStages := Seq(rjs, digest, gzip)
+pipelineStages := Seq(digest, gzip)
 
 routesGenerator := InjectedRoutesGenerator
