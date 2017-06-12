@@ -5,7 +5,7 @@ prosa.main.content.index=Lo último publicado
 prosa.description=Esto es Prosa
 
 # Debes cambiar esto en tu instalación
-prosa.canonical.url=http://www.prosa.io/
+prosa.canonical.url=https://www.prosa.io/
 
 # date formatting
 dates.year= año

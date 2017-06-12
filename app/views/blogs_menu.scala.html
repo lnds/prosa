@@ -1,7 +1,7 @@
 @(blogOpt:Option[Blog], user:Visitor)(implicit  messages:Messages)
 @blogOpt.map { blog =>
     <li>
-        <form class="navbar-form" role="search" action="http://google.com/search" method="get">
+        <form class="navbar-form" role="search" action="https://google.com/search" method="get">
             <div class="input-group">
                 <input type="hidden" name="q" value="site:@tools.PostAux.extractDomain(blog.url.getOrElse(Messages("prosa.canonical.url")))" />
                 <input type="text" class="form-control" placeholder="@Messages("blogs.action.search")" name="q" results="0" >
