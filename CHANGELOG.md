@@ -5,10 +5,9 @@
 - User Administration
 - Profile Editing
 
-## [0.3.18.1] - 2016-01-21
-### Changed
-- prosa.css 
-- master template css
+## [0.2.17] - 2017-06-11
+### Fixed
+- change some http for https in order to enable SSL/TLS support
 
 ### Fixed
 - Scrolling for Safari on iOS bug #10 on github
