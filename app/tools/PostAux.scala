@@ -74,7 +74,7 @@ object PostAux  {
   }
 
   def avatarUrl(email:String) : Option[String]=
-    Option(Gravatar(email).avatarUrl)
+    Option(Gravatar(email).ssl(true).avatarUrl)
 
   def extractDomain(url:String) = {
     val u = new java.net.URL(url)
