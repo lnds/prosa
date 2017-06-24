@@ -1,9 +1,13 @@
 # Change Log
 
 ## [Unreleased]
+## 0.3.1.11
 ### Added
-- User Administration
-- Profile Editing
+- add an sponsor/ads footer on posts
+
+### Fixed
+- fix bug with blog creation form
+- display error messages properly on blog form
 
 ## [0.2.17] - 2017-06-11
 ### Fixed
