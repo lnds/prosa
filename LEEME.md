@@ -1,6 +1,6 @@
 # Esto es Prosa
 
-Release 0.1
+Release 0.3
 
 Prosa es un servidor de blogs que utiliza un estilo minimalista de edición de textos.
 
@@ -21,25 +21,19 @@ El archivo INSTALAR tiene las instrucciones para instalar.
 
 Uso el siguiente esquema
 
-    Major.Minor.Ticket.Build
+    Major.Minor.Build.Ticket
     
 Major: es el numero de versión, 0 significa que está en etapa de pre-release (etapas alpha y beta), sólo cambia cuando se produce un cambio que es incompatible hacia atrás (o pasamos a la versión 1).
 Minor: Actualmente uso el numero de sprint (ver más abajo).
 Ticket: número del ticket resuelto en essa versión.
 Build: un número incremental que vuelve a cero cuando se incrementa Minor. Normalmente un incremento en este numero implica un bugfix.
 
+
 # Metodología
 
-A partir de octubre estoy usando como metodología de trabajo controlada a través de mi Jira personal (más adelante lo publicaré).
-El sprint tiene duración de 2 semanas e incluye varios tickets (mejoras, nuevas características y bugs).
-Al empezar un Sprint incremento el valor Minor.
+Los tickets se llevan en el proyecto GitHub
+Usamos Git Flow con ramas por cada ticket.
 
-Trabajaré 1 ticket a la vez.
-Cada ticket se trabaja en su propio branch en un repositorio stash interno (usando la metodología propuesta por Atlassian).
-
-Al empezar a trabajar en un ticket cambio el valor de Ticket.
-
-Al cerrar el ticket se integra a la rama master y además se hace el push a GitHub.
-
+(c) 2017 Eduardo Díaz, ver licencia
 
 

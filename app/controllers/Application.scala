@@ -12,6 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:DatabaseConfigProvider) extends Controller  with OptionalAuthElement with AuthConfigImpl with I18nSupport {
 
   val maxPosts = 10
+  val version = "0.3.0"
 
   def index = AsyncStack { implicit request =>
     Posts.last(maxPosts).map { posts =>
