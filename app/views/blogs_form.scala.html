@@ -145,6 +145,27 @@
 
 
                 <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="show_ads" value="@form("show_ads").value.getOrElse(true)" @if(form("show_ads").value.orNull) { checked } /> @Messages("blogs.input.label.show_ads")
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group @if(form("ads_code").error.nonEmpty){has-error}">
+                    <label for="ads_code" class="col-sm-3 control-label">@Messages("blogs.input.label.ads_code")</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" name="ads_code" id="ads_code">@form("ads_code").value</textarea>
+                        @form("disqus").error match {
+                            case None => {}
+                            case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="status" id="status">

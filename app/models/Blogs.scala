@@ -32,7 +32,9 @@ case class Blog(
                  googleAnalytics:Option[String],
                  status:BlogStatus.Value, //
                  owner:String,
-                 twitter:Option[String]
+                 twitter:Option[String],
+                 showAds:Option[Boolean],
+                 adsCode:Option[String]
                ) extends Identifiable
 
 
@@ -51,8 +53,10 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
   def status = column[BlogStatus.Value]("status")
   def owner = column[String]("owner", O.Length(45, varying = true))
   def twitter = column[Option[String]]("twitter_handle")
+  def showAds = column[Option[Boolean]]("show_ads")
+  def adsCode = column[Option[String]]("ads_code")
 
-  def * = (id,name,alias,description,image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, status, owner, twitter) <> (Blog.tupled, Blog.unapply)
+  def * = (id,name,alias,description,image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, status, owner, twitter, showAds, adsCode) <> (Blog.tupled, Blog.unapply)
 }
 
 
@@ -75,10 +79,10 @@ object Blogs extends DbService[Blog]{
   def findByAlias(alias:String) : Future[Option[Blog]] =
     dbConfig.db.run(blogs.filter(_.alias === alias).result.headOption)
 
-  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String]) : Future[Int] =
-    insert(Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, gogleAnalytics, BlogStatus.CREATED, owner.id, twitter))
+  def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String], showAds:Option[Boolean], adsCode:Option[String]) : Future[Int] =
+    insert(Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, BlogStatus.CREATED, owner.id, twitter, showAds, adsCode))
 
-  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], gogleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], status:BlogStatus.Value) : Future[Int] =
-    update (blog.copy(name=name, alias=alias,  useAvatarAsLogo=useAvatarAsLogo, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=gogleAnalytics, status=status))
+  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String], showAds:Option[Boolean], adsCode:Option[String], status:BlogStatus.Value) : Future[Int] =
+    update (blog.copy(name=name, alias=alias,  useAvatarAsLogo=useAvatarAsLogo, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=googleAnalytics,  showAds=showAds, adsCode=adsCode, status=status))
 
 }
