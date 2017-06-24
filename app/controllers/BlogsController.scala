@@ -1,14 +1,17 @@
 package controllers
 
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{Blogs, Authors, BlogStatus, Editor}
+import models.{Authors, BlogStatus, Blogs, Editor}
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Controller
 import tools.PostAux
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
@@ -50,6 +53,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def edit(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
+    Logger.info("EDIT")
     Blogs.findById(id).flatMap {
       case None =>
         Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
@@ -65,21 +69,31 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def save = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
+    Logger.info("SAVE")
     blogForm.bindFromRequest.fold(
-      formWithErrors => Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, None))),
+      formWithErrors => {
+        Logger.info("FORM WITH ERROR: "+formWithErrors)
+        Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, None)))
+      },
       blogData =>
         Blogs.findByAlias(blogData.alias).flatMap {
-          case None =>
+          case None => {
+            Logger.info("NONE!!!")
             Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter).map { i =>
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
-          case Some(blog) =>
+          }
+          case Some(blog) => {
+            Logger.info("SOME!!!")
             Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, None)))
+          }
         }
     )
   }
 
   def update(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
+    Logger.info("UPDATE")
+
     Blogs.findById(id).map {
       case Some(blog) =>
         blogForm.bindFromRequest.fold(
