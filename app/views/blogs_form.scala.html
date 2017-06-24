@@ -73,7 +73,7 @@
                         <input type="text" class="form-control" name="name" id="name" placeholder="@Messages("blogs.input.placeholder.name")" value="@form("name").value" >
                         @form("name").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -84,7 +84,7 @@
                         <input type="text" class="form-control" name="description" id="description" placeholder="@Messages("blogs.input.placeholder.description")" value="@form("description").value" >
                         @form("description").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                         <input type="text" class="form-control" name="alias" id="alias" placeholder="@Messages("blogs.input.placeholder.alias")" value="@form("alias").value" >
                         @form("alias").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -106,7 +106,7 @@
                         <input type="text" class="form-control" name="url" id="url" placeholder="@Messages("blogs.input.placeholder.url")" value="@form("url").value" >
                         @form("url").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                         <input type="text" class="form-control" name="disqus" id="disqus" placeholder="@Messages("blogs.input.placeholder.disqus")" value="@form("disqus").value" >
                         @form("disqus").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                         <input type="text" class="form-control" name="google_analytics" id="google_analytics" placeholder="@Messages("blogs.input.placeholder.google_analytics")" value="@form("google_analytics").value" >
                         @form("google_analytics").error match {
                         case None => {}
-                        case Some(error) => { <span class="help-block has-error">@error</span> }
+                        case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
                         }
                     </div>
                 </div>
@@ -145,12 +145,33 @@
 
 
                 <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="show_ads" value="@form("show_ads").value.getOrElse(true)" @if(form("show_ads").value.orNull) { checked } /> @Messages("blogs.input.label.show_ads")
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group @if(form("ads_code").error.nonEmpty){has-error}">
+                    <label for="ads_code" class="col-sm-3 control-label">@Messages("blogs.input.label.ads_code")</label>
+                    <div class="col-sm-9">
+                        <textarea class="form-control" name="ads_code" id="ads_code">@form("ads_code").value</textarea>
+                        @form("disqus").error match {
+                            case None => {}
+                            case Some(error) => { <span class="help-block has-error">@Messages(error.message)</span> }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label for="status" class="col-sm-3 control-label">@Messages("blogs.input.label.status")</label>
                     <div class="col-sm-9">
                         <select class="form-control" name="status" id="status">
-                            <option value="@Messages(models.BlogStatus.CREATED.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
-                            <option value="@Messages(models.BlogStatus.PUBLISHED.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
-                            <option value="@Messages(models.BlogStatus.INACTIVE.toString)" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
+                            <option value="@models.BlogStatus.CREATED.id" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.CREATED}") { selected }>@Messages("blogs.input.option.status.created")</option>
+                            <option value="@models.BlogStatus.PUBLISHED.id" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.PUBLISHED}") { selected }>@Messages("blogs.input.option.status.published")</option>
+                            <option value="@models.BlogStatus.INACTIVE.id" @if(form("status").value.getOrElse("") == s"${models.BlogStatus.INACTIVE}") { selected }>@Messages("blogs.input.option.status.inactive")</option>
                         </select>
                     </div>
                 </div>

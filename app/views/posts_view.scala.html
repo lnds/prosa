@@ -35,6 +35,14 @@
         <div class="post-content">
             @Html(post.content)
         </div>
+        <div class="comments">
+            @blog.showAds.map { showAds =>
+              @if(showAds) {
+                  <hr>
+                  @Html(blog.adsCode.getOrElse(""))
+              }
+            }
+        </div>
         @blog.disqus.map { disqus_short_name =>
         <div class="comments">
             <h3>@Messages("posts.view.comments")</h3>

@@ -76,6 +76,8 @@ blogs.input.label.status=Estado del Blog
 blogs.input.option.status.created=Blog Creado - No Publicado
 blogs.input.option.status.published=Blog Publicado
 blogs.input.option.status.inactive=Blog Inactivo
+blogs.input.label.show_ads=Mostrar Anuncios en Posts
+blogs.input.label.ads_code=Código de Anuncios
 
 
 # Posts Pagination
