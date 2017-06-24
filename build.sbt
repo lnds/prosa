@@ -4,11 +4,16 @@ name := """prosa-blog-server"""
 
 val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
 
-version := conf.getString("app.version")
+version := "0.3.1.11"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(SbtWeb)
+lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(SbtWeb).enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "buildinfo"
+  )
 
 scalaVersion := "2.11.7"
+
 
 scalacOptions ++= Seq(
   // Emit warning for usages of deprecated APIs

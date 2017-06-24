@@ -8,7 +8,7 @@
         <small>@author.map { a => &copy; @a.fullname }</small>
       </p>
       <p>
-        <small>@Messages("footer.prosa", Play.current.configuration.getString("app.version").orNull)</small>
+        <small>@Messages("footer.prosa", buildinfo.BuildInfo.version)</small>
       </p>
     </footer>
   </div>
