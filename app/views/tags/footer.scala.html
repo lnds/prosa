@@ -1,5 +1,6 @@
 @()(implicit messages:Messages)
 @import play.api.Play
+@import buildinfo.BuildInfo
 <div class="row">
   <div class="col-sm-12">
     <footer role="contentinfo" class="footer">
@@ -7,7 +8,7 @@
         <small>@Messages("footer.copyright")</small>
       </p>
       <p>
-        <small>@Messages("footer.prosa", Play.current.configuration.getString("app.version").orNull)</small>
+        <small>@Messages("footer.prosa", buildinfo.BuildInfo.version)</small>
       </p>
     </footer>
   </div>

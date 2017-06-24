@@ -1,7 +1,8 @@
 # Change Log
 
 ## [Unreleased]
-## 0.3.1.11
+
+## 0.3.1.11 - 2017-06-24
 ### Added
 - add an sponsor/ads footer on posts
 
