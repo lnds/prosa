@@ -1,11 +1,15 @@
 package models
 
+import javax.inject.{ Inject, Singleton }
+
 import org.mindrot.jbcrypt.BCrypt
+import play.api.db.slick.DatabaseConfigProvider
+import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import tools.{IdGenerator, PostAux}
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * AuthorService
@@ -47,11 +51,13 @@ class Authors(tag:Tag) extends Table[Author](tag, "author") with HasId {
 
 }
 
-object Authors extends EntityService[Author]  {
+@Singleton
+class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)
+  extends EntityService[Author] {
 
   type EntityType = Authors
-  val items = TableQuery[Authors]
-  lazy val authors = items
+  val items: TableQuery[Authors] = TableQuery[Authors]
+  lazy val authors: PostgresDriver.api.TableQuery[Authors] = items
 
   def authenticate(username: String, password:String) =
     findByNickname(username).map {
