@@ -12,13 +12,13 @@
 /* jshint nomen:false */
 /* global define, require, window */
 
-(function (factory) {
+;(function (factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
         // Register as an anonymous AMD module:
         define([
             'jquery',
-            'tmpl',
+            'blueimp-tmpl',
             './jquery.fileupload-image',
             './jquery.fileupload-audio',
             './jquery.fileupload-video',
@@ -28,7 +28,7 @@
         // Node/CommonJS:
         factory(
             require('jquery'),
-            require('tmpl')
+            require('blueimp-tmpl')
         );
     } else {
         // Browser globals:
