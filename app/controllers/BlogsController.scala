@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{Authors, BlogStatus, Blogs, Editor}
+import models._
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
@@ -20,7 +20,7 @@ case class BlogData(id:Option[String], name:String,alias:String,description:Stri
                     useAvatarAsLogo:Option[Boolean], status:Int, twitter:Option[String],
                     showAds:Option[Boolean], adsCode:Option[String])
 
-class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider)
+class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val blogsDAO : BlogsDAO, override protected val  authorsDAO:AuthorsDAO)
   extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
 
 
@@ -47,7 +47,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   def checkAliasName(alias:String) = alias.matches("[a-zA-Z0-9_-]+")   && alias.length() <= 32
 
   def create = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Authors.findById(loggedIn.id).map {
+    authorsDAO.findById(loggedIn.id).map {
       case Some(author) =>
         Ok(views.html.blogs_form(None, blogForm, loggedIn, PostAux.avatarUrl(author.email)))
       case None =>
@@ -57,12 +57,12 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
 
   def edit(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
     Logger.info("EDIT")
-    Blogs.findById(id).flatMap {
+    blogsDAO.findById(id).flatMap {
       case None =>
         Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
       case Some(blog) =>
         val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo,blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id, blog.twitter, blog.showAds, blog.adsCode))
-        Authors.findById(blog.owner).map {
+        authorsDAO.findById(blog.owner).map {
           case None =>
             Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
           case Some(owner) =>
@@ -72,37 +72,30 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
   }
 
   def save = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Logger.info("SAVE")
     blogForm.bindFromRequest.fold(
       formWithErrors => {
         Logger.info("FORM WITH ERROR: "+formWithErrors)
         Future.successful(BadRequest(views.html.blogs_form(None, formWithErrors, loggedIn, None)))
       },
       blogData =>
-        Blogs.findByAlias(blogData.alias).flatMap {
-          case None => {
-            Logger.info("NONE!!!")
-            Blogs.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode).map { i =>
+        blogsDAO.findByAlias(blogData.alias).flatMap {
+          case None =>
+            blogsDAO.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode).map { i =>
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
-          }
-          case Some(blog) => {
-            Logger.info("SOME!!!")
+          case Some(blog) =>
             Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, None)))
-          }
         }
     )
   }
 
   def update(id:String) = AsyncStack(AuthorityKey -> Editor, IgnoreTokenValidation -> None) { implicit request =>
-    Logger.info("UPDATE")
-
-    Blogs.findById(id).map {
+    blogsDAO.findById(id).map {
       case Some(blog) =>
         blogForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, None)),
           blogData => {
-            Blogs.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode, BlogStatus(blogData.status))
+            blogsDAO.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode, BlogStatus(blogData.status))
             Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))
           }
         )

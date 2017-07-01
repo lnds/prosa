@@ -2,9 +2,12 @@ package models
 
 import slick.driver.PostgresDriver.api._
 import tools.IdGenerator
+import javax.inject.{Inject, Singleton}
+
+import play.api.db.slick.DatabaseConfigProvider
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 object BlogStatus extends Enumeration {
@@ -60,7 +63,8 @@ class Blogs(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
 }
 
 
-object Blogs extends DbService[Blog]{
+@Singleton
+class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)extends DbService[Blog]{
 
   type EntityType = Blogs
 

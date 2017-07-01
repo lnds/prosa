@@ -17,8 +17,10 @@ trait AuthConfigImpl extends AuthConfig {
 
   val sessionTimeoutInSeconds = 3600
 
+  protected val authorsDAO : AuthorsDAO
+
   def resolveUser(id:Id)(implicit ctx:ExecutionContext) : Future[Option[User]] =
-        Authors.findById(id)
+        authorsDAO.findById(id)
 
   def loginSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =  {
     val uri = request.session.get("access_uri").getOrElse(routes.BlogsGuestController.index().url.toString)

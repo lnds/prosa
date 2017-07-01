@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## 0.3.2 - 2017-07-01
+
+### Changed
+- support play framework 2.5 (closes #12)
+- update medium editor (closes #12)
+
 ## 0.3.1.11 - 2017-06-24
 ### Added
 - add an sponsor/ads footer on posts

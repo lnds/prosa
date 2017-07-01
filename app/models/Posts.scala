@@ -1,14 +1,18 @@
 package models
 
+import javax.inject.{Inject, Singleton}
 import java.io.File
+
 import org.joda.time.{DateTime, Period}
 import play.api.libs.json.{JsArray, JsObject, Json}
 import slick.driver.PostgresDriver.api._
 import tools.IdGenerator
+
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import com.github.tototoshi.slick.PostgresJodaSupport._
+import play.api.db.slick.DatabaseConfigProvider
 
 
 case class Post(id:String,
@@ -42,7 +46,9 @@ class Posts(tag:Tag) extends Table[Post](tag, "post") with HasId {
   def * = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
 }
 
-object Posts extends DbService[Post]{
+@Singleton
+class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, private val blogsDAO: BlogsDAO, private val authorsDAO: AuthorsDAO)(implicit executionContext: ExecutionContext)
+  extends DbService[Post]{
 
   type EntityType = Posts
 
@@ -50,14 +56,14 @@ object Posts extends DbService[Post]{
   lazy val posts = items
 
   def last(n:Int) : Future[Seq[(Post,Blog)]] = {
-    val q = (for {(p,b) <- posts join Blogs.blogs on (_.blog === _.id)
+    val q = (for {(p,b) <- posts join blogsDAO.blogs on (_.blog === _.id)
                   if p.draft === false && b.status === BlogStatus.PUBLISHED} yield (p,b)
             ).sortBy(_._1.published.desc).take(n)
     dbConfig.db.run(q.result)
   }
 
   def last(blog:Blog, n:Int) : Future[Seq[(Post,Author)]] = {
-    val q = (for {(p,a) <- posts join Authors.authors on (_.author === _.id)
+    val q = (for {(p,a) <- posts join authorsDAO.authors on (_.author === _.id)
                   if p.blog === blog.id && p.draft === false } yield (p,a)
             ).sortBy(_._1.published.desc).take(n)
     dbConfig.db.run(q.result)
