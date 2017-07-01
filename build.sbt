@@ -4,7 +4,7 @@ name := """prosa-blog-server"""
 
 val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
 
-version := "0.3.1.12"
+version := "0.3.1.13"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(SbtWeb).enablePlugins(BuildInfoPlugin).
   settings(
