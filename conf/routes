@@ -22,7 +22,7 @@ POST        /blogs/edit/:id                             controllers.BlogsControl
 
 POST        /images/uploadImage                         controllers.ImagesController.upload()
 POST        /images/editorUploadImage                   controllers.ImagesController.editorUpload()
-GET         /images/get/:id                             controllers.ContentController.getImage(id)
+GET         /images/get/:id                             controllers.ContentController.image(id)
 
 GET         /blog/:alias                                controllers.PostsGuestController.index(alias:String, pageNum:Int ?=0)
 GET         /blog/:alias/:year/:month/:day/:slug        controllers.PostsGuestController.view(alias,year:Int,month:Int,day:Int,slug:String)

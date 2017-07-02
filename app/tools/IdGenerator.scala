@@ -20,22 +20,22 @@ object IdGenerator {
 
   def nextId(entityClass: Class[_]) = {
     val uuid = UUIDUtil.generateUUID
-    val classId = getEntityClassHashId(entityClass)
+    val classId = entityClassHashId(entityClass)
     uuid + "-" + classId
   }
 
   private def classHashIdsCache = new ConcurrentHashMap[Class[_], String]()
 
-  def getEntityClassHashId(entityClass: Class[_]): String =
+  def entityClassHashId(entityClass: Class[_]): String =
     Option(classHashIdsCache.get(entityClass)) match {
       case Some(hash) => hash
       case None =>
-        val hash = getEntityClassHashId(entityClass.getCanonicalName)
+        val hash = entityClassHashId(entityClass.getCanonicalName)
         classHashIdsCache.put(entityClass, hash)
         hash
     }
 
-  private def getEntityClassHashId(entityName: String): String =
+  private def entityClassHashId(entityName: String): String =
     normalizeHex(Integer.toHexString(entityName.hashCode))
 
 
