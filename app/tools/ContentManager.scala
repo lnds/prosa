@@ -16,10 +16,10 @@ class ContentManager @Inject()(configuration:Configuration) {
 
   def putFile(key:String, file:File, contentType:String) =
     cdnurl match {
-      case None => routes.ContentController.getImage(key).url
+      case None => routes.ContentController.image(key).url
       case Some(url) =>
         if (url.isEmpty)
-          routes.ContentController.getImage(key).url
+          routes.ContentController.image(key).url
         else
           AmazonS3.putFile(url, key, file, contentType)
     }

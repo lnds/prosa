@@ -68,7 +68,7 @@ extends Controller with StackableController {
   /**
    * This method get temporal file, you should configure a CDN in application.conf
    */
-  def getImage(id: String) = AsyncStack {
+  def image(id: String) = AsyncStack {
     implicit request =>
       imagesDAO.findById(id).map {
         case Some(img) =>
