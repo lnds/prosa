@@ -4,11 +4,11 @@ import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
-import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.Logger
 import play.api.mvc.Controller
 import tools.PostAux
 

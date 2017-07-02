@@ -17,7 +17,7 @@ trait TokenValidateElement extends StackableController {
   private val tokenForm = Form(PreventingCsrfToken.formKey -> text)
 
   private val random = new Random(new SecureRandom)
-  private val table = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ "^`~:/?,.{[}}|+_()*^%$#@!"
+  private[this] val table = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ "^`~:/?,.{[}}|+_()*^%$#@!"
 
   private def generateToken: PreventingCsrfToken = PreventingCsrfToken {
     Stream.continually(random.nextInt(table.size)).map(table).take(32).mkString
