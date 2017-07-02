@@ -12,24 +12,24 @@ trait TokenValidateElement extends StackableController {
 
   self: Controller =>
 
-  private val preventingCsrfTokenSessionKey = "preventingCsrfToken"
+  private[this] val preventingCsrfTokenSessionKey = "preventingCsrfToken"
 
-  private val tokenForm = Form(PreventingCsrfToken.formKey -> text)
+  private[this] val tokenForm = Form(PreventingCsrfToken.formKey -> text)
 
-  private val random = new Random(new SecureRandom)
+  private[this] val random = new Random(new SecureRandom)
   private[this] val table = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9') ++ "^`~:/?,.{[}}|+_()*^%$#@!"
 
-  private def generateToken: PreventingCsrfToken = PreventingCsrfToken {
+  private[this] def generateToken: PreventingCsrfToken = PreventingCsrfToken {
     Stream.continually(random.nextInt(table.size)).map(table).take(32).mkString
   }
 
   case object PreventingCsrfTokenKey extends RequestAttributeKey[PreventingCsrfToken]
   case object IgnoreTokenValidation extends RequestAttributeKey[Unit]
 
-  private def validateToken(request: Request[_]): Boolean = (for {
+  private[this] def validateToken(request: Request[_]): Boolean = (for {
     tokenInForm    <- tokenForm.bindFromRequest()(request).value
     tokenInSession <- request.session.get(preventingCsrfTokenSessionKey)
-  } yield tokenInForm == tokenInSession) getOrElse false
+  } yield tokenInForm.equals(tokenInSession)) getOrElse false
 
   override def proceed[A](request: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     if (isIgnoreTokenValidation(request) || validateToken(request)) {

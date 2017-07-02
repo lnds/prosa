@@ -10,7 +10,7 @@ object UUIDUtil {
 
   // Create an ids pool? uuid.toString is slow! :(
 
-  private val uuidGenerator = Generators.timeBasedGenerator
+  private[this] val uuidGenerator = Generators.timeBasedGenerator
   def generateUUID = uuidGenerator.generate.toString
   def timestamp(uuid: String) = (JavaUUID.fromString(uuid).timestamp() - 122192928000000000l) / 10000
 
@@ -24,7 +24,7 @@ object IdGenerator {
     uuid + "-" + classId
   }
 
-  private def classHashIdsCache = new ConcurrentHashMap[Class[_], String]()
+  private[this] def classHashIdsCache = new ConcurrentHashMap[Class[_], String]()
 
   def entityClassHashId(entityClass: Class[_]): String =
     Option(classHashIdsCache.get(entityClass)) match {
@@ -39,12 +39,12 @@ object IdGenerator {
     normalizeHex(Integer.toHexString(entityName.hashCode))
 
 
-  private def normalizeHex(hex: String) = {
-    val length = hex.length
+  private[this] def normalizeHex(hex: String) = {
+    val length : Int = hex.length
     if (length == 8)
       hex
     else if (length < 8)
-      hex + (for (i <- 0 until (8 - length)) yield "0").mkString("")
+      hex + (for (_ <- 0 until (8 - length)) yield "0").mkString("")
     else
       hex.substring(0, 8)
   }

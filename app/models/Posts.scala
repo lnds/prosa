@@ -10,6 +10,8 @@ import play.api.libs.json.{JsArray, JsObject, Json}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
+import scalaz._
+import Scalaz._
 import slick.driver.PostgresDriver.api._
 import tools.IdGenerator
 
@@ -113,7 +115,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
   }
 
   def importPosts(author:Author, blog:Blog, file:File, format:String) : Unit = {
-    if (format == "ghost")
+    if (format === "ghost")
       importGhostFormat(author, blog, file)
   }
 

@@ -5,8 +5,8 @@ import java.text.Normalizer
 import models.{Blog, Post}
 import org.joda.time.{Period, DateTime}
 import play.api.i18n.Messages
-import scravatar.Gravatar
 import scala.annotation.tailrec
+import scravatar.Gravatar
 
 object PostAux  {
 
@@ -68,7 +68,7 @@ object PostAux  {
       val endsWithNumber = "(.+-)([0-9]+)$".r
       slug match {
         case endsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
-        case s => generateUniqueSlug(s + "-2", existingSlugs)
+        case sl => generateUniqueSlug(sl + "-2", existingSlugs)
       }
     }
   }
@@ -84,7 +84,7 @@ object PostAux  {
 
 
 
-  def formatElapsed(date:Option[DateTime])(implicit messages:Messages) = {
+  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
     lazy val month = Messages("dates.month")

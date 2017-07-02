@@ -95,7 +95,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
         postsDAO.findById(id).map {
           case None => blogNotFound
           case Some(post) =>
-            if (post.author != loggedIn.id)
+            if (!post.author.equals(loggedIn.id))
               postNotFound(alias)
             else
              Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))

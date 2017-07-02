@@ -3,15 +3,15 @@ package tools
 import awscala._
 import awscala.s3.{Bucket, S3}
 import com.amazonaws.services.s3.model.ObjectMetadata
-import javax.inject.{Inject, Singleton}
 import controllers.routes
+import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 
 @Singleton
 class ContentManager @Inject()(configuration:Configuration) {
 
 
-  val cdnurl = configuration.getString("prosa.cdn.url")
+  val cdnurl: Option[String] = configuration.getString("prosa.cdn.url")
 
 
   def putFile(key:String, file:File, contentType:String) =

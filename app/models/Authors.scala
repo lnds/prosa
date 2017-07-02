@@ -1,15 +1,16 @@
 package models
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.{Inject, Singleton}
 
 import org.mindrot.jbcrypt.BCrypt
 import play.api.db.slick.DatabaseConfigProvider
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
+import slick.lifted.ColumnOrdered
 import tools.{IdGenerator, PostAux}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * AuthorService
@@ -38,14 +39,14 @@ case class Author(
 
 class Authors(tag:Tag) extends Table[Author](tag, "author") with HasId {
 
-  def id = column[String]("id", O.PrimaryKey)
-  def nickname = column[String]("nickname")
-  def email = column[String]("email")
-  def password = column[String]("password")
-  def permission = column[String]("permission")
-  def fullname = column[Option[String]]("fullname")
-  def bio = column[Option[String]]("bio")
-  def twitter = column[Option[String]]("twitter_handle")
+  def id: Rep[String] = column[String]("id", O.PrimaryKey)
+  def nickname: Rep[String] = column[String]("nickname")
+  def email: Rep[String] = column[String]("email")
+  def password: Rep[String] = column[String]("password")
+  def permission: Rep[String] = column[String]("permission")
+  def fullname: Rep[Option[String]] = column[Option[String]]("fullname")
+  def bio: Rep[Option[String]] = column[Option[String]]("bio")
+  def twitter: Rep[Option[String]] = column[Option[String]]("twitter_handle")
 
   def * = (id,nickname,email,password,permission,fullname,bio, twitter) <> (Author.tupled, Author.unapply)
 
@@ -59,7 +60,7 @@ class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
   val items: TableQuery[Authors] = TableQuery[Authors]
   lazy val authors: PostgresDriver.api.TableQuery[Authors] = items
 
-  def authenticate(username: String, password:String) =
+  def authenticate(username: String, password:String): Future[Option[Author]] =
     findByNickname(username).map {
       case None => None
       case Some(a) =>
@@ -76,7 +77,7 @@ class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
   def create(nickname:String, email:String, password:String, permission:String, twitter:Option[String]) : Future[Option[Author]]= {
     val pass = BCrypt.hashpw(password, BCrypt.gensalt())
     val author = Author(IdGenerator.nextId(classOf[Author]), nickname, email, pass, permission, None, None, twitter)
-    insert(author).map { i => Some(author) }
+    insert(author).map { _ => Some(author) }
   }
 
   def changePassword(author:Author, newPassword:String) : Future[Int] = {
@@ -89,7 +90,7 @@ class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
       case None => None
     }
 
-  override def queryFilter(qry: String, c: Authors) = c.nickname like "%" + qry + "%"
+  override def queryFilter(qry: String, c: Authors): Rep[Boolean] = c.nickname like "%" + qry + "%"
 
-  override def queryOrder(c: EntityType) = c.nickname.asc
+  override def queryOrder(c: EntityType): ColumnOrdered[String] = c.nickname.asc
 }
