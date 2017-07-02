@@ -1,9 +1,8 @@
 package tools
 
+import com.fasterxml.uuid.Generators
 import java.util.concurrent.ConcurrentHashMap
 import java.util.{UUID => JavaUUID}
-
-import com.fasterxml.uuid.Generators
 
 
 // taken from activate-framework by fw-brasil

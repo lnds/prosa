@@ -9,9 +9,9 @@ import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi, Messages}
 import play.api.mvc.Controller
-import tools.PostAux
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import tools.PostAux
 
 case class PostData(image:Option[String], title:String, subtitle:Option[String], content:String, draft:Boolean, publish:Option[Boolean])
 

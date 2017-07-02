@@ -1,15 +1,12 @@
 package models
 
-import play.api.Play
-import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.Future
 import slick.driver.JdbcProfile
 import slick.driver.PostgresDriver.api._
 import slick.lifted.ColumnOrdered
 import tools.IdGenerator
-import javax.inject.Inject
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait HasId {
 
@@ -28,42 +25,41 @@ trait Identifiable {
 
 }
 
-trait DAOService[Entity <: Identifiable, I] {
+trait DAOService[E <: Identifiable, I] {
 
-  def insert(item: Entity): Future[Int]
-  def update(item: Entity): Future[Int]
+  def insert(item: E): Future[Int]
+  def update(item: E): Future[Int]
   def delete(id: I): Future[Int]
-  def findById(id: I): Future[Option[Entity]]
+  def findById(id: I): Future[Option[E]]
   def count: Future[Int]
-  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[Entity]]
+  def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[E]]
 
 }
 
 
-trait DbService[Entity <: Identifiable]
-  extends DAOService[Entity,String] with HasDatabaseConfigProvider[JdbcProfile] {
+trait DbService[E <: Identifiable]
+  extends DAOService[E,String] with HasDatabaseConfigProvider[JdbcProfile] {
 
-  type EntityType <: Table[Entity]
+  type EntityType <: Table[E]
   type TableType = TableQuery[EntityType]
 
   val items: TableType
 
-  def genId(c: Class[Entity]) = IdGenerator.nextId(c)
+  def genId(c: Class[E]) = IdGenerator.nextId(c)
 
   override def count : Future[Int] = db.run(items.length.result)
 
-  private def filterQuery(id:String) : Query[EntityType, Entity, Seq] = items.filter(i => i.asInstanceOf[HasId].id === id)
+  private[this] def filterQuery(id:String) : Query[EntityType, E, Seq] = items.filter(i => i.asInstanceOf[HasId].id === id)
 
+  def findById(id: String) : Future[Option[E]]= db.run(filterQuery(id).result.headOption)
 
-  def findById(id: String) : Future[Option[Entity]]= db.run(filterQuery(id).result.headOption)
+  override def insert(item: E) : Future[Int] = db.run(items += item)
 
-  override def insert(item: Entity) : Future[Int] = db.run(items += item)
-
-  override def update(item: Entity) : Future[Int] = db.run(filterQuery(item.id).update(item))
+  override def update(item: E) : Future[Int] = db.run(filterQuery(item.id).update(item))
 
   override def delete(id:String) : Future[Int] = db.run(filterQuery(id).delete)
 
-  override def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[Entity]] = {
+  override def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[E]] = {
     val offset = pageSize * page
     val query = (for {item <- items} yield item).drop(offset).take(pageSize)
     val totalRows = count
