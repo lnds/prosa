@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- codacy issues
+
 ## 0.3.2 - 2017-07-01
 
 ### Changed
