@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## 0.3.2.2
+
+## Fixed
+- codacy error prone issues
+
 ## 0.3.2.1 
 
 ### Fixed

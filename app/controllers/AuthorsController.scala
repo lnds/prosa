@@ -10,6 +10,9 @@ import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Controller
+import scalaz._
+import Scalaz._
+
 
 class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, override protected val  authorsDAO:AuthorsDAO) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
@@ -19,7 +22,7 @@ class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvide
       "new_password" -> nonEmptyText,
       "confirm_password" -> nonEmptyText
     ).verifying(Messages("main.error.paswords_must_match"), result => result match {
-      case (_,p1,p2) => p1 == p2
+      case (_,p1,p2) => p1 === p2
       }
     )
   )
