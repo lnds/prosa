@@ -30,7 +30,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
       case None => Future.successful(blogNotFound)
       case Some(blog) =>
         authorsDAO.findById(blog.owner).flatMap { author =>
-          authorsDAO.getAvatar(blog.owner).flatMap { avatar =>
+          authorsDAO.avatar(blog.owner).flatMap { avatar =>
             postsDAO.listForBlog(blog, draft = false, page = pageNum).map { list =>
               Ok(indexView(blog, author, list, drafts = false, loggedIn, avatar))
             }
@@ -95,7 +95,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
         postsDAO.findById(id).map {
           case None => blogNotFound
           case Some(post) =>
-            if (post.author != loggedIn.id)
+            if (!post.author.equals(loggedIn.id))
               postNotFound(alias)
             else
              Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
