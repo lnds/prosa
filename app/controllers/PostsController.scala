@@ -30,7 +30,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
       case None => Future.successful(blogNotFound)
       case Some(blog) =>
         authorsDAO.findById(blog.owner).flatMap { author =>
-          authorsDAO.getAvatar(blog.owner).flatMap { avatar =>
+          authorsDAO.avatar(blog.owner).flatMap { avatar =>
             postsDAO.listForBlog(blog, draft = false, page = pageNum).map { list =>
               Ok(indexView(blog, author, list, drafts = false, loggedIn, avatar))
             }

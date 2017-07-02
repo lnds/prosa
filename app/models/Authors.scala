@@ -83,7 +83,7 @@ class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
     update(author.copy(password = BCrypt.hashpw(newPassword, BCrypt.gensalt())))
   }
 
-  def getAvatar(authorId:String) : Future[Option[String]] =
+  def avatar(authorId:String) : Future[Option[String]] =
     findById(authorId).map {
       case Some(a) => PostAux.avatarUrl(a.email)
       case None => None
