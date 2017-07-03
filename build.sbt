@@ -59,6 +59,7 @@ libraryDependencies ++= Seq(
   ws,
   evolutions,
   specs2 % Test,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",

@@ -119,7 +119,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
       importGhostFormat(author, blog, file)
   }
 
-  def importGhostFormat(author:Author, blog:Blog, file:File) : Unit = {
+  private def importGhostFormat(author:Author, blog:Blog, file:File) : Unit = {
     val data = Source.fromFile(file)(scala.io.Codec.UTF8).mkString
     val json = Json.parse(data)
     val jsonPosts = (json \ "data" \ "posts").as[JsArray]

@@ -1,0 +1,12 @@
+language: scala
+env:
+  - PLAY_VERSION=2.5.13
+jdk:
+- oraclejdk8
+scala:
+- 2.11.8
+notifications:
+  # Email notifications are disabled to not annoy anybody.
+  # See http://about.travis-ci.org/docs/user/build-configuration/ to learn more
+  # about configuring notification recipients and more.
+  email: false
