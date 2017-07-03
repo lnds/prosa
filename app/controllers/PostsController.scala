@@ -7,11 +7,14 @@ import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.i18n.{I18nSupport, MessagesApi, Messages}
+import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Controller
+import tools.PostAux
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import tools.PostAux
+import scalaz._
+import Scalaz._
 
 case class PostData(image:Option[String], title:String, subtitle:Option[String], content:String, draft:Boolean, publish:Option[Boolean])
 
@@ -95,10 +98,10 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
         postsDAO.findById(id).map {
           case None => blogNotFound
           case Some(post) =>
-            if (!post.author.equals(loggedIn.id))
-              postNotFound(alias)
+            if (post.author === loggedIn.id)
+              Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
             else
-             Ok(views.html.posts_edit(blog, post, postForm.fill(PostData(post.image, post.title, post.subtitle, post.content, post.draft, Some(post.published.isDefined))), loggedIn))
+              postNotFound(alias)
         }
     }
   }
@@ -121,7 +124,7 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
     }
   }
 
-  def delete(alias:String, id:String) = AsyncStack(AuthorityKey -> Writer) { implicit request =>
+  def delete(alias:String, id:String) = AsyncStack(AuthorityKey -> models.Writer) { implicit request =>
       blogsDAO.findByAlias(alias).flatMap {
         case None => Future.successful(blogNotFound)
         case Some(blog) =>

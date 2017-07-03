@@ -63,6 +63,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",
   "org.postgresql" % "postgresql" % "9.4-1201-jdbc41",
+  "com.h2database" % "h2" % "1.4.187",
   "com.typesafe.play" %% "play-slick" % "2.0.2",
   "com.typesafe.play" %% "play-slick-evolutions" % "2.0.2",
   "com.fasterxml.uuid" % "java-uuid-generator" % "3.1.3",
