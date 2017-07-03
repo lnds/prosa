@@ -21,6 +21,24 @@ class ApplicationSpec extends PlaySpec with OneAppPerTest  {
 
   }
 
+  "HomeController" should {
+
+    "render the index page" in {
+
+      val request = FakeRequest(GET, "/")
+      val _ = route(app, request).get
+
+
+      val home = route(app, request).get
+
+      status(home) mustBe OK
+      contentType(home) mustBe Some("text/html")
+
+      val expected = messagesApi.preferred(request).messages("prosa.main.content.index")
+      contentAsString(home) must include (expected)
+    }
+
+  }
 
 
 }
