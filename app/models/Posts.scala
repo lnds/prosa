@@ -3,7 +3,6 @@ package models
 import com.github.tototoshi.slick.PostgresJodaSupport._
 import java.io.File
 import javax.inject.{Inject, Singleton}
-
 import org.joda.time.{DateTime, Period}
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.libs.json.{JsArray, JsObject, Json}

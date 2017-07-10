@@ -35,13 +35,13 @@ object IdGenerator {
         hash
     }
 
-  private def entityClassHashId(entityName: String): String =
+  private[this] def entityClassHashId(entityName: String): String =
     normalizeHex(Integer.toHexString(entityName.hashCode))
 
 
   private[this] def normalizeHex(hex: String) = {
     val length : Int = hex.length
-    if (length == 8)
+    if (8 == length)
       hex
     else if (length < 8)
       hex + (for (_ <- 0 until (8 - length)) yield "0").mkString("")

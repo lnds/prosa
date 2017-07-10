@@ -1,13 +1,11 @@
 package models
 
-import slick.driver.PostgresDriver.api._
-import tools.IdGenerator
 import javax.inject.{Inject, Singleton}
-
 import play.api.db.slick.DatabaseConfigProvider
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
+import slick.driver.PostgresDriver.api._
+import tools.IdGenerator
 
 
 object BlogStatus extends Enumeration {

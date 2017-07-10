@@ -6,8 +6,8 @@ import models._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{MessagesApi, I18nSupport, Messages}
 import play.api.mvc.Controller
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val  authorsDAO:AuthorsDAO)
   extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
