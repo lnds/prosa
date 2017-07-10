@@ -1,7 +1,6 @@
 
 import org.scalatestplus.play._
 import play.api.{Configuration, Environment}
-import play.api.db.evolutions._
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
 import play.api.test._
 import play.api.test.Helpers._

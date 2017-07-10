@@ -9,12 +9,12 @@ import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.Controller
-import tools.PostAux
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scalaz._
 import Scalaz._
+import tools.PostAux
+
 
 case class PostData(image:Option[String], title:String, subtitle:Option[String], content:String, draft:Boolean, publish:Option[Boolean])
 

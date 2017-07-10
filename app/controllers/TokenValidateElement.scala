@@ -2,8 +2,8 @@ package controllers
 
 import java.security.SecureRandom
 import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
-import play.api.data.Forms._
 import play.api.data._
+import play.api.data.Forms._
 import play.api.mvc._
 import scala.concurrent.Future
 import scala.util.Random
@@ -29,7 +29,7 @@ trait TokenValidateElement extends StackableController {
   private[this] def validateToken(request: Request[_]): Boolean = (for {
     tokenInForm    <- tokenForm.bindFromRequest()(request).value
     tokenInSession <- request.session.get(preventingCsrfTokenSessionKey)
-  } yield tokenInForm.equals(tokenInSession)) getOrElse false
+  } yield tokenInForm == tokenInSession) getOrElse false
 
   override def proceed[A](request: RequestWithAttributes[A])(f: RequestWithAttributes[A] => Future[Result]): Future[Result] = {
     if (isIgnoreTokenValidation(request) || validateToken(request)) {

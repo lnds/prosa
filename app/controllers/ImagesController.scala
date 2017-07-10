@@ -12,9 +12,9 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.Controller
+import scala.concurrent.ExecutionContext.Implicits.global
 import tools.ContentManager
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 
 class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val contentManager: ContentManager, private val imagesDAO: ImagesDAO, protected val  authorsDAO:AuthorsDAO)

@@ -4,13 +4,13 @@ import javax.inject.{Inject, Singleton}
 
 import org.mindrot.jbcrypt.BCrypt
 import play.api.db.slick.DatabaseConfigProvider
+import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
 import slick.driver.PostgresDriver
 import slick.driver.PostgresDriver.api._
 import slick.lifted.ColumnOrdered
 import tools.{IdGenerator, PostAux}
 
-import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * AuthorService

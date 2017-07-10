@@ -72,7 +72,7 @@
             </ul>
         </div><!-- site menu -->
 
-        <a href="#" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
+        <a href="javascript:void(0)" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
         @content
 
     </div><!-- #site-canvas -->
@@ -90,7 +90,6 @@
     <script src="@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/js/medium-editor-insert-plugin.min.js")"></script>
     <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
     <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
-    <script src="@routes.Assets.versioned("js/docs.min.js")"></script>
 <script>
     $body = document.body;
     $('[data-load-image]', $body).each(function() {
@@ -119,9 +118,18 @@ var editor = new MediumEditor('.editor', {
             'justifyLeft',
             'justifyCenter',
             'justifyRight',
+            'html'
         ]
     },
-
+    paste: {
+        /* This example includes the default options for paste,
+         if nothing is passed this is what it used */
+        forcePlainText: true,
+        cleanPastedHTML: true,
+        cleanReplacements: [],
+        cleanAttrs: ['class', 'style', 'dir'],
+        cleanTags: ['meta']
+    }
 });
 </script>
 
@@ -147,7 +155,8 @@ var editor = new MediumEditor('.editor', {
         embeds: {
             label: '<span class="fa fa-youtube-play"></span>',
             placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter', // (string) Placeholder displayed when entering URL to embed
-            captions: false, // (boolean) Enable captions
+            oembedProxy: null,
+            captions: true, // (boolean) Enable captions
         }
     });
 

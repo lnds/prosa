@@ -33,6 +33,7 @@ $(document).keyup(function(e) {
 });
 
 
+/* exported ImageLoader */
 var ImageLoader = (function($) {
 
     'use strict';
