@@ -11,6 +11,7 @@
 
 ## Fixed
 - codacy error prone issues
+- fix javascript error associated with docs.min.js
 
 ## 0.3.2.1 
 
