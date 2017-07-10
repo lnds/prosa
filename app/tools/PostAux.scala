@@ -106,19 +106,19 @@ object PostAux  {
         val now = new DateTime()
         val period = new Period(baseDate, now)
         if (period.getYears >= 1)
-          period.getYears.toString + " " + (if (period.getYears == 1) year else years)
+          period.getYears.toString + " " + (if (period.getYears > 1) years else year)
         else if (period.getMonths >= 1)
-          period.getMonths.toString + " " + (if (period.getYears == 1) month else months)
+          period.getMonths.toString + " " + (if (period.getYears > 1) months else month)
         else if (period.getWeeks >= 1)
-          period.getWeeks.toString + " " + (if (period.getWeeks == 1) week else weeks)
+          period.getWeeks.toString + " " + (if (period.getWeeks > 1) weeks else week)
         else if (period.getDays >= 1)
-          period.getDays.toString + " " + (if (period.getDays == 1) day else days)
+          period.getDays.toString + " " + (if (period.getDays > 1) days else day)
         else if (period.getHours >= 1)
-          period.getHours.toString + " " + (if (period.getHours == 1) hour else hours)
+          period.getHours.toString + " " + (if (period.getHours > 1) hours else hour)
         else if (period.getMinutes >= 1)
-          period.getMinutes.toString + " " + (if (period.getMinutes == 1) minute else minutes)
+          period.getMinutes.toString + " " + (if (period.getMinutes > 1) minutes else minute)
         else
-          period.getSeconds.toString + " " + (if (period.getYears == 1) second else seconds)
+          period.getSeconds.toString + " " + (if (period.getSeconds > 1) seconds else second)
     }
   }
 
