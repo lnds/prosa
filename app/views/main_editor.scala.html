@@ -72,7 +72,7 @@
             </ul>
         </div><!-- site menu -->
 
-        <a href="#" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
+        <a href="javascript:void(0)" class="toggle-nav btn" id="toggle-menu"><i class="fa fa-bars fa-2x"></i></a>
         @content
 
     </div><!-- #site-canvas -->
@@ -147,7 +147,8 @@ var editor = new MediumEditor('.editor', {
         embeds: {
             label: '<span class="fa fa-youtube-play"></span>',
             placeholder: 'Paste a YouTube, Vimeo, Facebook, Twitter or Instagram link and press Enter', // (string) Placeholder displayed when entering URL to embed
-            captions: false, // (boolean) Enable captions
+            oembedProxy: null,
+            captions: true, // (boolean) Enable captions
         }
     });
 

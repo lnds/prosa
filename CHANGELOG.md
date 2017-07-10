@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## 0.3.2.3
+
+## Fixed
+- codacy JSLint error on prosa.js on ImageLoader (exported)
+
 ## 0.3.2.2
 
 ## Fixed
