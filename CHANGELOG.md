@@ -6,15 +6,17 @@
 
 ## Fixed
 - codacy JSLint error on prosa.js on ImageLoader (exported)
+- fix some minor issues on codacy
+- codacy error prone issues
+- fix javascript error associated with docs.min.js
 
 ## 0.3.2.2
 
 ## Added
 - autolink
 - insert html (experimental)
+
 ## Fixed
-- codacy error prone issues
-- fix javascript error associated with docs.min.js
 
 ## 0.3.2.1 
 
