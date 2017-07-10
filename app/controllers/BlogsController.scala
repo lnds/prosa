@@ -1,7 +1,6 @@
 package controllers
 
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
 import play.api.data.Form
@@ -10,10 +9,10 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.Logger
 import play.api.mvc.Controller
-import tools.PostAux
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import tools.PostAux
+
 
 case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],
                     logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String],
