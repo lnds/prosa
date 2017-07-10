@@ -74,6 +74,7 @@ libraryDependencies ++= Seq(
   "jp.t2v" %% "play2-auth-test" % "0.14.2" % "test",
   "com.andersen-gott" %% "scravatar" % "1.0.3",
   "org.jsoup" % "jsoup" % "1.8.3",
+  "org.apache.commons" % "commons-io" % "1.3.2",
   "com.amazonaws" % "aws-java-sdk" % "1.10.0",
   "com.github.seratch" %% "awscala" % "0.5.+",
   "org.scalaz" %% "scalaz-core" % "7.2.14",
