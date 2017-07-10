@@ -9,6 +9,9 @@
 
 ## 0.3.2.2
 
+## Added
+- autolink
+- insert html (experimental)
 ## Fixed
 - codacy error prone issues
 - fix javascript error associated with docs.min.js
