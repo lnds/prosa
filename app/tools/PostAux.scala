@@ -11,7 +11,7 @@ import scravatar.Gravatar
 object PostAux  {
 
 
-  def canonical(blog:Blog, post:Post) = {
+  def canonical(blog:Blog, post:Post): String = {
     val base = blog.url.getOrElse("prosa.canonical.url")
     if (base.endsWith("/"))
       base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
@@ -20,16 +20,15 @@ object PostAux  {
   }
 
   // build slugs for links
-  def slug(blog: String, post: Post, drafts:Boolean) = {
-    val bdate = if (drafts) post.created else post.published
-    bdate match {
+  def slug(blog: String, post: Post, drafts:Boolean): String = {
+    val blogDate = if (drafts) post.created else post.published
+    blogDate match {
       case None => routes.PostsController.edit(blog, post.id).url
-      case Some(d) =>
-        slugString(blog, d, post, drafts)
+      case Some(d) => buildSlug(blog, d, post, drafts)
     }
   }
 
-  def slugString(alias: String, d: DateTime, post: Post, draft:Boolean) = {
+  private def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
     val date = new DateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
@@ -37,7 +36,7 @@ object PostAux  {
       routes.PostsGuestController.view(alias, date.getYear, date.getMonthOfYear, date.getDayOfMonth, post.slug.get).url
   }
 
-  def atomUrl(urlBase:String) = {
+  def atomUrl(urlBase:String): String = {
     if (urlBase.endsWith("/"))
       urlBase + "atom.xml"
     else
@@ -68,7 +67,7 @@ object PostAux  {
       val endsWithNumber = "(.+-)([0-9]+)$".r
       slug match {
         case endsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
-        case sl => generateUniqueSlug(sl + "-2", existingSlugs)
+        case slugPath => generateUniqueSlug(slugPath + "-2", existingSlugs)
       }
     }
   }
@@ -76,7 +75,7 @@ object PostAux  {
   def avatarUrl(email:String) : Option[String]=
     Option(Gravatar(email).ssl(true).avatarUrl)
 
-  def extractDomain(url:String) = {
+  def extractDomain(url:String): String = {
     val u = new java.net.URL(url)
     u.getHost
   }
