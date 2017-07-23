@@ -39,15 +39,14 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
-        val img = imagesDAO.addImage(imageData._1, imageData._2)
+        val (filename, contentType) = imageData
+        val img = imagesDAO.addImage(filename, contentType)
         val url = contentManager.putFile(img.id, tempFile, img.contentType)
         imagesDAO.update(img.copy(url = Some(url)))
         Ok(url)
       }
     )
   }
-
-  case class ImageFile(url: String)
 
   def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     request.body.files.headOption.map { image =>
