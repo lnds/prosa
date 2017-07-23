@@ -9,6 +9,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import slick.driver.PostgresDriver.api._
+import slick.lifted.ProvenShape
 import tools.IdGenerator
 
 
@@ -29,19 +30,19 @@ case class Post(id:String,
 
 class Posts(tag:Tag) extends Table[Post](tag, "post") with HasId {
 
-  def id = column[String]("id", O.PrimaryKey)
-  def blog = column[String]("blog", O.Length(45, varying = true))
-  def image = column[Option[String]]("image")
-  def title = column[String]("title")
-  def subtitle = column[Option[String]]("subtitle")
-  def content = column[String]("content")
-  def slug = column[Option[String]]("slug")
-  def draft = column[Boolean]("draft")
-  def created = column[Option[DateTime]]("created")
-  def published = column[Option[DateTime]]("published")
-  def author = column[String]("author", O.Length(45, varying = true))
+  def id: Rep[String] = column[String]("id", O.PrimaryKey)
+  def blog: Rep[String] = column[String]("blog", O.Length(45, varying = true))
+  def image: Rep[Option[String]] = column[Option[String]]("image")
+  def title: Rep[String] = column[String]("title")
+  def subtitle: Rep[Option[String]] = column[Option[String]]("subtitle")
+  def content: Rep[String] = column[String]("content")
+  def slug: Rep[Option[String]] = column[Option[String]]("slug")
+  def draft: Rep[Boolean] = column[Boolean]("draft")
+  def created: Rep[Option[DateTime]] = column[Option[DateTime]]("created")
+  def published: Rep[Option[DateTime]] = column[Option[DateTime]]("published")
+  def author: Rep[String] = column[String]("author", O.Length(45, varying = true))
 
-  def * = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
+  def * : ProvenShape[Post] = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
 }
 
 @Singleton
@@ -50,8 +51,8 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   type EntityType = Posts
 
-  val items = TableQuery[Posts]
-  lazy val posts = items
+  val items: TableQuery[Posts] = TableQuery[Posts]
+  lazy val posts: TableQuery[Posts] = items
 
   def last(n:Int) : Future[Seq[(Post,Blog)]] = {
     val q = (for {(p,b) <- posts join blogsDAO.blogs on (_.blog === _.id)
@@ -97,7 +98,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
                     content=content,
                     created=Some(new DateTime()),
                     published=published,slug=slug,draft=draft )
-    insert(post).map { i => post }
+    insert(post).map { _ => post }
   }
 
   def update(post:Post, title:String, subtitle:Option[String], content:String, draft:Boolean, image:Option[String], publish:Boolean) : Future[Post] = {
@@ -105,7 +106,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     def slug = if (publish) { post.slug orElse  tools.PostAux.slugify(title) } else None
     def isDraft = !publish
     val newPost =  post.copy(title=title, subtitle=subtitle, content=content, draft=isDraft, image=image, published=published, slug=slug)
-    update(newPost).map { i =>
+    update(newPost).map { _ =>
        newPost
     }
   }

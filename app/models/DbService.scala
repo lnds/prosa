@@ -45,7 +45,7 @@ trait DbService[E <: Identifiable]
 
   val items: TableType
 
-  def genId(c: Class[E]) = IdGenerator.nextId(c)
+  def genId(c: Class[E]): String = IdGenerator.nextId(c)
 
   override def count : Future[Int] = db.run(items.length.result)
 

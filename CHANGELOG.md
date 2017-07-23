@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- add type to public declarations
+
 ## 0.3.4 - 2017-07-23
 
 ### Fixed
