@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## 0.3.3
+
+### Fixed
+- codacy security warning on ImagesController and ContentManager
+
 ## 0.3.2.3
 
 ## Fixed
@@ -12,11 +17,11 @@
 
 ## 0.3.2.2
 
-## Added
+### Added
 - autolink
 - insert html (experimental)
 
-## Fixed
+### Fixed
 
 ## 0.3.2.1 
 

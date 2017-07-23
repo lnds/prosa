@@ -1,17 +1,19 @@
 package controllers
 
 import java.io.File
+import java.nio.file.{Files, Paths}
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
-import models.{AuthorsDAO, Images, ImagesDAO, Writer}
+import models.{AuthorsDAO, ImagesDAO, Writer}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.Controller
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import tools.ContentManager
 
@@ -29,8 +31,7 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
 
   def upload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     val tempFile = File.createTempFile("image_", ".img")
-    val image =
-      request.body.file("file").map { file =>
+    val image = request.body.file("file").map { file =>
         val contentType = file.contentType.getOrElse("")
         file.ref.moveTo(tempFile, replace = true)
         Map("filename" -> tempFile.getAbsolutePath, "contentType" -> contentType)
@@ -72,9 +73,7 @@ extends Controller with StackableController {
     implicit request =>
       imagesDAO.findById(id).map {
         case Some(img) =>
-          val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
-          val byteArray = source.map(_.toByte).toArray
-          source.close()
+          val byteArray = Files.readAllBytes(Paths.get(img.filename))
           Ok(byteArray).as(img.contentType)
         case None =>
           NotFound
