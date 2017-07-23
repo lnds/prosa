@@ -7,7 +7,7 @@ import models._
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller, Result}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -19,9 +19,6 @@ case class PostData(image:Option[String], title:String, subtitle:Option[String],
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, val postsDAO: PostsDAO, blogsDAO: BlogsDAO, override protected val  authorsDAO:AuthorsDAO)
   extends  WithPostController with TokenValidateElement with AuthElement with AuthConfigImpl  {
-
-
-  private[this] val indexView = views.html.post_index
 
   def index(alias: String, pageNum: Int = 0): Action[AnyContent] = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
     withBlog(blogsDAO, alias) { blog =>
@@ -114,8 +111,5 @@ class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider
       Redirect(routes.PostsController.edit(alias, id)).flashing("success" -> Messages("posts.success.unpublished"))
     }
   }
-
-
-
 
 }

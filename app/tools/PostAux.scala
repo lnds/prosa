@@ -10,6 +10,8 @@ import scravatar.Gravatar
 
 object PostAux  {
 
+  val defaultPageSize = 10
+
   private[this] val slash = "/"
 
   def canonical(blog:Blog, post:Post): String = {

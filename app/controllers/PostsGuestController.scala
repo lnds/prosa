@@ -5,22 +5,16 @@ import javax.inject.Inject
 import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Controller}
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import tools.PostAux
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val  authorsDAO:AuthorsDAO)
-  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
-
-  private[this] val blogNotFound = Redirect(routes.BlogsGuestController.index())
-                      .flashing("error" -> Messages("blogs.error.not_found"))
-
-  private[this] def postNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias))
-                                    .flashing("error" -> Messages("posts.error.not_found"))
-
-  val indexView = views.html.post_index
+class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
+                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO)
+  extends WithPostController  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
   def index(alias:String, pageNum:Int=0): Action[AnyContent] = AsyncStack { implicit request =>
     blogsDAO.findByAlias(alias).flatMap {
@@ -56,7 +50,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
     blogsDAO.findByAlias(alias).flatMap {
       case None => Future.successful(blogNotFound)
       case Some(blog) =>
-        postsDAO.last(blog, 10).map { list =>
+        postsDAO.last(blog, PostAux.defaultPageSize).map { list =>
           Ok(views.xml.posts_atom(blog, list))
         }
     }
