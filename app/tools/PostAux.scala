@@ -83,55 +83,58 @@ object PostAux  {
 
 
 
-  private[this] lazy val year = Messages("dates.year")
-  private[this] lazy val years = Messages("dates.years")
-  private[this] lazy val month = Messages("dates.month")
-  private[this] lazy val months = Messages("dates.months")
-  private[this] lazy val week = Messages("dates.week")
-  private[this] lazy val weeks = Messages("dates.weeks")
-  private[this] lazy val day = Messages("dates.day")
-  private[this] lazy val days = Messages("dates.days")
-  private[this] lazy val hour = Messages("dates.hour")
-  private[this] lazy val hours = Messages("dates.hours")
-  private[this] lazy val minute = Messages("dates.minute")
-  private[this] lazy val minutes = Messages("dates.minutes")
-  private[this] lazy val second = Messages("dates.second")
-  private[this] lazy val seconds = Messages("dates.seconds")
 
-  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = date match {
-    case None => ""
-    case Some(base) =>
-      val now = new DateTime()
-      val period = new Period(base, now)
 
-      if (period.getYears > 1)
-        s"${period.getYears} $years"
-      else   if (period.getYears == 1)
-        s"${period.getYears} $year"
-      else if (period.getMonths > 1)
-        s"${period.getMonths} $months"
-      else if (period.getMonths == 1)
-        s"${period.getMonths} $month"
-      else if (period.getWeeks > 1)
-        s"${period.getWeeks} $weeks"
-      else if (period.getWeeks == 1)
-        s"${period.getWeeks} $week"
-      else if (period.getDays > 1)
-        s"${period.getDays} $days"
-      else if (period.getDays == 1)
-        s"${period.getDays} $day"
-      else if (period.getHours > 1)
-        s"${period.getHours} $hours"
-      else if (period.getHours == 1)
-        s"${period.getHours} $hour"
-      else if (period.getMinutes > 1)
-        s"${period.getMinutes} $minutes"
-      else if (period.getMinutes == 1)
-        s"${period.getMinutes} $minute"
-      else if (period.getSeconds > 1)
-        s"${period.getSeconds} $seconds"
-      else
-        s"${period.getSeconds} $second"
+  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = {
+    lazy val year = Messages("dates.year")
+    lazy val years = Messages("dates.years")
+    lazy val month = Messages("dates.month")
+    lazy val months = Messages("dates.months")
+    lazy val week = Messages("dates.week")
+    lazy val weeks = Messages("dates.weeks")
+    lazy val day = Messages("dates.day")
+    lazy val days = Messages("dates.days")
+    lazy val hour = Messages("dates.hour")
+    lazy val hours = Messages("dates.hours")
+    lazy val minute = Messages("dates.minute")
+    lazy val minutes = Messages("dates.minutes")
+    lazy val second = Messages("dates.second")
+    lazy val seconds = Messages("dates.seconds")
+    date match {
+      case None => ""
+      case Some(base) =>
+        val now = new DateTime()
+        val period = new Period(base, now)
+
+        if (period.getYears > 1)
+          s"${period.getYears} $years"
+        else   if (period.getYears == 1)
+          s"${period.getYears} $year"
+        else if (period.getMonths > 1)
+          s"${period.getMonths} $months"
+        else if (period.getMonths == 1)
+          s"${period.getMonths} $month"
+        else if (period.getWeeks > 1)
+          s"${period.getWeeks} $weeks"
+        else if (period.getWeeks == 1)
+          s"${period.getWeeks} $week"
+        else if (period.getDays > 1)
+          s"${period.getDays} $days"
+        else if (period.getDays == 1)
+          s"${period.getDays} $day"
+        else if (period.getHours > 1)
+          s"${period.getHours} $hours"
+        else if (period.getHours == 1)
+          s"${period.getHours} $hour"
+        else if (period.getMinutes > 1)
+          s"${period.getMinutes} $minutes"
+        else if (period.getMinutes == 1)
+          s"${period.getMinutes} $minute"
+        else if (period.getSeconds > 1)
+          s"${period.getSeconds} $seconds"
+        else
+          s"${period.getSeconds} $second"
+    }
   }
 
 }

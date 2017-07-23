@@ -121,6 +121,7 @@ posts.error.no_posts=No hay artículos
 posts.success.created=Artículo creado
 posts.success.saved=Artículo grabado
 posts.success.published=Artículo publicado
+posts.success.unpublished=Artículo dejó de ser publicado
 posts.success.deleted=Artículo eliminado
 
 # Posts Import
