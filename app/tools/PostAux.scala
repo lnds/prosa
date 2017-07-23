@@ -10,13 +10,16 @@ import scravatar.Gravatar
 
 object PostAux  {
 
+  val defaultPageSize = 10
+
+  private[this] val slash = "/"
 
   def canonical(blog:Blog, post:Post): String = {
     val base = blog.url.getOrElse("prosa.canonical.url")
-    if (base.endsWith("/"))
-      base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
+    if (base.endsWith(slash))
+      base.stripSuffix(slash) + slug(blog.alias, post, drafts=false)
     else
-      base + "/" + slug(blog.alias, post, drafts=false)
+      base + slash + slug(blog.alias, post, drafts=false)
   }
 
   // build slugs for links
@@ -28,7 +31,7 @@ object PostAux  {
     }
   }
 
-  private def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
+  private[this] def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
     val date = new DateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
@@ -37,7 +40,7 @@ object PostAux  {
   }
 
   def atomUrl(urlBase:String): String = {
-    if (urlBase.endsWith("/"))
+    if (urlBase.endsWith(slash))
       urlBase + "atom.xml"
     else
       urlBase + "/atom.xml"
@@ -67,7 +70,7 @@ object PostAux  {
       val endsWithNumber = "(.+-)([0-9]+)$".r
       slug match {
         case endsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
-        case slugPath => generateUniqueSlug(slugPath + "-2", existingSlugs)
+        case _ => generateUniqueSlug(slug + "-2", existingSlugs)
       }
     }
   }
@@ -79,6 +82,7 @@ object PostAux  {
     val u = new java.net.URL(url)
     u.getHost
   }
+
 
 
 
@@ -101,23 +105,37 @@ object PostAux  {
     date match {
       case None => ""
       case Some(base) =>
-        val baseDate = new DateTime(base)
         val now = new DateTime()
-        val period = new Period(baseDate, now)
-        if (period.getYears >= 1)
-          period.getYears.toString + " " + (if (period.getYears > 1) years else year)
-        else if (period.getMonths >= 1)
-          period.getMonths.toString + " " + (if (period.getYears > 1) months else month)
-        else if (period.getWeeks >= 1)
-          period.getWeeks.toString + " " + (if (period.getWeeks > 1) weeks else week)
-        else if (period.getDays >= 1)
-          period.getDays.toString + " " + (if (period.getDays > 1) days else day)
-        else if (period.getHours >= 1)
-          period.getHours.toString + " " + (if (period.getHours > 1) hours else hour)
-        else if (period.getMinutes >= 1)
-          period.getMinutes.toString + " " + (if (period.getMinutes > 1) minutes else minute)
+        val period = new Period(base, now)
+
+        if (period.getYears > 1)
+          s"${period.getYears} $years"
+        else   if (period.getYears == 1)
+          s"${period.getYears} $year"
+        else if (period.getMonths > 1)
+          s"${period.getMonths} $months"
+        else if (period.getMonths == 1)
+          s"${period.getMonths} $month"
+        else if (period.getWeeks > 1)
+          s"${period.getWeeks} $weeks"
+        else if (period.getWeeks == 1)
+          s"${period.getWeeks} $week"
+        else if (period.getDays > 1)
+          s"${period.getDays} $days"
+        else if (period.getDays == 1)
+          s"${period.getDays} $day"
+        else if (period.getHours > 1)
+          s"${period.getHours} $hours"
+        else if (period.getHours == 1)
+          s"${period.getHours} $hour"
+        else if (period.getMinutes > 1)
+          s"${period.getMinutes} $minutes"
+        else if (period.getMinutes == 1)
+          s"${period.getMinutes} $minute"
+        else if (period.getSeconds > 1)
+          s"${period.getSeconds} $seconds"
         else
-          period.getSeconds.toString + " " + (if (period.getSeconds > 1) seconds else second)
+          s"${period.getSeconds} $second"
     }
   }
 

@@ -19,7 +19,8 @@ import tools.ContentManager
 
 
 
-class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val contentManager: ContentManager, private val imagesDAO: ImagesDAO, protected val  authorsDAO:AuthorsDAO)
+class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val contentManager: ContentManager,
+                                 private val imagesDAO: ImagesDAO, protected val  authorsDAO:AuthorsDAO)
   extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
 
   val createForm = Form(

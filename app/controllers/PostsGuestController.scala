@@ -1,26 +1,22 @@
 package controllers
 
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.i18n.{MessagesApi, I18nSupport, Messages}
-import play.api.mvc.Controller
+import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.{Action, AnyContent}
+import tools.PostAux
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val  authorsDAO:AuthorsDAO)
-  extends Controller  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
+class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
+                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO)
+  extends WithPostController  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
-  val blogNotFound = Redirect(routes.BlogsGuestController.index())
-                      .flashing("error" -> Messages("blogs.error.not_found"))
-
-  def postNotFound(alias:String) = Redirect(routes.PostsGuestController.index(alias))
-                                    .flashing("error" -> Messages("posts.error.not_found"))
-
-  val indexView = views.html.post_index
-
-  def index(alias:String, pageNum:Int=0) = AsyncStack { implicit request =>
+  def index(alias:String, pageNum:Int=0): Action[AnyContent] = AsyncStack { implicit request =>
     blogsDAO.findByAlias(alias).flatMap {
       case None => Future.successful(blogNotFound)
       case Some(blog) =>
@@ -34,7 +30,7 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
     }
   }
 
-  def view(alias:String, year:Int, month:Int, day:Int, slug:String) = AsyncStack {
+  def view(alias:String, year:Int, month:Int, day:Int, slug:String): Action[AnyContent] = AsyncStack {
     implicit request =>
       blogsDAO.findByAlias(alias).flatMap {
         case None => Future.successful(blogNotFound)
@@ -50,11 +46,11 @@ class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProv
   }
 
 
-  def atom(alias:String) = AsyncStack { implicit request =>
+  def atom(alias:String): Action[AnyContent] = AsyncStack { implicit request =>
     blogsDAO.findByAlias(alias).flatMap {
       case None => Future.successful(blogNotFound)
       case Some(blog) =>
-        postsDAO.last(blog, 10).map { list =>
+        postsDAO.last(blog, PostAux.defaultPageSize).map { list =>
           Ok(views.xml.posts_atom(blog, list))
         }
     }

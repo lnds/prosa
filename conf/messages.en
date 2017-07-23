@@ -105,6 +105,7 @@ posts.error.no_posts=No Post
 posts.success.created=Post created
 posts.success.saved=Post saved
 posts.success.published=Post published
+posts.success.unpublished=Post unpublished
 posts.success.deleted=Post Deleted
 
 # Posts Import
