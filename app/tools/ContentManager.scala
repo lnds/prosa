@@ -1,10 +1,13 @@
 package tools
 
+import java.nio.file.{Files, Paths}
+
 import awscala._
 import awscala.s3.{Bucket, S3}
 import com.amazonaws.services.s3.model.ObjectMetadata
 import controllers.routes
 import javax.inject.{Inject, Singleton}
+
 import play.api.Configuration
 
 @Singleton
@@ -32,10 +35,9 @@ private object AmazonS3 {
 
   lazy implicit val s3 = S3.at(Region.US_EAST_1)
 
-  def putFile(cdnurl: String, key: String, file: File, contentType: String) = {
+  def putFile(cdnurl: String, key: String, file: File, contentType: String): String = {
     val bucket: Bucket = s3.bucket("prosa-bucket").getOrElse(s3.createBucket("prosa-bucket"))
-    val source = scala.io.Source.fromFile(file)(scala.io.Codec.ISO8859)
-    val byteArray = source.map(_.toByte).toArray
+    val byteArray = Files.readAllBytes(Paths.get(file.getAbsolutePath))
     val metadata: ObjectMetadata = new ObjectMetadata()
     metadata.setContentType(contentType)
     metadata.setContentLength(byteArray.length)

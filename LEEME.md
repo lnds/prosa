@@ -19,20 +19,21 @@ El archivo INSTALAR tiene las instrucciones para instalar.
 
 # Sobre el versionamiento
 
-Uso el siguiente esquema
+Uso el siguiente esquema, usando semantice versioning
 
-    Major.Minor.Build.Ticket
+    Major.Minor.Patch
     
 Major: es el numero de versión, 0 significa que está en etapa de pre-release (etapas alpha y beta), sólo cambia cuando se produce un cambio que es incompatible hacia atrás (o pasamos a la versión 1).
-Minor: Actualmente uso el numero de sprint (ver más abajo).
-Ticket: número del ticket resuelto en essa versión.
-Build: un número incremental que vuelve a cero cuando se incrementa Minor. Normalmente un incremento en este numero implica un bugfix.
+Minor: version que agrega funcionalidad de manera compatible con lo existente
+Patch: cambios compatibles pero que corresponden a correcciones
 
 
 # Metodología
 
 Los tickets se llevan en el proyecto GitHub
-Usamos Git Flow con ramas por cada ticket.
+Uso una versión simplificada de GitFlow, no hay tickets por issue, se trabaja sobre develop, y 
+solo creo un release cuando estoy por liberar a master.
+
 
 (c) 2017 Eduardo Díaz, ver licencia
 

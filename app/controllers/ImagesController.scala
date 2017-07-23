@@ -1,17 +1,19 @@
 package controllers
 
 import java.io.File
+import java.nio.file.{Files, Paths}
 import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
-import models.{AuthorsDAO, Images, ImagesDAO, Writer}
+import models.{AuthorsDAO, ImagesDAO, Writer}
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.Controller
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import tools.ContentManager
 
@@ -29,8 +31,7 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
 
   def upload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     val tempFile = File.createTempFile("image_", ".img")
-    val image =
-      request.body.file("file").map { file =>
+    val image = request.body.file("file").map { file =>
         val contentType = file.contentType.getOrElse("")
         file.ref.moveTo(tempFile, replace = true)
         Map("filename" -> tempFile.getAbsolutePath, "contentType" -> contentType)
@@ -38,15 +39,14 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
     createForm.bind(image.get).fold(
       formWithErrors => NotFound,
       imageData => {
-        val img = imagesDAO.addImage(imageData._1, imageData._2)
+        val (filename, contentType) = imageData
+        val img = imagesDAO.addImage(filename, contentType)
         val url = contentManager.putFile(img.id, tempFile, img.contentType)
         imagesDAO.update(img.copy(url = Some(url)))
         Ok(url)
       }
     )
   }
-
-  case class ImageFile(url: String)
 
   def editorUpload = StackAction(parse.multipartFormData, AuthorityKey -> Writer) { implicit request =>
     request.body.files.headOption.map { image =>
@@ -72,9 +72,7 @@ extends Controller with StackableController {
     implicit request =>
       imagesDAO.findById(id).map {
         case Some(img) =>
-          val source = scala.io.Source.fromFile(img.filename)(scala.io.Codec.ISO8859)
-          val byteArray = source.map(_.toByte).toArray
-          source.close()
+          val byteArray = Files.readAllBytes(Paths.get(img.filename))
           Ok(byteArray).as(img.contentType)
         case None =>
           NotFound

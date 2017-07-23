@@ -62,14 +62,14 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
   def last(n:Int) : Future[Seq[(Post,Blog)]] = {
     val q = (for {(p,b) <- posts join blogsDAO.blogs on (_.blog === _.id)
                   if p.draft === false && b.status === BlogStatus.PUBLISHED} yield (p,b)
-            ).sortBy(_._1.published.desc).take(n)
+            ).sortBy { case (post, _) => post.published.desc }.take(n)
     dbConfig.db.run(q.result)
   }
 
   def last(blog:Blog, n:Int) : Future[Seq[(Post,Author)]] = {
     val q = (for {(p,a) <- posts join authorsDAO.authors on (_.author === _.id)
                   if p.blog === blog.id && p.draft === false } yield (p,a)
-            ).sortBy(_._1.published.desc).take(n)
+            ).sortBy { case (post, _) => post.published.desc }.take(n)
     dbConfig.db.run(q.result)
   }
 
