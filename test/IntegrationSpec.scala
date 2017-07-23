@@ -1,8 +1,6 @@
 import org.scalatestplus.play._
 import play.api.{Configuration, Environment}
 import play.api.i18n.{DefaultLangs, DefaultMessagesApi}
-import play.api.test._
-import play.api.test.Helpers._
 
 /**
   * add your integration spec here.

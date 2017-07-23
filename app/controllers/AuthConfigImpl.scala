@@ -14,30 +14,30 @@ trait AuthConfigImpl extends AuthConfig {
   type User = Author
   type Authority = Permission
 
-  val idTag : ClassTag[Id] = classTag[Id]
+  val idTag: ClassTag[Id] = classTag[Id]
 
   val sessionTimeoutInSeconds = 3600
 
-  protected val authorsDAO : AuthorsDAO
+  protected val authorsDAO: AuthorsDAO
 
-  def resolveUser(id:Id)(implicit ctx:ExecutionContext) : Future[Option[User]] =
-        authorsDAO.findById(id)
+  def resolveUser(id: Id)(implicit ctx: ExecutionContext): Future[Option[User]] =
+    authorsDAO.findById(id)
 
-  def loginSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =  {
+  def loginSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] = {
     val uri = request.session.get("access_uri").getOrElse(routes.BlogsGuestController.index().url.toString)
     Future.successful(Redirect(uri).withSession(request.session - "access_uri"))
   }
 
-  def logoutSucceeded(request:RequestHeader)(implicit ctx:ExecutionContext) = Future.successful(Redirect(routes.Application.index()))
+  def logoutSucceeded(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] = Future.successful(Redirect(routes.Application.index()))
 
-  def authenticationFailed(request:RequestHeader)(implicit ctx:ExecutionContext) : Future[Result] =
+  def authenticationFailed(request: RequestHeader)(implicit ctx: ExecutionContext): Future[Result] =
     Future.successful(Redirect(routes.AuthController.login()).withSession("access_uri" -> request.uri))
 
-  override def authorizationFailed(request:RequestHeader, user: User, authority: Option[Authority])(implicit ctx:ExecutionContext) = {
+  override def authorizationFailed(request: RequestHeader, user: User, authority: Option[Authority])(implicit ctx: ExecutionContext): Future[Result] = {
     Future(Redirect(routes.AuthController.login()))
   }
 
-  def authorize(user:User, authority:Authority)(implicit ctx:ExecutionContext) = Future.successful((Permission.valueOf(user.permission), authority) match {
+  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful((Permission.valueOf(user.permission), authority) match {
     case (Administrator, _) => true
     case (Editor, Editor) => true
     case (Editor, Writer) => true
@@ -47,6 +47,6 @@ trait AuthConfigImpl extends AuthConfig {
 
   override lazy val tokenAccessor = new CookieTokenAccessor(
     cookieSecureOption = false,
-    cookieMaxAge       = Some(sessionTimeoutInSeconds)
+    cookieMaxAge = Some(sessionTimeoutInSeconds)
   )
 }
