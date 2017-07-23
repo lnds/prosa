@@ -1,12 +1,6 @@
 package dal
 
-import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-
-import scala.concurrent.Future
-import slick.driver.JdbcProfile
 import slick.lifted.Rep
-import tools.IdGenerator
 
 
 /**

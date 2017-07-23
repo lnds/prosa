@@ -7,10 +7,8 @@ import javax.inject.{Inject, Singleton}
 import models._
 import org.joda.time.{DateTime, Period}
 import play.api.db.slick.DatabaseConfigProvider
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import slick.driver.PostgresDriver.api._
 import slick.lifted.ProvenShape
 import tools.IdGenerator
 
@@ -20,26 +18,30 @@ import tools.IdGenerator
   * Created by ediaz on 7/23/17.
   */
 
-class Posts(tag:Tag) extends Table[Post](tag, "post") with HasId {
 
-  def id: Rep[String] = column[String]("id", O.PrimaryKey)
-  def blog: Rep[String] = column[String]("blog", O.Length(45, varying = true))
-  def image: Rep[Option[String]] = column[Option[String]]("image")
-  def title: Rep[String] = column[String]("title")
-  def subtitle: Rep[Option[String]] = column[Option[String]]("subtitle")
-  def content: Rep[String] = column[String]("content")
-  def slug: Rep[Option[String]] = column[Option[String]]("slug")
-  def draft: Rep[Boolean] = column[Boolean]("draft")
-  def created: Rep[Option[DateTime]] = column[Option[DateTime]]("created")
-  def published: Rep[Option[DateTime]] = column[Option[DateTime]]("published")
-  def author: Rep[String] = column[String]("author", O.Length(45, varying = true))
-
-  def * : ProvenShape[Post] = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
-}
 
 @Singleton
 class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, private val blogsDAO: BlogsDAO, private val authorsDAO: AuthorsDAO)(implicit executionContext: ExecutionContext)
   extends DbService[Post]{
+
+  import driver.api._
+
+  class Posts(tag:Tag) extends Table[Post](tag, "post") with HasId {
+
+    def id: Rep[String] = column[String]("id", O.PrimaryKey)
+    def blog: Rep[String] = column[String]("blog", O.Length(45, varying = true))
+    def image: Rep[Option[String]] = column[Option[String]]("image")
+    def title: Rep[String] = column[String]("title")
+    def subtitle: Rep[Option[String]] = column[Option[String]]("subtitle")
+    def content: Rep[String] = column[String]("content")
+    def slug: Rep[Option[String]] = column[Option[String]]("slug")
+    def draft: Rep[Boolean] = column[Boolean]("draft")
+    def created: Rep[Option[DateTime]] = column[Option[DateTime]]("created")
+    def published: Rep[Option[DateTime]] = column[Option[DateTime]]("published")
+    def author: Rep[String] = column[String]("author", O.Length(45, varying = true))
+
+    def * : ProvenShape[Post] = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
+  }
 
   type EntityType = Posts
 

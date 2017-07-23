@@ -1,20 +1,18 @@
 package dal
 
 import models.{Identifiable, Page}
-import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
-import slick.driver.JdbcProfile
-import slick.driver.PostgresDriver.api._
 import slick.lifted.ColumnOrdered
-import tools.IdGenerator
 
 /**
   * Created by ediaz on 7/23/17.
   */
 
 trait EntityService[T <: Identifiable] extends DbService[T] {
+
+  import driver.api._
 
   def queryFilter(qry: String, c: EntityType): Rep[Boolean]
 

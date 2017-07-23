@@ -3,13 +3,10 @@ package dal
 import models.{Identifiable, Page}
 import play.api.db.slick.HasDatabaseConfigProvider
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-
 import scala.concurrent.Future
 import slick.driver.JdbcProfile
 import tools.IdGenerator
-import slick.driver.PostgresDriver.api._
 
-import scala.concurrent.Future
 
 /**
   * Created by ediaz on 7/23/17.
@@ -18,6 +15,8 @@ import scala.concurrent.Future
 
 trait DbService[E <: Identifiable]
   extends DAOService[E,String] with HasDatabaseConfigProvider[JdbcProfile] {
+
+  import driver.api._
 
   type EntityType <: Table[E]
   type TableType = TableQuery[EntityType]
