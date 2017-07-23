@@ -2,7 +2,19 @@
 
 ## [Unreleased]
 
-## 0.3.3
+## 0.3.4 - 2017-07-23
+
+### Fixed
+- codacy code smells 
+- reduces complexity of function formatElapsed on PostAux
+
+### Changed
+- refactor of PostsController
+
+### Added
+- message for unpublished post on messages i18n
+
+## 0.3.3 - 2017-07-22
 
 ### Fixed
 - codacy security warning on ImagesController and ContentManager
