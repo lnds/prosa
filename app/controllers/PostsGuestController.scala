@@ -1,7 +1,7 @@
 package controllers
 
+import dal.{AuthorsDAO, BlogsDAO, PostsDAO}
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
 import play.api.db.slick.DatabaseConfigProvider

@@ -1,19 +1,18 @@
 package controllers
 
+import dal.{AuthorsDAO, ImagesDAO}
 import java.io.File
 import java.nio.file.{Files, Paths}
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
-import models.{AuthorsDAO, ImagesDAO, Writer}
+import models.Writer
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.Controller
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import tools.ContentManager
 
