@@ -10,13 +10,14 @@ import scravatar.Gravatar
 
 object PostAux  {
 
+  private[this] val slash = "/"
 
   def canonical(blog:Blog, post:Post): String = {
     val base = blog.url.getOrElse("prosa.canonical.url")
-    if (base.endsWith("/"))
-      base.stripSuffix("/") + slug(blog.alias, post, drafts=false)
+    if (base.endsWith(slash))
+      base.stripSuffix(slash) + slug(blog.alias, post, drafts=false)
     else
-      base + "/" + slug(blog.alias, post, drafts=false)
+      base + slash + slug(blog.alias, post, drafts=false)
   }
 
   // build slugs for links
@@ -28,7 +29,7 @@ object PostAux  {
     }
   }
 
-  private def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
+  private[this] def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
     val date = new DateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
@@ -37,7 +38,7 @@ object PostAux  {
   }
 
   def atomUrl(urlBase:String): String = {
-    if (urlBase.endsWith("/"))
+    if (urlBase.endsWith(slash))
       urlBase + "atom.xml"
     else
       urlBase + "/atom.xml"
@@ -67,7 +68,7 @@ object PostAux  {
       val endsWithNumber = "(.+-)([0-9]+)$".r
       slug match {
         case endsWithNumber(s, n) => generateUniqueSlug(s + (n.toInt + 1), existingSlugs)
-        case slugPath => generateUniqueSlug(slugPath + "-2", existingSlugs)
+        case _ => generateUniqueSlug(slug + "-2", existingSlugs)
       }
     }
   }
@@ -82,22 +83,23 @@ object PostAux  {
 
 
 
+  private[this] lazy val year = Messages("dates.year")
+  private[this] lazy val years = Messages("dates.years")
+  private[this] lazy val month = Messages("dates.month")
+  private[this] lazy val months = Messages("dates.months")
+  private[this] lazy val week = Messages("dates.week")
+  private[this] lazy val weeks = Messages("dates.weeks")
+  private[this] lazy val day = Messages("dates.day")
+  private[this] lazy val days = Messages("dates.days")
+  private[this] lazy val hour = Messages("dates.hour")
+  private[this] lazy val hours = Messages("dates.hours")
+  private[this] lazy val minute = Messages("dates.minute")
+  private[this] lazy val minutes = Messages("dates.minutes")
+  private[this] lazy val second = Messages("dates.second")
+  private[this] lazy val seconds = Messages("dates.seconds")
 
   def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = {
-    lazy val year = Messages("dates.year")
-    lazy val years = Messages("dates.years")
-    lazy val month = Messages("dates.month")
-    lazy val months = Messages("dates.months")
-    lazy val week = Messages("dates.week")
-    lazy val weeks = Messages("dates.weeks")
-    lazy val day = Messages("dates.day")
-    lazy val days = Messages("dates.days")
-    lazy val hour = Messages("dates.hour")
-    lazy val hours = Messages("dates.hours")
-    lazy val minute = Messages("dates.minute")
-    lazy val minutes = Messages("dates.minutes")
-    lazy val second = Messages("dates.second")
-    lazy val seconds = Messages("dates.seconds")
+
     date match {
       case None => ""
       case Some(base) =>

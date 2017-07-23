@@ -1,19 +1,13 @@
 package models
 
 import com.github.tototoshi.slick.PostgresJodaSupport._
-import java.io.File
 import javax.inject.{Inject, Singleton}
 
-import org.apache.commons.io.FilenameUtils
 import org.joda.time.{DateTime, Period}
 import play.api.db.slick.DatabaseConfigProvider
-import play.api.libs.json.{JsArray, JsObject, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.io.Source
-import scalaz._
-import Scalaz._
 import slick.driver.PostgresDriver.api._
 import tools.IdGenerator
 
