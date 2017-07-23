@@ -98,29 +98,40 @@ object PostAux  {
   private[this] lazy val second = Messages("dates.second")
   private[this] lazy val seconds = Messages("dates.seconds")
 
-  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = {
+  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = date match {
+    case None => ""
+    case Some(base) =>
+      val now = new DateTime()
+      val period = new Period(base, now)
 
-    date match {
-      case None => ""
-      case Some(base) =>
-        val baseDate = new DateTime(base)
-        val now = new DateTime()
-        val period = new Period(baseDate, now)
-        if (period.getYears >= 1)
-          period.getYears.toString + " " + (if (period.getYears > 1) years else year)
-        else if (period.getMonths >= 1)
-          period.getMonths.toString + " " + (if (period.getYears > 1) months else month)
-        else if (period.getWeeks >= 1)
-          period.getWeeks.toString + " " + (if (period.getWeeks > 1) weeks else week)
-        else if (period.getDays >= 1)
-          period.getDays.toString + " " + (if (period.getDays > 1) days else day)
-        else if (period.getHours >= 1)
-          period.getHours.toString + " " + (if (period.getHours > 1) hours else hour)
-        else if (period.getMinutes >= 1)
-          period.getMinutes.toString + " " + (if (period.getMinutes > 1) minutes else minute)
-        else
-          period.getSeconds.toString + " " + (if (period.getSeconds > 1) seconds else second)
-    }
+      if (period.getYears > 1)
+        s"${period.getYears} $years"
+      else   if (period.getYears == 1)
+        s"${period.getYears} $year"
+      else if (period.getMonths > 1)
+        s"${period.getMonths} $months"
+      else if (period.getMonths == 1)
+        s"${period.getMonths} $month"
+      else if (period.getWeeks > 1)
+        s"${period.getWeeks} $weeks"
+      else if (period.getWeeks == 1)
+        s"${period.getWeeks} $week"
+      else if (period.getDays > 1)
+        s"${period.getDays} $days"
+      else if (period.getDays == 1)
+        s"${period.getDays} $day"
+      else if (period.getHours > 1)
+        s"${period.getHours} $hours"
+      else if (period.getHours == 1)
+        s"${period.getHours} $hour"
+      else if (period.getMinutes > 1)
+        s"${period.getMinutes} $minutes"
+      else if (period.getMinutes == 1)
+        s"${period.getMinutes} $minute"
+      else if (period.getSeconds > 1)
+        s"${period.getSeconds} $seconds"
+      else
+        s"${period.getSeconds} $second"
   }
 
 }
