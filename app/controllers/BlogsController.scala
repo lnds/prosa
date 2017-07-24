@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 import jp.t2v.lab.play2.auth.AuthElement
 import models._
+import org.webjars.play.RequireJS
 import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
@@ -23,7 +24,9 @@ case class BlogData(id:Option[String], name:String,alias:String,description:Stri
                     useAvatarAsLogo:Option[Boolean], status:Int, twitter:Option[String],
                     showAds:Option[Boolean], adsCode:Option[String])
 
-class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val blogsDAO : BlogsDAO, override protected val  authorsDAO:AuthorsDAO)
+class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
+                                 private val blogsDAO : BlogsDAO, override protected val  authorsDAO:AuthorsDAO,
+                                 implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
   extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
 
 

@@ -1,4 +1,4 @@
-@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:Option[String])(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash)
+@(blog:Option[Blog], form: Form[BlogData], user:Visitor, avatarUrl:Option[String])(implicit  messages:Messages, token:controllers.PreventingCsrfToken, flash:Flash, webJarAssets: WebJarAssets,  requireJS: org.webjars.play.RequireJS)
 @main("Blog", None, None, None, None, None, user){
 @views.html.blogs_menu(None, user)
 }{

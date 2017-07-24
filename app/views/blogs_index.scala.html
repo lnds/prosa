@@ -1,4 +1,4 @@
-@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash,  messages:Messages)
+@(caption:String,  page:Page[Blog], user:Visitor)(implicit flash:Flash,  messages:Messages, webJarAssets: WebJarAssets,  requireJS: org.webjars.play.RequireJS)
 @main(caption, None, None, Some(Messages("prosa.canonical.url")), None, None, user) {
     @views.html.blogs_menu(None, user)
 }{

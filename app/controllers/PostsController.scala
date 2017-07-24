@@ -3,7 +3,9 @@ package controllers
 
 import dal.{AuthorsDAO, BlogsDAO, PostsDAO}
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.AuthElement
+import org.webjars.play.RequireJS
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
@@ -19,7 +21,8 @@ case class PostData(image:Option[String], title:String, subtitle:Option[String],
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
                                   override protected val postsDAO: PostsDAO, override protected val blogsDAO: BlogsDAO,
-                                  override protected val  authorsDAO:AuthorsDAO)
+                                  override protected val  authorsDAO:AuthorsDAO,
+                                  implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
   extends  WithPostController with TokenValidateElement with AuthElement with AuthConfigImpl  {
 
   def index(alias: String, pageNum: Int = 0): Action[AnyContent] = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>
