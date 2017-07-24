@@ -23,7 +23,7 @@
     }
     <button class="btn btn-primary" onclick="sbmt();">@Messages("posts.action.save")</button>
     <a class="btn btn-danger" data-toggle="modal" data-target="#modalDelete">@Messages("posts.action.delete")</a>
-    <a  class="btn btn-success" onclick="publish();">@Messages("posts.action.publish")</a>
+    <a  class="btn btn-success" onclick="sbmt_publish();">@Messages("posts.action.publish")</a>
 </form>
 }{
 <div id="banner-image" class="jumbotron cover-image" data-load-image="@form("image").value">
@@ -157,7 +157,7 @@
         $("#post-form").submit();
     }
 
-    function publish() {
+    function sbmt_publish() {
         $("#publish").val("true");
         $("#draft").val("false");
         sbmt();
