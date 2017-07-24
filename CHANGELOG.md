@@ -2,8 +2,12 @@
 
 ## [Unreleased]
 
+## 0.3.5 - 2017-07-23
+
 ### Fixed
 - add type to public declarations
+- fix bug on Safari, pubish button wasn't working
+- fix bug #15
 
 ## 0.3.4 - 2017-07-23
 
