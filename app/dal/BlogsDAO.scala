@@ -36,13 +36,28 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     def useAvatarAsLogo: Rep[Option[Boolean]] = column[Option[Boolean]]("use_avatar_as_logo")
     def disqus: Rep[Option[String]] = column[Option[String]]("disqus")
     def googleAnalytics: Rep[Option[String]] = column[Option[String]]("google_analytics")
-    def status: Rep[BlogStatus.Value] = column[BlogStatus.Value]("status")
+    def status: Rep[Int] = column[Int]("status")
     def owner: Rep[String] = column[String]("owner", O.Length(45, varying = true))
     def twitter: Rep[Option[String]] = column[Option[String]]("twitter_handle")
     def showAds: Rep[Option[Boolean]] = column[Option[Boolean]]("show_ads")
     def adsCode: Rep[Option[String]] = column[Option[String]]("ads_code")
 
     def * : ProvenShape[Blog] = (id,name,alias,description,image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, status, owner, twitter, showAds, adsCode) <> (Blog.tupled, Blog.unapply)
+  }
+
+
+
+  object BlogStatus extends Enumeration  {
+
+
+    val CREATED = Value(0, "blog.status.created")
+    val PUBLISHED = Value(1, "blog.status.published")
+    val INACTIVE = Value(-1, "blog.status.published")// <- reserved for administator
+
+    implicit val blogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
+      s => s.id,
+      i => BlogStatus.apply(i)
+    )
   }
 
   type EntityType = Blogs
@@ -53,7 +68,7 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def listForVisitor(user:Visitor, page: Int = 0, pageSize: Int = 10) : Future[Page[Blog]] = {
     val offset = pageSize * page
-    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
+    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED.id || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
     val totalRows = count
     val result = dbConfig.db.run(query.result)
     result flatMap (items => totalRows map (rows => Page(items, page, offset, rows, pageSize)))
@@ -63,9 +78,9 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     dbConfig.db.run(blogs.filter(_.alias === alias).result.headOption)
 
   def create(owner:Author, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String], showAds:Option[Boolean], adsCode:Option[String]) : Future[Int] =
-    insert(Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, BlogStatus.CREATED, owner.id, twitter, showAds, adsCode))
+    insert(Blog(IdGenerator.nextId(classOf[Blog]), name, alias, description, image, logo, url, useAvatarAsLogo, disqus, googleAnalytics, BlogStatus.CREATED.id, owner.id, twitter, showAds, adsCode))
 
-  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String], showAds:Option[Boolean], adsCode:Option[String], status:BlogStatus.Value) : Future[Int] =
+  def update(blog:Blog, name:String,alias:String,description:String,image:Option[String],logo:Option[String],url:Option[String], disqus:Option[String], googleAnalytics:Option[String], useAvatarAsLogo:Option[Boolean], twitter:Option[String], showAds:Option[Boolean], adsCode:Option[String], status:Int) : Future[Int] =
     update (blog.copy(name=name, alias=alias,  useAvatarAsLogo=useAvatarAsLogo, description=description, image=image, logo=logo, url=url, disqus=disqus, googleAnalytics=googleAnalytics,  showAds=showAds, adsCode=adsCode, status=status))
 
 }

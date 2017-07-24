@@ -50,7 +50,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def last(n:Int) : Future[Seq[(Post,Blog)]] = {
     val q = (for {(p,b) <- posts join blogsDAO.blogs on (_.blog === _.id)
-                  if p.draft === false && b.status === BlogStatus.PUBLISHED} yield (p,b)
+                  if p.draft === false && b.status === blogsDAO.BlogStatus.PUBLISHED.id} yield (p,b)
       ).sortBy { case (post, _) => post.published.desc }.take(n)
     dbConfig.db.run(q.result)
   }

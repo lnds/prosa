@@ -39,7 +39,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       "disqus" -> optional(text),
       "google_analytics" -> optional(text),
       "use_avatar_as_logo" -> optional(boolean),
-      "status" -> number(min=BlogStatus.INACTIVE.id, max=BlogStatus.PUBLISHED.id),
+      "status" -> number(min=blogsDAO.BlogStatus.INACTIVE.id, max=blogsDAO.BlogStatus.PUBLISHED.id),
       "twitter" -> optional(text),
       "show_ads" -> optional(boolean),
       "ads_code" -> optional(text)
@@ -64,7 +64,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
       case None =>
         Future.successful(Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found")))
       case Some(blog) =>
-        val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo,blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status.id, blog.twitter, blog.showAds, blog.adsCode))
+        val form = blogForm.fill(BlogData(Some(blog.id), blog.name, blog.alias, blog.description, blog.image, blog.logo,blog.url, blog.disqus, blog.googleAnalytics, blog.useAvatarAsLogo, blog.status, blog.twitter, blog.showAds, blog.adsCode))
         authorsDAO.findById(blog.owner).map {
           case None =>
             Redirect(routes.BlogsGuestController.index()).flashing("error" -> Messages("blogs.error.not_found"))
@@ -86,7 +86,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
             blogsDAO.create(loggedIn, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode).map { _ =>
               Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.created"))
             }
-          case Some(blog) =>
+          case _ =>
             Future.successful(BadRequest(views.html.blogs_form(None, blogForm.fill(blogData).withGlobalError("blg"), loggedIn, None)))
         }
     )
@@ -98,7 +98,7 @@ class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider:
         blogForm.bindFromRequest.fold(
           formWithErrors => BadRequest(views.html.blogs_form(Some(blog), formWithErrors, loggedIn, None)),
           blogData => {
-            blogsDAO.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode, BlogStatus(blogData.status))
+            blogsDAO.update(blog, blogData.name, blogData.alias, blogData.description, blogData.image, blogData.logo, blogData.url, blogData.disqus, blogData.googleAnalytics, blogData.useAvatarAsLogo, blogData.twitter, blogData.showAds, blogData.adsCode, blogData.status)
             Redirect(routes.BlogsGuestController.index()).flashing("success" -> Messages("blogs.success.updated"))
           }
         )
