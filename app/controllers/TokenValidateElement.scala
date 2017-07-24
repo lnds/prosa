@@ -2,8 +2,8 @@ package controllers
 
 import java.security.SecureRandom
 import jp.t2v.lab.play2.stackc.{RequestAttributeKey, RequestWithAttributes, StackableController}
-import play.api.data._
 import play.api.data.Forms._
+import play.api.data._
 import play.api.mvc._
 import scala.concurrent.Future
 import scala.util.Random

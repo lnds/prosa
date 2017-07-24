@@ -1,18 +1,16 @@
 package controllers
 
+import dal.AuthorsDAO
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.AuthElement
-import models.{AuthorsDAO, Writer}
+import models.Writer
 import org.mindrot.jbcrypt.BCrypt
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.Controller
-import scalaz._
-import Scalaz._
-
+import play.api.mvc.{Action, AnyContent, Controller}
+import scalaz.Scalaz._
 
 class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, override protected val  authorsDAO:AuthorsDAO) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
@@ -27,12 +25,12 @@ class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvide
     )
   )
 
-  def changePassword() = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
+  def changePassword(): Action[AnyContent] = StackAction(AuthorityKey -> Writer,IgnoreTokenValidation -> None) { implicit request =>
     Ok(views.html.change_password(changePasswordForm))
   }
 
 
-  def savePassword() = StackAction(AuthorityKey -> Writer) { implicit request =>
+  def savePassword(): Action[AnyContent] = StackAction(AuthorityKey -> Writer) { implicit request =>
     changePasswordForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.change_password(formWithErrors)),
       formOk => {

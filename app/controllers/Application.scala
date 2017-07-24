@@ -1,13 +1,12 @@
 package controllers
 
+import dal.{AuthorsDAO, PostsDAO}
 import javax.inject.Inject
-
 import jp.t2v.lab.play2.auth.OptionalAuthElement
-import models.{AuthorsDAO, Guest, PostsDAO}
+import models.Guest
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
-
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
