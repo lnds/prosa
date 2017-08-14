@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## 0.3.6 - 2017-08-13
+
+### Changed
+- add support for webjars
+
+### Fixed
+- fix a bug with dates with daylight saving
+- fix a 404 error when editing a post    
+    
 ## 0.3.5 - 2017-07-23
 
 ### Fixed

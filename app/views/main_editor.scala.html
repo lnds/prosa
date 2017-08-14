@@ -1,4 +1,4 @@
-@(title: String, user:Author)(menu: Html)(userMenu:Html)(content: Html)(actions:Html)(implicit  messages:Messages)
+@(title: String, user:Author)(menu: Html)(userMenu:Html)(content: Html)(actions:Html)(implicit  messages:Messages, webJarAssets: WebJarAssets,  requireJS: org.webjars.play.RequireJS)
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,8 +8,7 @@
     <meta name="author" content="">
     <title>@title</title>
 
-    <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/bootstrap/dist/css/bootstrap.css")'>
-
+    <link rel='stylesheet' href='@routes.WebJarAssets.at(webJarAssets.locate("css/bootstrap.min.css"))'>
     <link rel='shortcut icon' type='image/png' href='@routes.Assets.versioned("images/favicon.png")'>
     <link rel='stylesheet' href='@routes.Assets.versioned("bower_components/font-awesome/css/font-awesome.min.css")'>
     <link rel="stylesheet" href='@routes.Assets.versioned("css/dropzone.css")'>
@@ -88,7 +87,7 @@
     <script src="@routes.Assets.versioned("bower_components/handlebars/handlebars.runtime.min.js")"></script>
     <script src="@routes.Assets.versioned("bower_components/jquery-sortable/source/js/jquery-sortable-min.js")"></script>
     <script src="@routes.Assets.versioned("bower_components/medium-editor-insert-plugin/dist/js/medium-editor-insert-plugin.min.js")"></script>
-    <script src="@routes.Assets.versioned("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <script src='@routes.WebJarAssets.at(webJarAssets.locate("js/bootstrap.min.js"))'></script>
     <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
 <script>
     $body = document.body;

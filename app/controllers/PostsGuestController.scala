@@ -2,17 +2,21 @@ package controllers
 
 import dal.{AuthorsDAO, BlogsDAO, PostsDAO}
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.OptionalAuthElement
 import models._
+import org.webjars.play.RequireJS
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import tools.PostAux
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO)
+                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO,
+                                      implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
   extends WithPostController  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
   def index(alias:String, pageNum:Int=0): Action[AnyContent] = AsyncStack { implicit request =>

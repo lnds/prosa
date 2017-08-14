@@ -2,9 +2,11 @@ package tools
 
 import controllers.routes
 import java.text.Normalizer
+
 import models.{Blog, Post}
-import org.joda.time.{Period, DateTime}
+import org.joda.time.{DateTime, LocalDateTime, Period}
 import play.api.i18n.Messages
+
 import scala.annotation.tailrec
 import scravatar.Gravatar
 
@@ -31,8 +33,8 @@ object PostAux  {
     }
   }
 
-  private[this] def buildSlug(alias: String, d: DateTime, post: Post, draft:Boolean): String = {
-    val date = new DateTime(d)
+  private[this] def buildSlug(alias: String, d: LocalDateTime, post: Post, draft:Boolean): String = {
+    val date = new LocalDateTime(d)
     if (draft)
       routes.PostsController.edit(alias, post.id).url
     else
@@ -87,7 +89,7 @@ object PostAux  {
 
 
 
-  def formatElapsed(date:Option[DateTime])(implicit messages:Messages): String = {
+  def formatElapsed(date:Option[LocalDateTime])(implicit messages:Messages): String = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
     lazy val month = Messages("dates.month")
@@ -105,7 +107,7 @@ object PostAux  {
     date match {
       case None => ""
       case Some(base) =>
-        val now = new DateTime()
+        val now = new LocalDateTime()
         val period = new Period(base, now)
 
         if (period.getYears > 1)

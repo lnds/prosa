@@ -1,7 +1,7 @@
 package models
 
 
-import org.joda.time.{DateTime, Period}
+import org.joda.time.LocalDateTime
 
 case class Post(id:String,
                 blog:String,
@@ -11,8 +11,8 @@ case class Post(id:String,
                 content:String,
                 slug:Option[String],
                 draft:Boolean,
-                created:Option[DateTime],
-                published:Option[DateTime],
+                created:Option[LocalDateTime],
+                published:Option[LocalDateTime],
                 author:String) extends Identifiable
 
 

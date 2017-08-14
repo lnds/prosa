@@ -2,18 +2,24 @@ package controllers
 
 import dal.AuthorsDAO
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.LoginLogout
+import org.webjars.play.RequireJS
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 case class LoginData(username:String, password:String)
 
-class AuthController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, override protected val authorsDAO: AuthorsDAO) extends Controller with LoginLogout with AuthConfigImpl with I18nSupport {
+class AuthController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
+                                override protected val authorsDAO: AuthorsDAO,
+                                implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+extends Controller with LoginLogout with AuthConfigImpl with I18nSupport {
 
   val loginForm = Form(
     mapping("nickname" -> nonEmptyText, "password" -> text

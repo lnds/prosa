@@ -4,7 +4,7 @@ name := """prosa-blog-server"""
 
 val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
 
-version := "0.3.4"
+version := "0.3.6"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(SbtWeb).enablePlugins(BuildInfoPlugin).
   settings(
@@ -59,6 +59,8 @@ libraryDependencies ++= Seq(
   ws,
   evolutions,
   specs2 % Test,
+  "org.webjars" %% "webjars-play" % "2.5.0-4",
+  "org.webjars" % "bootstrap" % "3.3.7",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "org.mindrot" % "jbcrypt" % "0.3m",

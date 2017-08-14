@@ -51,7 +51,7 @@ var ImageLoader = (function($) {
             var image = new Image(),
                 src = $el.data('load-image');
 
-            if(src.length) {
+            if(src.length > 0) {
                 image.src = src;
                 image.onload = module.success($el, image);
                 image.onerror = module.done($el);

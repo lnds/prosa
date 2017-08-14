@@ -2,17 +2,23 @@ package controllers
 
 import dal.AuthorsDAO
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.AuthElement
 import models.Writer
 import org.mindrot.jbcrypt.BCrypt
+import org.webjars.play.RequireJS
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
+
 import scalaz.Scalaz._
 
-class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, override protected val  authorsDAO:AuthorsDAO) extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
+class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
+                                   override protected val  authorsDAO:AuthorsDAO,
+                                   implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+  extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 
   val changePasswordForm = Form(
     tuple(

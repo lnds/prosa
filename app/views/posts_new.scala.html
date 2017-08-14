@@ -1,4 +1,4 @@
-@(blog:Blog, form:Form[PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash,  messages:Messages)
+@(blog:Blog, form:Form[PostData], user:Author)(implicit token:controllers.PreventingCsrfToken, flash:Flash,  messages:Messages, webJarAssets: WebJarAssets,  requireJS: org.webjars.play.RequireJS)
 @main_editor("Posts New", user) {
     @views.html.blogs_menu(Some(blog), user)
 }{
