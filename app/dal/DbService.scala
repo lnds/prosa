@@ -2,8 +2,7 @@ package dal
 
 import models.{Identifiable, Page}
 import play.api.db.slick.HasDatabaseConfigProvider
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import slick.driver.JdbcProfile
 import tools.IdGenerator
 
@@ -13,7 +12,7 @@ import tools.IdGenerator
   */
 
 
-trait DbService[E <: Identifiable]
+abstract class DbService[E <: Identifiable](implicit ec:ExecutionContext)
   extends DAOService[E,String] with HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
