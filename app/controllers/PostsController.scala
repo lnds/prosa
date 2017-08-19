@@ -20,7 +20,7 @@ case class PostData(image:Option[String], title:String, subtitle:Option[String],
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
                                   override protected val postsDAO: PostsDAO, override protected val blogsDAO: BlogsDAO,
-                                  override protected val  authorsDAO:AuthorsDAO,
+                                  val  authorsDAO:AuthorsDAO,
                                   implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS, implicit val ec:ExecutionContext)
   extends  WithPostController with TokenValidateElement with AuthElement with AuthConfigImpl  {
 

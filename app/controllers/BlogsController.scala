@@ -24,7 +24,7 @@ case class BlogData(id:Option[String], name:String,alias:String,description:Stri
                     showAds:Option[Boolean], adsCode:Option[String])
 
 class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                 private val blogsDAO : BlogsDAO, override protected val  authorsDAO:AuthorsDAO,
+                                 private val blogsDAO : BlogsDAO, val  authorsDAO:AuthorsDAO,
                                  implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
                                  implicit val ec:ExecutionContext)
   extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {

@@ -14,7 +14,7 @@ import scala.concurrent.ExecutionContext
 
 
 class BlogsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                      private val blogsDAO:BlogsDAO, protected override  val authorsDAO: AuthorsDAO,
+                                      private val blogsDAO:BlogsDAO,  val authorsDAO: AuthorsDAO,
                                       implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
                                       implicit val ec:ExecutionContext)
   extends Controller  with OptionalAuthElement with AuthConfigImpl with I18nSupport {

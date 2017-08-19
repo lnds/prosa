@@ -13,7 +13,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import scala.concurrent.{ExecutionContext, Future}
 
 class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:DatabaseConfigProvider,
-                            val postsDAO:PostsDAO, override protected val  authorsDAO:AuthorsDAO,
+                            val postsDAO:PostsDAO, val  authorsDAO:AuthorsDAO,
                             implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
                             implicit val ec:ExecutionContext)
   extends Controller with OptionalAuthElement with AuthConfigImpl with I18nSupport {

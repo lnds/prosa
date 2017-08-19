@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import tools.PostAux
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO,
+                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, val authorsDAO:AuthorsDAO,
                                       implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS, implicit val ec:ExecutionContext)
   extends WithPostController  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 

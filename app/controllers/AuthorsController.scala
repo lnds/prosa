@@ -16,7 +16,7 @@ import play.api.mvc.{Action, AnyContent, Controller}
 import scalaz.Scalaz._
 
 class AuthorsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                   override protected val  authorsDAO:AuthorsDAO,
+                                   val  authorsDAO:AuthorsDAO,
                                    implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
   extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport  {
 

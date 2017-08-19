@@ -21,7 +21,7 @@ import scala.concurrent.ExecutionContext
 
 
 class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val contentManager: ContentManager,
-                                 private val imagesDAO: ImagesDAO, protected val  authorsDAO:AuthorsDAO, implicit val ec:ExecutionContext)
+                                 private val imagesDAO: ImagesDAO, val  authorsDAO:AuthorsDAO, implicit val ec:ExecutionContext)
   extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
 
   val createForm = Form(
