@@ -10,12 +10,13 @@ import org.webjars.play.RequireJS
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
+import scala.concurrent.ExecutionContext
 
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class BlogsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
                                       private val blogsDAO:BlogsDAO, protected override  val authorsDAO: AuthorsDAO,
-                                      implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+                                      implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
+                                      implicit val ec:ExecutionContext)
   extends Controller  with OptionalAuthElement with AuthConfigImpl with I18nSupport {
 
   def index(pageNum:Int=0): Action[AnyContent] = AsyncStack { implicit request =>
