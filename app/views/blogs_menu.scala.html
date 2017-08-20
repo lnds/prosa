@@ -31,6 +31,8 @@
 }.getOrElse {
     <li><a href="@routes.Application.index"><i class="fa fa-home"></i>&nbsp;  @Messages("menu.home")</a></li>
     <li><a href="@routes.BlogsGuestController.index()"><i class="glyphicon glyphicon-th"></i>&nbsp;  @Messages("menu.blogs")</a></li>
+    <li></li>
+    <li><a href="@routes.AuthController.login()"><i class="fa fa-lock"></i>&nbsp; @Messages("menu.login")</a></li>
 }
 @user match {
 case Guest => {}
