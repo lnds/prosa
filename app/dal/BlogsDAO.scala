@@ -52,7 +52,7 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
     val CREATED = Value(0, "blog.status.created")
     val PUBLISHED = Value(1, "blog.status.published")
-    val INACTIVE = Value(-1, "blog.status.published")// <- reserved for administator
+    val INACTIVE = Value(-1, "blog.status.inactive")// <- reserved for administator
 
     implicit val blogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
       s => s.id,
@@ -68,7 +68,8 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def listForVisitor(user:Visitor, page: Int = 0, pageSize: Int = 10) : Future[Page[Blog]] = {
     val offset = pageSize * page
-    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED.id || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
+    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED.id || user.isInstanceOf[Author]} yield blog)
+                .sortBy(_.name.asc).drop(offset).take(pageSize)
     val totalRows = count
     val result = dbConfig.db.run(query.result)
     result flatMap (items => totalRows map (rows => Page(items, page, offset, rows, pageSize)))

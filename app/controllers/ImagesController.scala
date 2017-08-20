@@ -13,7 +13,7 @@ import play.api.data.Forms._
 import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
-import play.api.mvc.Controller
+import play.api.mvc.{Action, AnyContent, Controller}
 import tools.ContentManager
 
 import scala.concurrent.ExecutionContext
@@ -71,7 +71,7 @@ extends Controller with StackableController {
   /**
    * This method get temporal file, you should configure a CDN in application.conf
    */
-  def image(id: String) = AsyncStack {
+  def image(id: String): Action[AnyContent] = AsyncStack {
     implicit request =>
       imagesDAO.findById(id).map {
         case Some(img) =>

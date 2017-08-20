@@ -17,7 +17,7 @@ class ContentManager @Inject()(configuration:Configuration) {
   val cdnurl: Option[String] = configuration.getString("prosa.cdn.url")
 
 
-  def putFile(key:String, file:File, contentType:String) =
+  def putFile(key:String, file:File, contentType:String): String =
     cdnurl match {
       case None => routes.ContentController.image(key).url
       case Some(url) =>
