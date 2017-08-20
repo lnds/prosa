@@ -20,7 +20,7 @@ import tools.IdGenerator
 
 
 @Singleton
-class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext)extends DbService[Blog]{
+class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider)(implicit executionContext: ExecutionContext) extends DbService[Blog]{
 
   import driver.api._
 

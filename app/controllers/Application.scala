@@ -10,12 +10,12 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class Application @Inject()(val messagesApi:MessagesApi, dbConfigProvider:DatabaseConfigProvider,
-                            val postsDAO:PostsDAO, override protected val  authorsDAO:AuthorsDAO,
-                            implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+                            val postsDAO:PostsDAO, val  authorsDAO:AuthorsDAO,
+                            implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
+                            implicit val ec:ExecutionContext)
   extends Controller with OptionalAuthElement with AuthConfigImpl with I18nSupport {
 
   val maxPosts = 10

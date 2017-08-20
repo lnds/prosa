@@ -17,7 +17,7 @@ import scala.concurrent.Future
 case class LoginData(username:String, password:String)
 
 class AuthController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                override protected val authorsDAO: AuthorsDAO,
+                                val authorsDAO: AuthorsDAO,
                                 implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
 extends Controller with LoginLogout with AuthConfigImpl with I18nSupport {
 

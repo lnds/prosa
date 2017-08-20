@@ -5,8 +5,8 @@ import models.{Blog, Post}
 import play.api.i18n.Messages
 import play.api.mvc.Result
 import views.html.post_index
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
@@ -20,7 +20,7 @@ trait WithPostController extends WithBlogController {
 
   def postNotFound(alias: String): Result = Redirect(routes.PostsGuestController.index(alias)).flashing("error" -> Messages("posts.error.not_found"))
 
-  def withPost(alias: String, id: String)(f: (Blog, Post) => Result): Future[Result] =
+  def withPost(alias: String, id: String)(f: (Blog, Post) => Result)(implicit ec:ExecutionContext): Future[Result] =
     withBlog(alias) { blog =>
       postsDAO.findById(id).map {
         case None => postNotFound(alias)

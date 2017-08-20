@@ -1,18 +1,18 @@
 package dal
 
 import models.{Identifiable, Page}
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import slick.lifted.ColumnOrdered
 
 /**
   * Created by ediaz on 7/23/17.
   */
 
-trait EntityService[T <: Identifiable] extends DbService[T] {
+abstract class EntityService[T <: Identifiable](implicit ec:ExecutionContext) extends DbService[T] {
 
   import driver.api._
+
 
   def queryFilter(qry: String, c: EntityType): Rep[Boolean]
 
@@ -30,7 +30,7 @@ trait EntityService[T <: Identifiable] extends DbService[T] {
   }
 
 
-  def search(queryStr: String, page: Int = 0, pageSize: Int = 50)(implicit s: Session): Future[Page[T]] = {
+  def search(queryStr: String, page: Int = 0, pageSize: Int = 50): Future[Page[T]] = {
     val offset = pageSize * page
     val query = pageQuery(page, offset, pageSize, Some(queryStr))
     val totalRows = countQuery(queryStr)

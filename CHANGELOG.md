@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Added
+- add login menu option in blogs view
+- more SpecTests
+
+### Fixed
+- execution context properly handled
+
 ## 0.3.6 - 2017-08-13
 
 ### Changed

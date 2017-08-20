@@ -1,16 +1,5 @@
 package models
 
-import javax.inject.{Inject, Singleton}
-
-import org.mindrot.jbcrypt.BCrypt
-import play.api.db.slick.DatabaseConfigProvider
-import tools.{IdGenerator, PostAux}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{ExecutionContext, Future}
-import slick.driver.PostgresDriver.api._
-import slick.lifted.{ColumnOrdered, ProvenShape}
-
 
 /**
  * AuthorService

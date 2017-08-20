@@ -18,7 +18,7 @@ trait AuthConfigImpl extends AuthConfig {
 
   val sessionTimeoutInSeconds = 3600
 
-  protected val authorsDAO: AuthorsDAO
+  val authorsDAO: AuthorsDAO
 
   def resolveUser(id: Id)(implicit ctx: ExecutionContext): Future[Option[User]] =
     authorsDAO.findById(id)

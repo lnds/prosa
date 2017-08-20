@@ -1,9 +1,5 @@
 package models
 
-import play.api.db.slick.HasDatabaseConfigProvider
-import slick.driver.JdbcProfile
-
-
 case class Blog(
                  id:String,
                  name:String,

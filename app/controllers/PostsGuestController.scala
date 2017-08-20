@@ -10,13 +10,12 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 import tools.PostAux
 
 class PostsGuestController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, override protected val authorsDAO:AuthorsDAO,
-                                      implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+                                      val blogsDAO: BlogsDAO, val postsDAO: PostsDAO, val authorsDAO:AuthorsDAO,
+                                      implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS, implicit val ec:ExecutionContext)
   extends WithPostController  with OptionalAuthElement with AuthConfigImpl   with I18nSupport  {
 
   def index(alias:String, pageNum:Int=0): Action[AnyContent] = AsyncStack { implicit request =>

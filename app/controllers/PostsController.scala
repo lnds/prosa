@@ -13,16 +13,15 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent}
 import tools.PostAux
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 case class PostData(image:Option[String], title:String, subtitle:Option[String], content:String, draft:Boolean, publish:Option[Boolean])
 
 class PostsController  @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
                                   override protected val postsDAO: PostsDAO, override protected val blogsDAO: BlogsDAO,
-                                  override protected val  authorsDAO:AuthorsDAO,
-                                  implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+                                  val  authorsDAO:AuthorsDAO,
+                                  implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS, implicit val ec:ExecutionContext)
   extends  WithPostController with TokenValidateElement with AuthElement with AuthConfigImpl  {
 
   def index(alias: String, pageNum: Int = 0): Action[AnyContent] = AsyncStack(AuthorityKey -> models.Writer, IgnoreTokenValidation -> None) { implicit request =>

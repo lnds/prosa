@@ -6,7 +6,6 @@ import models.Author
 import org.mindrot.jbcrypt.BCrypt
 import play.api.db.slick.DatabaseConfigProvider
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import slick.lifted.{ColumnOrdered, ProvenShape}
 import tools.{IdGenerator, PostAux}

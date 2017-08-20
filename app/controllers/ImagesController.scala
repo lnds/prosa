@@ -4,6 +4,7 @@ import dal.{AuthorsDAO, ImagesDAO}
 import java.io.File
 import java.nio.file.{Files, Paths}
 import javax.inject.Inject
+
 import jp.t2v.lab.play2.auth.AuthElement
 import jp.t2v.lab.play2.stackc.StackableController
 import models.Writer
@@ -13,13 +14,14 @@ import play.api.db.slick.DatabaseConfigProvider
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json._
 import play.api.mvc.Controller
-import scala.concurrent.ExecutionContext.Implicits.global
 import tools.ContentManager
+
+import scala.concurrent.ExecutionContext
 
 
 
 class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val contentManager: ContentManager,
-                                 private val imagesDAO: ImagesDAO, protected val  authorsDAO:AuthorsDAO)
+                                 private val imagesDAO: ImagesDAO, val  authorsDAO:AuthorsDAO, implicit val ec:ExecutionContext)
   extends Controller with AuthElement with AuthConfigImpl with I18nSupport {
 
   val createForm = Form(
@@ -62,7 +64,8 @@ class ImagesController @Inject()(val messagesApi: MessagesApi, dbConfigProvider:
 
 }
 
-class ContentController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val imagesDAO: ImagesDAO)
+class ContentController @Inject()(val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider, private val imagesDAO: ImagesDAO,
+                                 implicit val ec:ExecutionContext)
 extends Controller with StackableController {
 
   /**

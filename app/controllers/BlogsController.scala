@@ -15,8 +15,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Controller}
 import tools.PostAux
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 
 case class BlogData(id:Option[String], name:String,alias:String,description:String,image:Option[String],
@@ -25,8 +24,9 @@ case class BlogData(id:Option[String], name:String,alias:String,description:Stri
                     showAds:Option[Boolean], adsCode:Option[String])
 
 class BlogsController @Inject() (val messagesApi: MessagesApi, dbConfigProvider: DatabaseConfigProvider,
-                                 private val blogsDAO : BlogsDAO, override protected val  authorsDAO:AuthorsDAO,
-                                 implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS)
+                                 private val blogsDAO : BlogsDAO, val  authorsDAO:AuthorsDAO,
+                                 implicit val webJarAssets: WebJarAssets, implicit val requireJS: RequireJS,
+                                 implicit val ec:ExecutionContext)
   extends Controller with TokenValidateElement with AuthElement with AuthConfigImpl with I18nSupport {
 
 

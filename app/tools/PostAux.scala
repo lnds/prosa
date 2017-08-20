@@ -4,7 +4,7 @@ import controllers.routes
 import java.text.Normalizer
 
 import models.{Blog, Post}
-import org.joda.time.{DateTime, LocalDateTime, Period}
+import org.joda.time.{LocalDateTime, Period}
 import play.api.i18n.Messages
 
 import scala.annotation.tailrec
