@@ -22,7 +22,7 @@ class ImagesDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvide
 
   class Images(tag:Tag) extends Table[Image](tag, "image") with HasId {
 
-    def id: Rep[String] = column[String]("id", O.PrimaryKey)
+    def id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(keySize))
     def filename: Rep[String] = column[String]("filename")
     def contentType: Rep[String] = column[String]("contenttype")
     def url: Rep[Option[String]] = column[Option[String]]("url")

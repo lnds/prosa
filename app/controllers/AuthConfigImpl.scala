@@ -37,7 +37,8 @@ trait AuthConfigImpl extends AuthConfig {
     Future(Redirect(routes.AuthController.login()))
   }
 
-  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] = Future.successful((Permission.valueOf(user.permission), authority) match {
+  def authorize(user: User, authority: Authority)(implicit ctx: ExecutionContext): Future[Boolean] =
+    Future.successful((Permission.valueOf(user.permission), authority) match {
     case (Administrator, _) => true
     case (Editor, Editor) => true
     case (Editor, Writer) => true
