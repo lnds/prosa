@@ -75,8 +75,8 @@
     @blogOpt.map { blog =>
     <link href="@tools.PostAux.atomUrl(blog.url.getOrElse(""))" rel="alternate" type="application/atom.xml" />
     }
-    <script src="@routes.Assets.versioned("bower_components/jquery/dist/jquery.min.js")" ></script>
-    <script src='@routes.WebJarAssets.at(webJarAssets.locate("js/bootstrap.min.js"))'></script>
+    <script src='@routes.WebJarAssets.at(webJarAssets.locate("jquery.min.js"))'></script>
+    <script src='@routes.WebJarAssets.at(webJarAssets.locate("bootstrap.min.js"))'></script>
     <script src="@routes.Assets.versioned("js/prosa.js")"> </script>
     @user match {
         case Guest => {}

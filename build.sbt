@@ -60,6 +60,7 @@ libraryDependencies ++= Seq(
   evolutions,
   specs2 % Test,
   "org.webjars" %% "webjars-play" % "2.5.0-4",
+  "org.webjars" % "jquery" % "3.2.1",
   "org.webjars" % "bootstrap" % "3.3.7",
   "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
