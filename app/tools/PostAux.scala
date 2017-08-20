@@ -101,7 +101,7 @@ object PostAux  {
     }
   }
 
-  private[this] def namePeriod(period: Period) : String = {
+  private[this] def namePeriod(period: Period)(implicit messages:Messages) : String = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
     lazy val month = Messages("dates.month")
