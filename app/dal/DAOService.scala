@@ -10,6 +10,8 @@ import scala.concurrent.Future
 
 trait DAOService[E <: Identifiable, I] {
 
+  val keySize = 45
+
   def insert(item: E): Future[Int]
   def update(item: E): Future[Int]
   def delete(id: I): Future[Int]

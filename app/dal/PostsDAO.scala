@@ -18,15 +18,16 @@ import tools.IdGenerator
   */
 
 @Singleton
-class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, private val blogsDAO: BlogsDAO, private val authorsDAO: AuthorsDAO)(implicit executionContext: ExecutionContext)
+class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider, private val blogsDAO: BlogsDAO, private val authorsDAO: AuthorsDAO)
+                         (implicit executionContext: ExecutionContext)
   extends DbService[Post]{
 
   import driver.api._
 
   class Posts(tag:Tag) extends Table[Post](tag, "post") with HasId {
 
-    def id: Rep[String] = column[String]("id", O.PrimaryKey)
-    def blog: Rep[String] = column[String]("blog", O.Length(45, varying = true))
+    def id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(keySize))
+    def blog: Rep[String] = column[String]("blog", O.Length(keySize, varying = true))
     def image: Rep[Option[String]] = column[Option[String]]("image")
     def title: Rep[String] = column[String]("title")
     def subtitle: Rep[Option[String]] = column[Option[String]]("subtitle")
@@ -35,7 +36,7 @@ class PostsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     def draft: Rep[Boolean] = column[Boolean]("draft")
     def created: Rep[Option[LocalDateTime]] = column[Option[LocalDateTime]]("created")
     def published: Rep[Option[LocalDateTime]] = column[Option[LocalDateTime]]("published")
-    def author: Rep[String] = column[String]("author", O.Length(45, varying = true))
+    def author: Rep[String] = column[String]("author", O.Length(keySize, varying = true))
 
     def * : ProvenShape[Post] = (id,blog,image,title,subtitle,content,slug,draft,created,published,author) <> (Post.tupled, Post.unapply)
   }

@@ -29,8 +29,9 @@ abstract class EntityService[T <: Identifiable](implicit ec:ExecutionContext) ex
       .take(pageSize)
   }
 
+  val defaultPageSize : Int = 50
 
-  def search(queryStr: String, page: Int = 0, pageSize: Int = 50): Future[Page[T]] = {
+  def search(queryStr: String, page: Int = 0, pageSize: Int = defaultPageSize): Future[Page[T]] = {
     val offset = pageSize * page
     val query = pageQuery(page, offset, pageSize, Some(queryStr))
     val totalRows = countQuery(queryStr)

@@ -26,7 +26,7 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   class Blogs(tag:Tag) extends Table[Blog](tag, "blog") with HasId {
 
-    def id: Rep[String] = column[String]("id", O.PrimaryKey)
+    def id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(keySize))
     def name: Rep[String] = column[String]("name")
     def alias: Rep[String] = column[String]("alias")
     def description: Rep[String] = column[String]("description")
@@ -37,7 +37,7 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
     def disqus: Rep[Option[String]] = column[Option[String]]("disqus")
     def googleAnalytics: Rep[Option[String]] = column[Option[String]]("google_analytics")
     def status: Rep[Int] = column[Int]("status")
-    def owner: Rep[String] = column[String]("owner", O.Length(45, varying = true))
+    def owner: Rep[String] = column[String]("owner", O.Length(keySize, varying = true))
     def twitter: Rep[Option[String]] = column[Option[String]]("twitter_handle")
     def showAds: Rep[Option[Boolean]] = column[Option[Boolean]]("show_ads")
     def adsCode: Rep[Option[String]] = column[Option[String]]("ads_code")
@@ -52,7 +52,7 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
     val CREATED = Value(0, "blog.status.created")
     val PUBLISHED = Value(1, "blog.status.published")
-    val INACTIVE = Value(-1, "blog.status.published")// <- reserved for administator
+    val INACTIVE = Value(-1, "blog.status.inactive")// <- reserved for administator
 
     implicit val blogStatusMapper = MappedColumnType.base[BlogStatus.Value, Int](
       s => s.id,
@@ -68,7 +68,8 @@ class BlogsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvider
 
   def listForVisitor(user:Visitor, page: Int = 0, pageSize: Int = 10) : Future[Page[Blog]] = {
     val offset = pageSize * page
-    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED.id || user.isInstanceOf[Author]} yield blog).sortBy(_.name.asc).drop(offset).take(pageSize)
+    val query = (for { blog <- blogs if blog.status === BlogStatus.PUBLISHED.id || user.isInstanceOf[Author]} yield blog)
+                .sortBy(_.name.asc).drop(offset).take(pageSize)
     val totalRows = count
     val result = dbConfig.db.run(query.result)
     result flatMap (items => totalRows map (rows => Page(items, page, offset, rows, pageSize)))

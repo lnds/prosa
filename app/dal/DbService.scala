@@ -36,7 +36,9 @@ abstract class DbService[E <: Identifiable](implicit ec:ExecutionContext)
 
   override def delete(id:String) : Future[Int] = db.run(filterQuery(id).delete)
 
-  override def list(page: Int = 0, pageSize: Int = 10, orderBy: Int = 1, filter: String = "%"): Future[Page[E]] = {
+  val defaultListSize : Int = 10
+
+  override def list(page: Int = 0, pageSize: Int = defaultListSize, orderBy: Int = 1, filter: String = "%"): Future[Page[E]] = {
     val offset = pageSize * page
     val query = (for {item <- items} yield item).drop(offset).take(pageSize)
     val totalRows = count

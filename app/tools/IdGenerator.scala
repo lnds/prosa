@@ -11,14 +11,14 @@ object UUIDUtil {
   // Create an ids pool? uuid.toString is slow! :(
 
   private[this] val uuidGenerator = Generators.timeBasedGenerator
-  def generateUUID = uuidGenerator.generate.toString
-  def timestamp(uuid: String) = (JavaUUID.fromString(uuid).timestamp() - 122192928000000000l) / 10000
+  def generateUUID: String = uuidGenerator.generate.toString
+  def timestamp(uuid: String): Long = (JavaUUID.fromString(uuid).timestamp() - 122192928000000000L) / 10000
 
 }
 
 object IdGenerator {
 
-  def nextId(entityClass: Class[_]) = {
+  def nextId(entityClass: Class[_]): String = {
     val uuid = UUIDUtil.generateUUID
     val classId = entityClassHashId(entityClass)
     uuid + "-" + classId
@@ -40,12 +40,13 @@ object IdGenerator {
 
 
   private[this] def normalizeHex(hex: String) = {
+    val maxSize : Int = 8
     val length : Int = hex.length
-    if (8 == length)
+    if (maxSize == length)
       hex
-    else if (length < 8)
-      hex + (for (_ <- 0 until (8 - length)) yield "0").mkString("")
+    else if (length < maxSize)
+      hex + (for (_ <- 0 until (maxSize - length)) yield "0").mkString("")
     else
-      hex.substring(0, 8)
+      hex.substring(0, maxSize)
   }
 }

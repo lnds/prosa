@@ -23,7 +23,7 @@ class AuthorsDAO @Inject() (protected val dbConfigProvider: DatabaseConfigProvid
   import driver.api._
 
   class Authors(tag: Tag) extends Table[Author](tag, "author") with HasId {
-    def id: Rep[String] = column[String]("id", O.PrimaryKey)
+    def id: Rep[String] = column[String]("id", O.PrimaryKey, O.Length(keySize))
     def nickname: Rep[String] = column[String]("nickname")
     def email: Rep[String] = column[String]("email")
     def password: Rep[String] = column[String]("password")
