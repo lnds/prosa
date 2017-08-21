@@ -2,12 +2,15 @@
 
 ## [Unreleased]
 
+## 0.3.9 -2017-08-21
+
 ### Fixed
 - menu login 
 
 ### Changed
 - uses webjars jquery
 - uses webjars font-awesome
+- refactor formatElapsed in PostAux
 
 ## 0.3.8 - 2017-08-20
 
