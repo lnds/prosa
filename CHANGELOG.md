@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Fixed
+- menu login 
+
+### Changed
+- uses webjars jquery
+- uses webjars font-awesome
+
 ## 0.3.8 - 2017-08-20
 
 ### Fixed
