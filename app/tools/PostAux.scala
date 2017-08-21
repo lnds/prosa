@@ -85,10 +85,6 @@ object PostAux  {
     u.getHost
   }
 
-
-
-
-
   def formatElapsed(date:Option[LocalDateTime])(implicit messages:Messages): String = {
 
     date match {
@@ -97,53 +93,84 @@ object PostAux  {
         val now = new LocalDateTime()
         val period = new Period(base, now)
         namePeriod(period)
-
     }
   }
 
   private[this] def namePeriod(period: Period)(implicit messages:Messages) : String = {
+    nameYears(period)
+  }
+
+  private[this] def nameYears(period: Period)(implicit messages:Messages) : String = {
     lazy val year = Messages("dates.year")
     lazy val years = Messages("dates.years")
+    period.getYears match {
+      case y if y > 1 => s"$y $years"
+      case 1 => s"1 $year"
+      case _ => nameMonths(period)
+    }
+  }
+
+  private[this] def nameMonths(period: Period)(implicit messages:Messages) : String = {
     lazy val month = Messages("dates.month")
     lazy val months = Messages("dates.months")
+    period.getMonths match {
+      case m if m > 1 => s"$m $months"
+      case 1 => s"1 $month"
+      case _ => nameWeeks(period)
+    }
+  }
+
+  private[this] def nameWeeks(period: Period)(implicit messages:Messages) : String = {
     lazy val week = Messages("dates.week")
     lazy val weeks = Messages("dates.weeks")
+    period.getWeeks match {
+      case w if w > 1 => s"$w $weeks"
+      case 1 => s"1 $week"
+      case _ => nameDays(period)
+    }
+  }
+
+  private[this] def nameDays(period: Period)(implicit messages:Messages) : String = {
     lazy val day = Messages("dates.day")
     lazy val days = Messages("dates.days")
+    period.getDays match {
+      case d if d > 1 => s"$d $days"
+      case 1 =>  s"1 $day"
+      case _ => nameHours(period)
+    }
+  }
+
+
+  private[this] def nameHours(period: Period)(implicit messages:Messages) : String = {
     lazy val hour = Messages("dates.hour")
     lazy val hours = Messages("dates.hours")
+    period.getHours match {
+      case h if h > 1 =>  s"$h $hours"
+      case 1 =>  s"1 $hour"
+      case _ => nameMinutes(period)
+    }
+  }
+
+
+  private[this] def nameMinutes(period: Period)(implicit messages:Messages) : String = {
     lazy val minute = Messages("dates.minute")
     lazy val minutes = Messages("dates.minutes")
+    period.getMinutes match {
+      case m if m > 1 =>  s"$m $minutes"
+      case 1 => s"1 $minute"
+      case _ => nameSeconds(period)
+    }
+  }
+
+  private[this] def nameSeconds(period: Period)(implicit messages:Messages) : String = {
     lazy val second = Messages("dates.second")
     lazy val seconds = Messages("dates.seconds")
-    if (period.getYears > 1)
-      s"${period.getYears} $years"
-    else if (period.getYears == 1)
-      s"${period.getYears} $year"
-    else if (period.getMonths > 1)
-      s"${period.getMonths} $months"
-    else if (period.getMonths == 1)
-      s"${period.getMonths} $month"
-    else if (period.getWeeks > 1)
-      s"${period.getWeeks} $weeks"
-    else if (period.getWeeks == 1)
-      s"${period.getWeeks} $week"
-    else if (period.getDays > 1)
-      s"${period.getDays} $days"
-    else if (period.getDays == 1)
-      s"${period.getDays} $day"
-    else if (period.getHours > 1)
-      s"${period.getHours} $hours"
-    else if (period.getHours == 1)
-      s"${period.getHours} $hour"
-    else if (period.getMinutes > 1)
-      s"${period.getMinutes} $minutes"
-    else if (period.getMinutes == 1)
-      s"${period.getMinutes} $minute"
-    else if (period.getSeconds > 1)
-      s"${period.getSeconds} $seconds"
-    else
-      s"${period.getSeconds} $second"
+    period.getSeconds match {
+      case 1 => s"${period.getSeconds} $second"
+      case s => s"$s $seconds"
+    }
   }
+
+
 
 }
